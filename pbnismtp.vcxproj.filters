@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="CSMTPConnection">
+      <UniqueIdentifier>{6c84f53a-dcc2-401b-a3e5-e6a93ff9a603}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="pbnismtp.rc">
+      <Filter>CSMTPConnection</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CSMTPConnection\PJNNTLMAuth.cpp">
+      <Filter>CSMTPConnection</Filter>
+    </ClCompile>
+    <ClCompile Include="CSMTPConnection\PJNSMTP.cpp">
+      <Filter>CSMTPConnection</Filter>
+    </ClCompile>
+    <ClCompile Include="pbnismtp.cpp" />
+    <ClCompile Include="CSMTPConnection\SocMFC.cpp">
+      <Filter>CSMTPConnection</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CSMTPConnection\PJNNTLMAuth.h">
+      <Filter>CSMTPConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="CSMTPConnection\PJNSMTP.h">
+      <Filter>CSMTPConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="pbnismtp.h" />
+    <ClInclude Include="CSMTPConnection\SocMFC.h">
+      <Filter>CSMTPConnection</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

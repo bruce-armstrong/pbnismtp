@@ -1,0 +1,1584 @@
+<html>
+
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>CPJNSMTPConnection v3.17</title>
+<link href="naughter.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h2>
+<img alt="PJNSMTP.gif (295 bytes)" height="38" src="PJNSMTP.gif" width="39" /><strong>CPJNSMTPConnection 
+v3.17</strong></h2>
+<p>Welcome to <strong>CPJNSMTPConnection</strong>, a collection of MFC classes to 
+support the SMTP protocol. SMTP for those not familiar with all the internet protocols 
+is the protocol used to send internet email. </p>
+<p>Also included with the SMTP classes in the download is a class called &quot;CPJNMD5Hash&quot; 
+which provides for calculation of MD5 hashes and HMACs using the MS Crypto API as 
+well as a class called &quot;CNTLMClientAuth&quot; which provides a reusable client 
+side implementation for NTLM authentication.</p>
+<p><b><i>Important!:</i></b> Please note that I have been informed that CPJNSMTPConnection 
+is being used to develop and send unsolicited bulk mail. This was not the intention 
+of the code and the author explicitly forbids use of the code for any software of 
+this kind without my explicit written consent.</p>
+<p></p>
+<table>
+	<tr>
+		<td><a href="#References">References</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Features">Features</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Copyright">Copyright</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Usage">Usage</a></td>
+	</tr>
+	<tr>
+		<td><a href="#History">History</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Contact">Contacting the Author</a></td>
+	</tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="References"></a><strong>References</strong> </h2>
+<ul>
+	<li>For information about <strong>SMTP </strong>(<strong>S</strong>imple
+	<strong>M</strong>ail <strong>T</strong>ransfer <strong>P</strong>rotocol) you 
+	should read <a href="http://www.ietf.org/rfc/rfc821.txt">RFC 821</a>.</li>
+	<li>For information about ESMTP (Extended Simple Mail Transfer Protocol) which 
+	obsoletes the original SMTP RFC, you should read
+	<a href="http://www.ietf.org/rfc/rfc821.txt">RFC 2821</a>.</li>
+	<li><a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a> which defines 
+	how MIME attachments are to be handled in a standard SMTP message.</li>
+	<li><a href="http://www.ietf.org/rfc/rfc822.txt">RFC 822</a> and
+	<a href="http://www.ietf.org/rfc/rfc2822.txt">RFC 2822</a> define the ways standard 
+	headers are used by SMTP.</li>
+	<li><a href="http://www.ietf.org/rfc/rfc2110.txt">RFC 2110</a> and
+	<a href="http://www.ietf.org/rfc/rfc2557.txt">RFC 2557</a> which covers MHTML 
+	(aka HTML Email).</li>
+	<li>Base64 encoding which is used in various places in SMTP is described in
+	<a href="http://www.ietf.org/rfc/rfc1113.txt">RFC 1113</a> and
+	<a href="http://www.ietf.org/rfc/rfc1421.txt">RFC 1421</a>. If was eventually 
+	referred to as Base64 in <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a></li>
+	<li>The details about SMTP authentication are spread across a number of RFCs 
+	including <a href="http://www.ietf.org/rfc/rfc1731.txt">RFC 1731</a>,
+	<a href="http://www.ietf.org/rfc/rfc1869.txt">RFC 1869</a>,
+	<a href="http://www.ietf.org/rfc/rfc2195.txt">RFC 2195</a>,
+	<a href="http://www.ietf.org/rfc/rfc2095.txt">RFC 2095</a>,
+	<a href="http://www.ietf.org/rfc/rfc2245.txt">RFC 2245</a>,
+	<a href="http://www.ietf.org/rfc/rfc2554.txt">RFC 2554</a>,
+	<a href="http://www.ietf.org/rfc/rfc2595.txt">RFC 2595</a>,
+	<a href="http://www.ietf.org/rfc/rfc4616.txt">RFC 4616</a> and
+	<a href="http://www.ietf.org/rfc/rfc4954.txt">RFC 4954</a>.</li>
+	<li>The CRAM-MD5 authentication scheme uses a HMAC (Hashed Message Authentication 
+	Code) which is described in <a href="http://www.ietf.org/rfc/rfc2104.txt">RFC 
+	2104</a>, while MD5 itself is described in
+	<a href="http://www.ietf.org/rfc/rfc1321.txt">RFC 1321</a>.</li>
+	<li><a href="http://www.ietf.org/rfc/rfc3461.txt">RFC 3461</a>,
+	<a href="http://www.ietf.org/rfc/rfc3464.txt">RFC 3464</a> ,
+	<a href="http://www.ietf.org/rfc/rfc3798.txt">RFC 3798</a> and
+	<a href="http://www.ietf.org/rfc/rfc3885.txt">RFC 3885</a> describe DSN&#39;s 
+	(Delivery Status Notifications) and MDN&#39;s (Message Disposition Notifications)</li>
+	<li>The page <a href="http://www.activexperts.com/support/activemail/auth/">
+	http://www.activexperts.com/support/activemail/auth/</a> includes a good description 
+	of the AUTH LOGIN, AUTH PLAIN and AUTH CRAM-MD5 authentication schemes which 
+	is implemented by CPJNSMTPConnection.</li>
+	<li><a href="http://www.ietf.org/rfc/rfc3207.txt">RFC 3207</a> define how STARTTLS 
+	operates.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Features"></a><strong>Features</strong> </h2>
+<ul>
+	<li>Simple and clean C++ interface.</li>
+	<li>The interface provided is synchronous which provides an easier programming 
+	model than using asynchronous sockets.</li>
+	<li>The code does not rely on the MFC socket classes. These classes have a number 
+	of shortcomings, one of which causes problems when they are used in NT services.</li>
+	<li>The code can be used in a console application without any problems (Again 
+	this is not the case for the MFC socket classes).</li>
+	<li>A configurable timeout for the connection can be set through the class API.</li>
+	<li>The classes are fully Unicode compliant and include Unicode built options 
+	in the workspace file.</li>
+	<li>As of v1.1, the classes now fully supports sending file attachments.</li>
+	<li>Multi CC, BCC &amp; Reply To support is included.</li>
+	<li>Support for regular email address formats and multiple email address parsing.</li>
+	<li>Full support for MIME and MHTML (aka HTML Email).</li>
+	<li>Full support for MIME Charsets.</li>
+	<li>Comprehensive sample program included which exercises most of the classes 
+	functionality.</li>
+	<li>As of v2.61, the classes now fully support sending email over SSL. This 
+	means that for instance you can use the Gmail SMTP server &quot;smtp.gmail.com&quot; 
+	on port 465. Also note that all of the other features such as authentication 
+	are fully supported over SSL. For example to use Gmail you will require some 
+	form of authentication such as AUTH PLAIN because it does not operate as an 
+	open relay (which would facilitate spam).</li>
+	<li>Supports numerous authentication protocols including &quot;AUTH CRAM-MD5&quot;, &quot;AUTH 
+	LOGIN&quot;, &quot;AUTH PLAIN&quot; and &quot;AUTH NTLM&quot;. An &quot;Auto 
+	Detection&quot; form of authentication is also supported. In this mode, the 
+	authentication protocols supported by the server are detected and the most appropriate 
+	protocol is used.</li>
+	<li>As of v2.65, the classes include comprehensive support for DSN&#39;s (Delivery 
+	Status Notifications).</li>
+	<li>As of v2.84, the classes include support for MDN&#39;s (Message Disposition 
+	Notifications)</li>
+	<li>As of v2.86, the classes support STARTTLS. This SMTP command allows a standard 
+	SMTP plain text connection to be made and assuming the SMTP server supports 
+	STARTTLS, the connection can be upgraded to a encrypted connection mid stream. 
+	Often SMTP servers only offer STARTTLS via port 25 instead of SSL / TLS on a 
+	different port.</li>
+	<li>Optionally supports Address header encoding.</li>
+	<li>As of v3.09, the classes are only supported on VC 2013 or later.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><b><a name="Copyright"></a>Copyright</b></h2>
+<ul>
+	<li>You are allowed to include the source code in any product (commercial, shareware, 
+	freeware or otherwise) when your product is released in binary form. </li>
+	<li>You are allowed to modify the source code in any way you want except you 
+	cannot modify the copyright details at the top of each module. </li>
+	<li>If you want to distribute source code with your application, then you are 
+	only allowed to distribute versions released by the author. This is to maintain 
+	a single distribution point for the source code. </li>
+	<li><b><i>Important!!:</i></b> Please note that I have been informed that CPJNSMTPConnection 
+	is being used to develop and send unsolicited bulk mail. This was not the intention 
+	of the code and the author explicitly forbids use of the code for any software 
+	of this kind without my explicit written consent.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Usage"></a><strong>Usage</strong> </h2>
+<ul>
+	<li>The classes are designed for VC 2013 or later. They will not compile on 
+	earlier releases of VC, so please no more emails about Visual C 6 support!</li>
+	<li>You will also need to download the SocMFC.cpp/h modules separately from
+	<a href="http://www.naughter.com/w3mfc.html">www.naughter.com/w3mfc.html</a>. 
+	This set of modules provides the socket functionality.</li>
+	<li>To use the class in your code simply include PJNSMTP.cpp/h, SocMFC.cpp/h 
+	and PJNMD5.h in your project and #include PJNSMTP.h in which ever of your modules 
+	needs to make calls to the classes. You also need to copy all the IDS_PJNSMTP_* 
+	strings from the samples apps &quot;PJNSMTP.rc&quot; rc file to your applications 
+	rc file.</li>
+	<li>By default NTLM authentication is also provided for. This is provided by 
+	including PJNNTLMAuth.cpp/h in your project. If you do not want to include this 
+	support, then you should define the pre-processor macro &quot;CPJNSMTP_NONTLM&quot; 
+	before including PJNSMTP.h. You then do not need to include these two modules 
+	in your project.</li>
+	<li>By default SSL connections are also provided for. This is provided by the 
+	author's SSLWrappers classes which you will need to download from
+	<a href="http://www.naughter.com/sslwrappers.html">http://www.naughter.com/sslwrappers.html</a>. 
+	Please note that the the SSLWrappers classes themselves depends on the author's 
+	CryptoWrappers classes which you will also need to download from
+	<a href="http://www.naughter.com/cryptowrappers.html">http://www.naughter.com/cryptowrappers.html</a>. 
+	If you do not want to include SSL support, then you should define the pre-processor 
+	macro &quot;CPJNSMTP_NOSSL&quot; before including PJNSMTP.h<a href="http://naughter.spaces.live.com/blog/cns!7692E6D72E26EAC!209.entry">.</a></li>
+	<li>You will need to have Winsock correctly initialised prior to calling any 
+	functions in CPJNSMTPConnection. Depending on your application, this will involve 
+	calling either WSAStartup or AfxSocketInit at start-up of your application.</li>
+	<li>To see the class in action, have a look at the code in CPJNSMTPApp::InitInstance 
+	in the module &quot;PJNSMTPApp.cpp&quot; as well as all the code in the PJNSMTPAppDlg.cpp 
+	module in the sample application which comes with the code. For example to send 
+	a message about this class, the code would look something like this (ignoring 
+	error handling&lt;gg&gt;):</li>
+</ul>
+<pre>CPJNSMTPConnection smtp;
+smtp.Connect(_T(&quot;mail.someisp.com&quot;));
+CPJNSMTPMessage m;
+CPJNSMTPAddress toAddress(_T(&quot;someaddress@somedestination.com&quot;));
+m.m_To.Add(toAddress);
+m.m_From = CPJNSMTPAddress(_T(&quot;adeveloper@someisp.com&quot;));
+m.m_sSubject = _T(&quot;A Fellow developer!&quot;);
+m.AddTextBody(_T(&quot;If you can read this then the CPJNSMTPConnection code is working&quot;));
+smtp.SendMessage(m);</pre>
+<ul>
+	<li>Please note that the NTLM authentication support in the class is provided 
+	by using the SSPI (Security Support Provider Interface) interfaces in Windows. 
+	If you run into problems using NTLM, please consider that the problem may not 
+	lie with the SMTP code but with issues with SSPI. For example, there are a number 
+	of knowledge base articles on this including: &quot;XCON: NTLM Authentication 
+	Does Not Work Between Exchange Server 5.5 Internet Mail Service and Windows 
+	2000 SMTP Stack&quot;. </li>
+	<li>Please note that if you are using the class to send MHTML HTML emails, that 
+	you should form CID tags using angle brackets as some mail servers such as the 
+	iPlanet mail reader on Sun/Solaris has problems if you do not use this. For 
+	example, you should use:<br />
+	<br />
+	Content-ID: &lt;IMAGE_1&gt;<br />
+	<br />
+	and not:<br />
+	<br />
+	Content-ID: IMAGE_1<br />
+	<br />
+	The code to accomplish this would be:<br>
+	<p>CPJNSMTPBodyPart part; <br>. . . <br>part.SetContentID(_T(&quot;&lt;IMAGE_1&gt;&quot;));
+	<br>. . . </p>
+	<pre></pre>
+	This is not really a problem with the class but more of a gotcha on the minutiae 
+	of using MHTML email.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="History"></a><strong>History</strong></h2>
+<p><strong>V1.0 (26 May 1998)</strong> </p>
+<ul>
+	<li>Initial public release.</li>
+</ul>
+<p><strong>V1.1 (17 June 1998)</strong> </p>
+<ul>
+	<li>Fixed the case where a single dot occurs on its own in the body of a message</li>
+	<li>Classes now supports an optional &quot;Reply-To&quot; Header Field</li>
+	<li>Classes now fully supports file attachments</li>
+	<li>Some rework on the contents of the help file</li>
+</ul>
+<p><strong>V1.11 (18 June 1998)</strong> </p>
+<ul>
+	<li>Fixed a memory overwrite problem which was occurring with the buffer used 
+	for encoding base64 attachments.</li>
+</ul>
+<p><strong>V1.12 (27 June 1998)</strong> </p>
+<ul>
+	<li>The case where a line begins with a &quot;.&quot; but contains other text 
+	is now also catered for. See RFC 821, Section 4.5.2 for further details.</li>
+	<li>m_sBody in CPJNSMTPMessage has now been made protected. Client applications 
+	now should call AddBody instead. This ensures that FixSingleDot is only called 
+	once even if the same message is sent a number of times.</li>
+	<li>Fixed a number of problems with how the MIME boundaries were defined and 
+	sent.</li>
+	<li>Got rid of an unreferenced formal parameter compiler warning when doing 
+	a release build.</li>
+</ul>
+<p><strong>V1.2 (11 August 1998)</strong> </p>
+<ul>
+	<li>VC 5 project file is now provided instead of VC 4.x</li>
+	<li>Attachment array which the message class contains now uses references instead 
+	of pointers.</li>
+	<li>Now uses Sleep(0) to yield our time slice instead of Sleep(100), this is 
+	the preferred way of writing polling style code in Win32 without severely impacting 
+	performance.</li>
+	<li>All trace statements now display the value as returned from GetLastError</li>
+	<li>A number of extra asserts have been added</li>
+	<li>AddMultipleRecipients has been added which supports added a number of recipients 
+	at one time from a single string</li>
+	<li>Extra trace statements have been added to help in debugging</li>
+	<li>A number of updates to the documentation.</li>
+</ul>
+<p><strong>V1.21 (12 September 1998)</strong> </p>
+<ul>
+	<li>Removed a couple of unreferenced variable compiler warnings discovered when 
+	the class was compiled on Visual C++ 6.0.</li>
+	<li>Fixed a major bug which was causing an ASSERT when the CSMTPAttachment destructor 
+	was being called in the InitInstance of the sample app. This was inadvertently 
+	introduced for the 1.2 release. The fix is to revert fix 2) as done for v1.2. 
+	This new fix will also help to reduce the number of attachment images kept in 
+	memory at one time.</li>
+	<li>Fixed a few errors in this help file.</li>
+</ul>
+<p><strong>V1.3 (18 January 1999)</strong> </p>
+<ul>
+	<li>Full support has now been added for CC (Carbon Copy) &amp; BCC (Blind Carbon 
+	Copy).</li>
+</ul>
+<p><strong>V1.31 (22 February 1999)</strong> </p>
+<ul>
+	<li>Added a Get and SetTitle method which allows a files attachment title to 
+	be different that the original filename.</li>
+	<li>Updated sample app to include a more descriptive subject line.</li>
+	<li>Default timeout for the code when a debug build is built has now been set 
+	to 60 seconds.</li>
+	<li>Improved the reading of responses back from the server by implementing a 
+	growable receive buffer.</li>
+	<li>Updated instructions on how the relevant RFC documents can be retrieved.</li>
+</ul>
+<p><strong>V1.32 (25 March 1999)</strong> </p>
+<ul>
+	<li>Now sleeps for 250 ms instead of yielding the time slice. This helps reduce 
+	CPU usage when waiting for data to arrive in the socket.</li>
+</ul>
+<p><strong>V1.33 (14 May 1999)</strong> </p>
+<ul>
+	<li>Updated documentation to refer to RFC 822.</li>
+	<li>Fixed a bug with the way the code generates time zone fields in the Date 
+	headers. Thanks to Randy A. Scott for reporting this bug. </li>
+</ul>
+<p><strong>V1.34 (10 September 1999)</strong> </p>
+<ul>
+	<li>Improved CPJNSMTPMessage::GetHeader to include mime field even when no attachments 
+	are included.</li>
+</ul>
+<p><strong>V1.35 (5 October 1999)</strong> </p>
+<ul>
+	<li>Fixed 2 level 4 warnings when compiled using VC 6.</li>
+</ul>
+<p><strong>V1.36 (16 February 2000)</strong> </p>
+<ul>
+	<li>Fixed another compiler problem when compiled with VC 6.</li>
+</ul>
+<p><strong>V1.37 (19 March 2000)</strong> </p>
+<ul>
+	<li>Fixed a problem in GetHeader on Non-English Windows machines</li>
+	<li>Now ships with a VC 5 workspace. I accidentally shipped a VC 6 version in 
+	one of the previous versions of the code.</li>
+	<li>Fixed a number of UNICODE problems</li>
+	<li>Updated the sample app to deliberately assert before connecting to the author&#39;s 
+	SMTP server.</li>
+</ul>
+<p><strong>V1.38 (26 March 2000)</strong> </p>
+<ul>
+	<li>Updated the sample app provided with the code to be a mini mail client. 
+	This should now also give a better idea of what the code can be used for.</li>
+</ul>
+<p><strong>V1.39 (28 March 2000)</strong> </p>
+<ul>
+	<li>Set the release mode timeout to be 10 seconds. 2 seconds was causing problems 
+	for slow dial up networking connections.</li>
+</ul>
+<p><strong>V1.40 (7 May 2000)</strong> </p>
+<ul>
+	<li>Addition of some ASSERTs in CSMTPSocket::Connect.</li>
+</ul>
+<p><strong>V1.41 (20 June 2000)</strong> </p>
+<ul>
+	<li>Removed the base64 encoder from this file</li>
+	<li>Added the base64 encoder/decoder implementation in a separate file. This 
+	was done because base64 decoding was not part of the previous implementation</li>
+	<li>Added support for ESMTP connection. The class now attempts to authenticate 
+	the user on the ESMTP server using the username and passwords supplied. For 
+	this connect now takes the username and passwords as parameters. These can be 
+	null in which case ESMTP authentication is not attempted</li>
+	<li>This class can now handle AUTH LOGIN and AUTH LOGIN PLAIN authentication 
+	schemes </li>
+	<li>Added the files md5.* containing the MD5 digest generation code after modifications 
+	so that it compiles with VC++ 6</li>
+	<li>Added support for CRAM-MD5 login.</li>
+	<li>Please note that all the support for SMTP authentication was added by Puneet 
+	Pawaia to which I am gratefully appreciated for all the hard work put in.</li>
+</ul>
+<p><strong>V2.0 (21 June 2000)</strong> </p>
+<ul>
+	<li>Now includes a number of files missing from the zip file.</li>
+	<li>Updated the version number to v2 to reflect the major changes which occurred 
+	in v1.41</li>
+</ul>
+<p><strong>V2.01 (10 July 2000)</strong> </p>
+<ul>
+	<li>Fixed a problem with sending attachments &gt; 1K in size.</li>
+	<li>Changed the parameters to CPJNSMTPConnection::Connect</li>
+</ul>
+<p><strong>V2.02 (30 July 2000)</strong> </p>
+<ul>
+	<li>Fixed a bug in AuthLogin which was transmitting the username and password 
+	with an extra &quot;=&quot; which was causing the login to failure. Thanks to 
+	Victor Vogelpoel for finding this.</li>
+</ul>
+<p><strong>V2.03 (5 September 2000)</strong> </p>
+<ul>
+	<li>Added a CSMTP_NORSA preprocessor macro to allow the CPJNSMTPConnection code 
+	to be compiled without the dependence on the RSA code.</li>
+</ul>
+<p><strong>V2.04 (28 December 2000)</strong> </p>
+<ul>
+	<li>Removed an unused variable from ConnectESMTP.</li>
+	<li>Allowed the hostname as sent in the HELO command to be specified at run 
+	time in addition to using the hostname of the client machine</li>
+	<li>Fixed a problem where high ASCII characters were not being properly encoded 
+	in the quoted-printable version of the body sent.</li>
+	<li>Added support for user definable charset&#39;s for the message body.</li>
+	<li>Mime boundaries are now always sent irrespective of whether attachments 
+	are included or not. This is required as the body is using quoted-printable.</li>
+	<li>Fixed a bug in sendLines which was causing small message bodies to be sent 
+	incorrectly</li>
+	<li>Now fully supports custom headers in the SMTP message</li>
+	<li>Fixed a copy and paste bug where the default port for the SMTP socket class 
+	was 110.</li>
+	<li>You can now specify the address on which the socket is bound. This enables 
+	the programmer to decide on which NIC data should be sent from. This is especially 
+	useful on a machine with multiple IP addresses.</li>
+	<li>Addition of functions in the SMTP connection class to auto dial and auto 
+	disconnect to the Internet if you so desire.</li>
+	<li>Sample app has been improved to allow Auto Dial and binding to IP addresses 
+	to be configured.</li>
+	<li>Thanks go to Yaroslav Liapkov, Josef Hampl, Duncan Strand, Fritz Roland &quot;Nick&quot; 
+	Bjorklund, Lev Elbert and Perry Rapp for finding these problems and/or suggesting 
+	the improvements.</li>
+</ul>
+<p><strong>V2.1 (14 May 2001)</strong> </p>
+<ul>
+	<li>Charset now defaults to ISO 8859-1 instead of us-ascii</li>
+	<li>Removed a number of unreferenced variables from the sample app.</li>
+	<li>Headers are now encoded if they contain non ascii characters.</li>
+	<li>Fixed a bug in getLine, Thanks to Lev Evert for spotting this one.</li>
+	<li>Made the charset value a member of the message class instead of the connection 
+	class</li>
+	<li>Sample app now fully supports specifying the charset of the message</li>
+	<li>Added a AddMultipleAttachments method to CPJNSMTPMessage</li>
+	<li>Attachments can now be copied to each other via new methods in CSMTPAttachment</li>
+	<li>Message class now contains copies of the attachments instead of pointers 
+	to them</li>
+	<li>Sample app now allows multiple attachments to be added</li>
+	<li>Removed an unnecessary assert in QuotedPrintableEncode</li>
+	<li>Added a Mime flag to the CPJNSMTPMessage class which allows you to decide 
+	whether or not a message should be sent as MIME. Note that if you have attachments, 
+	then mime is assumed.</li>
+	<li>CSMTPAttachment class has now become CSMTPBodyPart in anticipation of full 
+	support for MIME and MHTML email support</li>
+	<li>Updated copyright message in source code and documentation</li>
+	<li>Fixed a bug in GetHeader related to _tsetlocale usage. Thanks to Sean McKinnon 
+	for spotting this problem.</li>
+	<li>Fixed a bug in SendLines when sending small attachments. Thanks to Deng 
+	Tao for spotting this problem.</li>
+	<li>Removed the need for SendLines function entirely.</li>
+	<li>Now fully supports HTML email (aka MHTML)</li>
+</ul>
+<p><strong>V2.11 (17 June 2001)</strong> </p>
+<ul>
+	<li>Fixed a bug in CPJNSMTPMessage::HeaderEncode where spaces were not being 
+	interpreted correctly. Thanks to Jim Alberico for spotting this.</li>
+	<li>Fixed 2 issues with ReadResponse both having to do with multi-line responses. 
+	Thanks to Chris Hanson for this update.</li>
+</ul>
+<p><strong>V2.12 (25 June 2001)</strong> </p>
+<ul>
+	<li>Code now links in Winsock and RPCRT40 automatically. This avoids client 
+	code having to specify it in their linker settings. Thanks to Malte and Phillip 
+	for spotting this issue.</li>
+	<li>Updated sample code in documentation. Thanks to Phillip for spotting this.</li>
+	<li>Improved the code in CSMTPBodyPart::SetText to ensure lines are correctly 
+	wrapped. Thanks to Thomas Moser for this fix.</li>
+</ul>
+<p><strong>V2.13 (1 July 2001)</strong> </p>
+<ul>
+	<li>Modified QuotedPrintableEncode to prevent the code to enter in an infinite 
+	loop due to a long word i.e. bigger than SMTP_MAXLINE, in this case, the word 
+	is broken. Thanks to Manuel Gustavo Saraiva for this fix.</li>
+	<li>Provided a new protected variable in CSMTPBodyPart called m_bQuotedPrintable 
+	to bypass the QuotedPrintableEncode function in cases that we don&#39;t want 
+	that kind of correction. Again thanks to Manuel Gustavo Saraiva for this fix.</li>
+</ul>
+<p><strong>V2.14 (15 July 2001)</strong> </p>
+<ul>
+	<li>Improved the error handling in the function CPJNSMTPMessage::AddMultipleAttachments. 
+	In addition the return value has been changed from BOOL to int.</li>
+</ul>
+<p><strong>V2.15 (13 August 2001)</strong> </p>
+<ul>
+	<li>Fixed a bug in QuotedPrintableEncode which was wrapping encoding characters 
+	across multiple lines. Thanks to Roy He for spotting this.</li>
+	<li>Provided a &quot;SendMessage&quot; method which sends a email directly from 
+	disk. This allows you to construct your own emails and the use the class just 
+	to do the sending. This function also has the advantage that it efficiently 
+	uses memory and reports progress.</li>
+	<li>Provided support for progress notification and cancelling via the &quot;OnSendProgress&quot; 
+	virtual method.</li>
+</ul>
+<p><strong>V2.16 (29 September 2001)</strong> </p>
+<ul>
+	<li>Fixed a bug in ReadResponse which occurred when you disconnected via Dial-Up 
+	Networking while a connection was active. This was originally spotted in my 
+	POP3 class.</li>
+	<li>Fixed a problem in CSMTPBodyPart::GetHeader which was always including the &quot;quoted-printable&quot; 
+	even when <br />
+	m_bQuotedPrintable for that body part was FALSE. Thanks to &quot;jason&quot; 
+	for spotting this.</li>
+</ul>
+<p><strong>V2.17 (12 October 2001)</strong> </p>
+<ul>
+	<li>Fixed a problem where GetBody was reporting the size as 1 bigger than it 
+	should have been. Thanks to &quot;c f&quot; for spotting this problem.</li>
+	<li>Fixed a bug in the TRACE statements when a socket connection cannot be made.</li>
+	<li>The sample app now displays a filter of &quot;All Files&quot; when selecting 
+	attachments to send</li>
+	<li>Fixed a problem sending 0 byte attachments. Thanks to Deng Tao for spotting 
+	this problem.</li>
+</ul>
+<p><strong>V2.18 (11 January 2002)</strong> </p>
+<ul>
+	<li>Now includes a method to send a message directly from memory. Thanks to 
+	Tom Allebrandi for this suggestion.</li>
+	<li>Change function name &quot;IsReadible&quot; to be &quot;IsReadable&quot;. 
+	I was never very good at English!.</li>
+	<li>Fixed a bug in CSMTPBodyPart::QuotedPrintableEncode. If a line was exactly 
+	76 characters long plus \r\n it produced an invalid soft linebreak of &quot;\r=\r\n\n&quot;. 
+	Thanks to Gerald Egert for spotting this problem.</li>
+</ul>
+<p><strong>13 January 2002</strong> </p>
+<ul>
+	<li>Minor update to the sample app to fix a bug in browsing for attachments, 
+	Core classes not changed.</li>
+</ul>
+<p><strong>V2.19 (29 July 2002)</strong> </p>
+<ul>
+	<li>Fixed an access violation in CSMTPBodyPart::QuotedPrintableEncode. Thanks 
+	to Fergus Gallagher for spotting this problem.</li>
+	<li>Fixed a problem where in very rare cases, the QuotedPrintableEncode function 
+	produces a single dot in a line, when inserting the &quot;=&quot; to avoid the 
+	mail server&#39;s maxline limit. I inserted a call to FixSingleDot after calling 
+	the QuotedPrintableEncode function in GetBody. Thanks to Andreas Kappler for 
+	spotting this problem.</li>
+	<li>Fixed an issue in CSMTPBodyPart::GetHeader which ensures all mail clients 
+	can correctly handle body parts and attachments which have a filename with spaces 
+	in it. Thanks to Andreas Kappler for spotting this problem.</li>
+	<li>QP encoding is now only used when you specify MIME. This fixes a bug as 
+	reported by David Terracino.</li>
+	<li>Removed now unused &quot;API Reference&quot; link in HTML file supporting 
+	the code.</li>
+</ul>
+<p><strong>V2.20 (10 August 2002)</strong> </p>
+<ul>
+	<li>Fixed a number of uncaught file exceptions in CSMTPBodyPart::GetBody, CPJNSMTPMessage::SaveToDisk 
+	and CPJNSMTPConnection::SendMessage. Thanks to John Allan Miller for reporting 
+	this problem.</li>
+	<li>The CPJNSMTPConnection::SendMessage version of the method which sends a 
+	file directly from disk, now fails if the file is empty.</li>
+	<li>Improved the sample app by displaying a wait cursor while a message from 
+	file is being sent.</li>
+	<li>Improved the sample app by warning the user if mail settings are missing 
+	and then bringing up the configuration dialog.</li>
+</ul>
+<p><strong>V2.21 (20 September 2002)</strong> </p>
+<ul>
+	<li>Fixed a problem where the code &quot;Coder.EncodedMessage&quot; was not 
+	being converted from an ASCII string to a UNICODE string in calls to CString::Format. 
+	This was occurring when sending the username and password for &quot;AUTH LOGIN&quot; 
+	support in addition to sending the &quot;username digest&quot; for &quot;AUTH 
+	CRAM-MD5&quot; support. Thanks to Serhiy Pavlov for reporting this problem.</li>
+	<li>Removed a number of calls to CString::Format and instead replaced with string 
+	literal CString constructors instead.</li>
+</ul>
+<p><strong>V2.22 (3 October 2002)</strong> </p>
+<ul>
+	<li>Quoted printable encoding didn&#39;t work properly in UNICODE. (invalid 
+	conversion from TCHAR to BYTE). Thanks to Serhiy Pavlov for reporting this problem.</li>
+	<li>Subject encoding didn&#39;t work properly in UNICODE. (invalid conversion 
+	from TCHAR to BYTE). Thanks to Serhiy Pavlov for reporting this problem.</li>
+	<li>It didn&#39;t insert &quot;charset&quot; tag into root header for plain 
+	text messages (now it includes &quot;charset&quot; into plain text messages 
+	too). Thanks to Serhiy Pavlov for reporting this problem.</li>
+</ul>
+<p><strong>V2.23 (4 October 2002)</strong> </p>
+<ul>
+	<li>Fixed an issue where the header / body separator was not being sent correctly 
+	for mails with attachments or when the message is MIME encoded. Thanks to Serhiy 
+	Pavlov for reporting this problem.</li>
+	<li>Fixed a bug in QuotedPrintableEncode and HeaderEncode which was causing 
+	the errors. Thanks to Antonio Maiorano for reporting this problem.</li>
+	<li>Fixed an issue with an additional line separator being sent between the 
+	header and body of emails. This was only evident in mail clients if a non mime 
+	email without attachments was sent.</li>
+</ul>
+<p><strong>V2.24 (11 December 2002)</strong> </p>
+<ul>
+	<li>Review all TRACE statements for correctness</li>
+	<li>Provided a virtual OnError method which gets called with error information.</li>
+</ul>
+<p><strong>V2.25 (7 February 2003)</strong> </p>
+<ul>
+	<li>Addition of a &quot;BOOL bGracefully&quot; argument to Disconnect so that 
+	when an application cancels the sending of a message, you can pass FALSE and 
+	close the socket without properly terminating the SMTP conversation. Thanks 
+	to &quot;nabocorp&quot; for this nice addition.</li>
+	<li>Did a spell check on the documentation &lt;g&gt;.</li>
+</ul>
+<p><strong>9 February 2003</strong> </p>
+<ul>
+	<li>Updated the sample app to display a simple progress dialog when you send 
+	a message from disk (not using the &quot;Send Direct&quot;) option. This provides 
+	a sample of how you can implement a cancellable send of a message with progress 
+	support. Thanks to &quot;nabocorp&quot; for suggesting this addition to the 
+	sample.</li>
+</ul>
+<p><strong>V2.26 (19 March 2003</strong><b>)</b></p>
+<ul>
+	<li>Addition of copy constructors and operator= to CPJNSMTPMessage class. Thanks 
+	to Alexey Vasilyev for this suggestion.</li>
+</ul>
+<p><strong>V2.27 (13 April 2003</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in the handling of EHLO responses. Thanks to &quot;Senior&quot; 
+	for the bug report and the fix.</li>
+</ul>
+<p><strong>V2.28 (17 April 2003</strong><b>)</b></p>
+<ul>
+	<li>Enhanced the CSMTPAddress constructor to parse out the email address and 
+	friendly name rather than assume it is an email address.</li>
+	<li>Reworked the syntax of the CPJNSMTPMessage::ParseMultipleRecipients method. 
+	Also now internally this function uses the new CSMTPAddress constructor.</li>
+</ul>
+<p><strong>V2.29 (19 April 2003</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in the CSMTPAddress constructor where I was mixing up the friendly 
+	name in the &quot;&lt;&gt;&quot; separators, when it should have been the email 
+	address.</li>
+</ul>
+<p><strong>V2.30 (4 May 2003</strong><b>)</b></p>
+<ul>
+	<li>Fixed an issue where the class doesn&#39;t convert the mail body and subject 
+	to the wanted encoding but rather changes the encoding of the email in the email 
+	header. Since the issue of supporting several languages is a complicated one 
+	I&#39;ve decided that we could settle for sending all CPJNSMTPConnection emails 
+	in UTF-8. I&#39;ve added some conversion functions to the class that - at this 
+	point - always converts the body and subject of the email to UTF-8. A big thanks 
+	to Itamar Kerbel for this nice addition.</li>
+	<li>Moved code and sample app to VC 6.</li>
+</ul>
+<p><strong>V2.31 (5 May 2003</strong><b>)</b></p>
+<ul>
+	<li>Reworked the way UTF8 encoding is now done. What you should do if you want 
+	to use UTF-8 encoding is set the charset&nbsp; &quot;UTF-8&quot; and use either 
+	QP or base 64 encoding.</li>
+	<li>Reworked the automatic encoding of the subject line to use the settings 
+	as taken from the root SMTP body part</li>
+	<li>Only the correct headers according to the MIME RFC are now encoded.</li>
+	<li>QP encoding is the encoding mechanism now always used for headers.</li>
+	<li>Headers are now only encoded if required to be encoded.</li>
+</ul>
+<p><strong>V2.32 (12 May 2003</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug where the X-Mailer header was being sent incorrectly. Thanks 
+	to Paolo Vernazza for reporting this problem.</li>
+	<li>Addition of X-Mailer header is now optional. In addition sample app now 
+	does not send the X-Mailer header.</li>
+	<li>The sample app now does not send the Reply-To header.</li>
+</ul>
+<p><strong>V2.33 (18 August 2003</strong><b>)</b></p>
+<ul>
+	<li>Modified the return value from the ConnectToInternet method. Instead of 
+	it being a boolean, it is now an enum. This allows client code to differentiate 
+	between two conditions that it couldn&#39;t previously, namely when an internet 
+	connection already existed or if a new connection (presumably a dial-up connection 
+	was made). This allows client code to then disconnect if a new connection was 
+	required. Thanks to Pete Arends for this nice addition.</li>
+</ul>
+<p><strong>19 August 2003</strong></p>
+<ul>
+	<li>Updated the sample app to avoid a memory leak. It turns out that it was 
+	to do with the ordering of &lt;string&gt; in the pre compiled header. I was 
+	never too fond of STL and this has confirmed my prejudices.&nbsp; Thanks to 
+	Damian Willis for reporting this problem.</li>
+</ul>
+<p><strong>V2.34 (15 October 2003</strong><b>)</b></p>
+<ul>
+	<li>Reworked the CPJNSMTPConnection::ReadResponse method to use the timeout 
+	provided by IsReadable rather than calling sleep. Thanks to Clarke Brunt for 
+	reporting this issue.</li>
+</ul>
+<p><strong>V2.35 (3 November 2003</strong><b>)</b></p>
+<ul>
+	<li>Simplified the code in CPJNSMTPConnection::ReadResponse. Thanks to Clarke 
+	Brunt for reporting this issue.</li>
+</ul>
+<p><strong>V2.36 (3 December 2003</strong><b>)</b></p>
+<ul>
+	<li>Made code which checks the Login responses which contain &quot;Username&quot; 
+	and &quot;Password&quot; case insensitive. Thanks to Zhang xiao Pan for reporting 
+	this problem.</li>
+</ul>
+<p><strong>V2.37 (11 December 2003</strong><b>)</b></p>
+<ul>
+	<li>Fixed an unreferrenced variable in CPJNSMTPConnection::OnError as reported 
+	by VC.Net 2003</li>
+	<li>DEBUG_NEW macro is now only used on VC 6 and not on VC 7 or VC 7.1. This 
+	avoids a problem on these compilers where a conflict exists between it and the 
+	STL header files. Thanks to Alex Evans for reporting this problem.</li>
+</ul>
+<p><strong>V2.38 (31 January 2004</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in CSMTPBodyPart::GetBody where the size of the body part was 
+	incorrectly calculating the size if the encoded size was an exact multiple of 
+	76. Thanks to Kurt Emanuelson and Enea Mansutti for reporting this problem.</li>
+</ul>
+<p><strong>V2.39 (7 February 2004</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in CSMTPBodyPart::SetText where the code would enter an endless 
+	loop in the Replace function. It has now been replaced with CString::Replace. 
+	This now means that the class will not now compile on VC 5. Thanks to Johannes 
+	Philipp Grohs for reporting this problem.</li>
+	<li>Fixed a number of warnings when the code is compiled with VC.Net 2003. Thanks 
+	to Edward Livingston for reporting this issue.</li>
+</ul>
+<p><strong>V2.40 (18 February 2004</strong><b>)</b></p>
+<ul>
+	<li>You can now optionally set the priority of an email thro the variable CPJNSMTPMessage::m_Priority. 
+	Thanks to Edward Livingston for suggesting this addition.</li>
+</ul>
+<p><strong>V2.41 (4 March 2004</strong><b>)</b></p>
+<ul>
+	<li>To avoid conflicts with the ATL Server class of the same name &quot;CPJNSMTPConnection&quot;, 
+	the class is now called &quot;CPJNSMTPConnection&quot;. To provide for easy 
+	upgrading of code, &quot;CSMTPConnection&quot; is now defined to be CPJSMTPConnection&quot; 
+	if the code detects that the ATL Server SMTP class is not included. Thanks to 
+	Ken Jones for reporting this issue.</li>
+</ul>
+<p><strong>V2.42 (13 March 2004</strong><b>)</b></p>
+<ul>
+	<li>Fixed a problem where the CSMTPBodyPart::m_dwMaxAttachmentSize value was 
+	not being copied in the CSMTPBodyPart::operator= method. Thanks to Gerald Egert 
+	for reporting this problem and the fix.</li>
+</ul>
+<p><strong>V2.43 (5 June 2004</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in CSMTPConnection::ReadResponse, where the wrong parameters 
+	were being null terminated. Thanks to &quot;caowen&quot; for this update.</li>
+	<li>Updated the CSMTPConnection::ReadResponse function to handle multiline responses 
+	in all cases. Thanks to Thomas Liebethal for reporting this issue.</li>
+</ul>
+<p><strong>V2.44 (7 June 2004</strong><b>)</b></p>
+<ul>
+	<li>Fixed a potential buffer overflow issue in CSMTPConnection::ReadResponse 
+	when certain multi line responses are received</li>
+</ul>
+<p><strong>V2.45 (30 September 2004</strong><b>)</b> </p>
+<ul>
+	<li>Fixed a parsing issue in CPJNSMTPConnection::ReadResponse when multi line 
+	responses are read in as multiple packets. Thanks to Mark Smith for reporting 
+	this problem.</li>
+	<li>Reworked the code which supports the various authentication mechanisms to 
+	support the correct terms. What was called &quot;AUTH LOGIN PLAIN&quot; support 
+	now more correctly uses the term &quot;AUTH PLAIN&quot;. The names of the functions 
+	and enums have now also been reworked.</li>
+	<li>Did a review of the sample app code provided with the class so that the 
+	name of the modules, projects, exe etc is now &quot;PJNSMTPApp&quot;. Also reworked 
+	the name of some helper classes as well as the module name which supports the 
+	main class.</li>
+	<li>Reworked CPJNSMTPConnection::AuthLoginPlain (now called AuthPlain) to correctly 
+	handle the case where an invalid response is received when expecting the username: 
+	response. Thanks to Mark Smith for reporting this problem.</li>
+</ul>
+<p><strong>V2.46 (23 December 2004</strong><b>)</b> </p>
+<ul>
+	<li>&quot;Name&quot; field in Content-Type headers is now quoted just like the 
+	filename field. Thanks to Mark Smith for reporting this issue in conjunction 
+	with the mail client Eudora.</li>
+</ul>
+<p><strong>V2.47 (24 January 2005</strong><b>)</b> </p>
+<ul>
+	<li>All classes now uses exceptions to indicate errors. This means the whole 
+	area of handling errors in the code a whole lot simpler. For example the OnError 
+	mechanism is gone along with all the string literals in the code. The actual 
+	code itself is a whole lot simpler also. You should carefully review your code 
+	as a lot of the return values from methods (especially CPJNSMTPConnection) are 
+	now void and will throw CSMTPException&#39;s. Thanks to Mark Smith for prompting 
+	this update.</li>
+	<li>General tidy up of the code following the testing of the new exception based 
+	code.</li>
+</ul>
+<p><strong>19 February 2005</strong> </p>
+<ul>
+	<li>Updated the usage section of the documentation to describe what is required 
+	to integrate the code into your applications. Thanks to Matthew Tompkins for 
+	prompting this update.</li>
+</ul>
+<p><strong>V2.48 (7 March 2005</strong><b>)</b> </p>
+<ul>
+	<li>Addition of PJNSMTP_EXT_CLASS define to the classes to allow the classes 
+	to be easily incorporated into extension DLLs. Thanks to Arnaud Faucher for 
+	suggesting this addition.</li>
+	<li>Now support NTLM authentication. Thanks to Arnaud Faucher for this nice 
+	addition. NTLM Authentication is provided by a new reusable class called &quot;CNTLMClientAuth&quot; 
+	in PJNNTLMAuth.cpp/h&quot;.</li>
+	<li>Fixed a bug in the sample app in the persistence of the Authentication setting. 
+	Thanks to Arnaud Faucher for reporting this issue.</li>
+</ul>
+<p><strong>V2.49 (26 March 2005</strong><b>)</b> </p>
+<ul>
+	<li>Fixed compile problems with the code when the Force Conformance In For Loop 
+	Scope compile setting is used in Visual Studio .NET 2003. Thanks to Alexey Kuznetsov 
+	for reporting this problem.</li>
+	<li>Fixed compile problems when the code is compiled using the Detect 64-bit 
+	Portability Issues setting in Visual Studio .NET 2003.</li>
+</ul>
+<p><strong>V2.50 (18 April 2005</strong><b>)</b> </p>
+<ul>
+	<li>Addition of a simple IsConnected() function inline with the author&#39;s 
+	CPop3Connection class. Thanks to Alexey Kuznetsov for prompting this addition.</li>
+	<li>Addition of a MXLookup function which provides for convenient DNS lookups 
+	of MX records (the IP addresses of SMTP mail servers for a specific host domain). 
+	Internally this new function uses the new DNS functions which are provided with 
+	Windows 2000 or later. To ensure that the code continues to work correctly on 
+	earlier versions of Windows, the function pointers for the required functions 
+	are constructed at runtime using GetProcAddress. You can use this function to 
+	discover the IP address of the mail servers responsible for a specific domain. 
+	This allows you to deliver email directly to a domain rather than through a 
+	third party mail server. Thanks to Hans Dietrich for suggesting this nice addition.</li>
+</ul>
+<p><strong>V2.51 (23 April 2005</strong><b>)</b> </p>
+<ul>
+	<li>The code now uses a MS Crypto API implementation of the MD5 HMAC algorithm 
+	instead of custom code based on the RSA MD5 code. This means that there is no 
+	need for the RSA MD5.cpp, MD5.h and glob-md5.h to be included in client applications. 
+	In addition the build configurations for excluding the RSA MD5 code has been 
+	removed from the sample app. The new classes to perform the MD5 hashing are 
+	contained in PJNMD5.h and are generic enough to be included in client applications 
+	in their own right.</li>
+</ul>
+<p><strong>V2.52 (1 May 2005</strong><b>)</b> </p>
+<ul>
+	<li>Now uses the author&#39;s CWSocket sockets wrapper class.</li>
+	<li>Added support for connecting via Socks4, Socks5 and HTTP proxies </li>
+	<li>The last parameter to Connect has now been removed and is configured via 
+	an accessor / mutator pair Get/SetBoundAddress.</li>
+	<li>CSMTPException class is now called CPJNSMTPException.</li>
+	<li>Class now uses the Base64 class as provided with CWSocket. This means that 
+	the modules Base64Coder.cpp/h are no longer distributed or required and should 
+	be removed from any projects which use the updated SMTP classes.</li>
+	<li>Fixed a bug in SaveToDisk method whereby existing files were not being truncated 
+	prior to saving the email message.</li>
+	<li>All calls to allocate heap memory now generate a CPJNSMTPException if the 
+	allocation fails.</li>
+	<li>Addition of a MXLookupAvailable() function so that client code can know 
+	a priori if DNS MX lookups are supported.</li>
+	<li>Sample app now allows you to use the MXLookup method to determine the mail 
+	server to use based on the first email address you provide in the To field.</li>
+</ul>
+<p><strong>V2.53 (3 May 2005</strong><b>)</b> </p>
+<ul>
+	<li>Updated the usage section to describe the need to have the Platform SDK 
+	installed and configured.</li>
+	<li>Fixed a number of warnings when the code is compiled in Visual Studio .NET 
+	2003. Thanks to Nigel Delaforce for reporting these issues.</li>
+</ul>
+<p><strong>18 May 2005</strong> </p>
+<ul>
+	<li>Fixed a compiler warning in the CPJNMD5Hash class when compiled using Visual 
+	Studio .NET 2003. Thanks to Alexey Kuznetsov for reporting this issue.</li>
+</ul>
+<p><strong>V2.54 (24 July 2005</strong><b>)</b> </p>
+<ul>
+	<li>Now includes support for parsing &quot;(...)&quot; comments in addresses. 
+	Thanks to Alexey Kuznetsov for this nice addition.</li>
+	<li>Fixed an issue where the mail header could contain a &quot;Content-Transfer-Encoding&quot; 
+	header. This header should only be applied to headers of MIME body parts rather 
+	than the mail header itself. Thanks to Jeroen van der Laarse, Terence Dwyer 
+	and Bostjan Erzen for reporting this issue and the required fix.</li>
+	<li>Now calling both AddTextBody and AddHTMLBody both set the root body part 
+	MIME type to multipart/mixed. Previously the code comments said one thing and 
+	did another (set it to &quot;multipart/related&quot;). Thanks to Bostjan Erzen 
+	for reporting this issue.</li>
+</ul>
+<p><strong>V2.55 (14 August 2005</strong><b>)</b> </p>
+<ul>
+	<li>Minor update to include comments next to various locations in the code to 
+	inform users what to do if they get compile errors as a result of compiling 
+	the code without the Platform SDK being installed. Thanks to Gudjon Adalsteinsson 
+	for prompting this update.</li>
+	<li>Fixed an issue when the code calls the function DnsQuery when the code is 
+	compiled for UNICODE. This was the result of a documentation error in the Platform 
+	SDK which incorrectly says that DnsQuery_W takes a ASCII string when in actual 
+	fact it takes a UNICODE string. Thanks to John Oustalet III for reporting this 
+	issue.</li>
+</ul>
+<p><strong>V2.56 (5 September 2005</strong><b>)</b> </p>
+<ul>
+	<li>Fixed an issue in MXLookup method where memory was not being freed correctly 
+	in the call to DnsRecordListFree. Thanks to Raimund Mettendorf for reporting 
+	this bug.</li>
+	<li>Fixed an issue where lines which had a single dot i.e. &quot;.&quot; did 
+	not get mailed correctly. Thanks to Raimund Mettendorf for reporting this issue.</li>
+	<li>Removed the call to FixSingleDot from SetText method as it is done at runtime 
+	as the email as being sent. This was causing problems for fixing up the dot 
+	issue when MIME encoded messages were being sent.</li>
+	<li>Function pointer to CompleteAuthToken is now constructed at runtime. This 
+	means that NTLM client authentication will work correctly on Win9x as used by 
+	the class CPJNSMTPConnection and any other class instead of bringing up a &quot;Failed 
+	to load due to missing export...&quot; message from the Windows loader. If you 
+	want to remove the NTLM support from CPJNSMTPConnection then you can continue 
+	to use the CPJNSMTP_NONTLM preprocessor define. Thanks to &quot;Lior&quot; for 
+	reporting this problem.</li>
+	<li>Fixed an issue where the FixSingleDot function was being called when saving 
+	a message to disk. This was incorrect and it should only be done when actually 
+	sending an SMTP email.</li>
+</ul>
+<p><strong>V2.57 (7 September 2005</strong><b>)</b> </p>
+<ul>
+	<li>Fixed another single dot issue, this time where the body is composed of 
+	just a single dot. Thanks to Raimund Mettendorf for reporting this issue.</li>
+	<li>Fixed a typo in the accessor function CPJNSMTPConnection::GetBoundAddress 
+	which was incorrectly called CPJNSMTPConnection::SetBoundAddress. Thanks to 
+	Pavel Kolar for reporting this.</li>
+</ul>
+<p><strong>V2.58 (29 September 2005</strong><b>)</b> </p>
+<ul>
+	<li>Removed linkage to secur32.lib as all SSPI functions are now constructed 
+	at runtime using GetProcAddress. Thanks to Emir Kapic for this update.</li>
+	<li>MD5 Format method now allows you to specify an uppercase or lower case string 
+	for the hash. This is necessary since the CRAM-MD5 authentication mechanism 
+	requires a lowercase MD5 hash. Thanks to Jian Peng for reporting this issue.</li>
+	<li>250 or 251 is now considered a successful response to the RCPT command. 
+	Thanks to Jian Peng for reporting this issue.</li>
+	<li>Fixed potential memory leaks in the implementation of NTLM authentication 
+	as the code was throwing exceptions which the authentication code was not expected 
+	to handle.</li>
+</ul>
+<p><strong>V2.59 (2 October 2005</strong><b>)</b> </p>
+<ul>
+	<li>MXLookup functionality of the class can now be excluded via the preprocessor 
+	define &quot;CPJNSMTP_NOMXLOOKUP&quot;. Thanks to Thiago Luiz for prompting 
+	this update. </li>
+	<li>Sample app now does not bother asking for username and password if authentication 
+	type is NTLM. Thanks to Emir Kapic for spotting this issue.</li>
+	<li>Documentation has been updated to refer to issues with NTLM Authentication 
+	and SSPI. Thanks to Emir Kapic for prompting this update.</li>
+	<li>Fixed an update error done for the previous version which incorrectly supported 
+	the additional 251 command for the &quot;MAIL&quot; command instead of more 
+	correctly the &quot;RCPT&quot; command. Thanks to Jian Peng for reporting this 
+	issue.</li>
+</ul>
+<p><strong>V2.60 (7 October 2005</strong><b>)</b> </p>
+<ul>
+	<li>Fixed an issue where file attachments were incorrectly including a charset 
+	value in their headers. Thanks to Asle Rokstad for reporting this issue.</li>
+</ul>
+<p><strong>V2.61 (16 November 2005</strong><b>)</b> </p>
+<ul>
+	<li>Now includes full support for connecting via SSL. For example sending mail 
+	thro Gmail using the server &quot;smtp.gmail.com&quot; on port 465. Thanks to 
+	Vladimir Sukhoy for providing this very nice addition (using of course the author&#39;s 
+	very own OpenSSL wrappers!).</li>
+</ul>
+<p><strong>9 December 2005</strong></p>
+<ul>
+	<li>Updated the usage section of the documentation on how to correctly exclude 
+	the SSL functionality from the class. Thanks to Berni Slootbeek for prompting 
+	this update.</li>
+	<li>Updated the usage section of the documentation on the preferred way of formatting 
+	CID tags for MHTML emails. Thanks to Asle Rokstad for prompting this update.</li>
+</ul>
+<p><strong>V2.62 (29 June 2006</strong><b>)</b> </p>
+<ul>
+	<li>Updated the documentation to use the same style as the web site.</li>
+	<li>Combined the functionality of the _PJNNTLMCLIENTAUTH_DATA class into the 
+	main CNTLMClientAuth class.</li>
+	<li>Code now uses new C++ style casts rather than old style C casts where necessary.
+	</li>
+	<li>Integrated ThrowPJNSMTPException function into CPJNSMTPConnection class 
+	and renamed to ThrowPJNSMTPException</li>
+	<li>Combined the functionality of the _PJNSMTP_DATA class into the main CPJNSMTPConnection 
+	class.</li>
+	<li>Updated the code to clean compile on VC 2005</li>
+	<li>Updated copyright details.</li>
+	<li>Removed unnecessary checks for failure to allocate via new since in MFC 
+	these will throw CMemoryExceptions!.</li>
+	<li>Optimized CPJNSMTPException constructor code</li>
+</ul>
+<p><strong>V2.63 (14 July 2006</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in CPJNSMTPConnection where when compiled in UNICODE mode, NTLM 
+	authentication would fail. Thanks to Wouter Demuynck for providing the fix for 
+	this bug.</li>
+	<li>Reworked the CPJNSMTPConnection::NTLMAuthPhase(*) methods to throw standard 
+	CPJNSMTPException exceptions if there are any problems detected. This can be 
+	done now that the CNTLMClientAuth class is resilient to exceptions being thrown.</li>
+	<li>Updated CNTLMClientAuth to use newer C++ style casts.</li>
+	<li>Made the&nbsp; CNTLMClientAuth::NTLMAuthenticate function &quot;exception&quot; 
+	safe, that is derived classes are free to throw exceptions in their implementations 
+	of NTLMAuthPhase1, NTLMAuthPhase2 or NTLMAuthPhase3 and the CNTLMClientAuth 
+	class will properly clean up its resources. This is achieved by making the CredHandle 
+	and SecHandle values member variables of the class.</li>
+	<li>Replaced all calls to ZeroMemory with memset.</li>
+	<li>Now the public NTLMAuthenticate function allows you to pass a user name 
+	and password pair to do NTLM authentication using a specified account instead 
+	of the credentials of the current user. If&nbsp; you leave these values as NULL, 
+	then you will get the old behaviour which is to use the current user credentials. 
+	Thanks to Wouter Demuynck for this very nice addition.</li>
+</ul>
+<p><strong>17 July 2006</strong></p>
+<ul>
+	<li>Updated the code in the sample app to allow &gt; 30000 characters to be 
+	entered into the edit box which contains the body of the email. This is achieved 
+	by placing a call to CEdit::SetLimitText in the OnInitDialog method of the dialog. 
+	Thanks to Thomas Noone for reporting this issue.</li>
+</ul>
+<p><strong>V2.64 (13 October 2006</strong><b>)</b></p>
+<ul>
+	<li>Code now initializes the Domain name value in CNTLMClientAuth::NTLMAuthenticate 
+	to an empty string instead of a NULL string. This avoids NTLM authentication 
+	issues when authenticating as a non-domain user with certain mail servers. Thanks 
+	to Wouter Demuynck for reporting this issue.</li>
+	<li>Fixed an issue in Disconnect where if the call to ReadCommandResponse threw 
+	an exception, we would not close down the socket or set m_bConnected to FALSE. 
+	The code has been updated to ensure these are now done. This just provides a 
+	more consistent debugging experience. Thanks to Alexey Kuznetsov for reporting 
+	this issue.</li>
+	<li>CPJNSMTPException::GetErrorMessage now uses the user default locale for 
+	formatting error strings.</li>
+	<li>Fixed some issues with cleaning up of header and body parts in CPJNSMTPConnection::SendBodyPart 
+	and CPJNSMTPMessage::WriteToDisk. Thanks to Xiao-li Ling for reporting this 
+	issue.</li>
+</ul>
+<p><strong>V2.65 (11 November 2006</strong><b>)</b></p>
+<ul>
+	<li>Reverted CPJNSMTPException::GetErrorMessage to use the system default locale. 
+	This is consistent with how MFC does its own error handling.</li>
+	<li>Now includes comprehensive support for DSN&#39;s (Delivery Status Notifications) 
+	as specified in RFC 3461. Thanks to Riccardo Raccuglia for prompting this update.</li>
+	<li>CPJNSMTPBodyPart::GetBody and CPJNSMTPConnection::SendMessage(const CString&amp; 
+	sMessageOnFile... now does not open the disk file for exclusive read access, 
+	meaning that other apps can read from the file. Thanks to Wouter Demuynck for 
+	reporting this issue.</li>
+	<li>Fixed an issue in CPJNSMTPConnection::SendMessage(const CString&amp; sMessageOnFile... 
+	where under certain circumstances we could end up deleting the local &quot;pSendBuf&quot; 
+	buffer twice. Thanks to Izidor Rozman for reporting this issue.</li>
+</ul>
+<p><strong>V2.66 (30 March 2007</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in CPJNSMTPConnection::SetHeloHostname where an unitialized 
+	stack variable could potentially be used. Thanks to Anthony Kowalski for reporting 
+	this bug.</li>
+	<li>Updated copyright details.</li>
+</ul>
+<p><strong>V2.67 (1 August 2007</strong><b>)</b></p>
+<ul>
+	<li>AuthCramMD5, ConnectESMTP, ConnectSMTP, AuthLogin, and AuthPlain methods 
+	have now been made virtual.</li>
+	<li>Now includes support for a Auto Authentication protocol. This will detect 
+	what authentication methods the SMTP server supports and uses the &quot;most 
+	secure&quot; method available. If you do not agree with the order in which the 
+	protocol is chosen, a virtual function called &quot;ChooseAuthenticationMethod&quot; 
+	has been provided. Thanks to &quot;zhangbo&quot; for providing this very nice 
+	addition to the code.</li>
+	<li>Removed the definition for the defunct &quot;AuthNTLM&quot; method.</li>
+</ul>
+<p><strong>V2.70 (13 November 2007</strong><b>)</b></p>
+<ul>
+	<li>Major update to the code to use VC2005 specific features. This version of 
+	the code and onwards will be supported only on VC 2005 or later. Thanks to Andrey 
+	Babushkin for prompting this update. Please note that there has been breaking 
+	changes to the names and layout of various methods and member variables. You 
+	should carefully analyze the sample app included in the download as well as 
+	your client code for the required updates you will need to make.</li>
+	<li>Sample app included in download is now build for Unicode and links dynamically 
+	to MFC. It also links dynamically to the latest OpenSSL 0.9.8g dlls.</li>
+</ul>
+<p><strong>V2.71 (19 November 2007</strong><b>)</b></p>
+<ul>
+	<li>The &quot;Date:&quot; header is now formed using static lookup arrays for 
+	the day of week and month names instead of using CTime::Format. This helps avoid 
+	generating invalid Date headers on non English version of Windows where the 
+	local language versions of these strings would end up being used. Thanks to 
+	feedback at the codeproject page for the code (specifically
+	<a href="http://www.codeproject.com/internet/csmtpconn.asp?df=100&amp;forumid=472&amp;mpp=50&amp;select=2054493#xx2054493xx">
+	http://www.codeproject.com/internet/csmtpconn.asp?df=100&amp;forumid=472&amp;mpp=50&amp;select=2054493#xx2054493xx</a> 
+	for reporting this issue).</li>
+</ul>
+<p><strong>V2.72 (23 December 2007</strong><b>)</b></p>
+<ul>
+	<li>Following feedback from Selwyn Stevens that the AUTH PLAIN mechanism was 
+	failing for him while trying to send mail using the gmail SMTP server, I decided 
+	to go back and re-research the area of SMTP authentication again&lt;g&gt;. It 
+	turns out that the way I was implementing AUTH PLAIN support was not the same 
+	as that specified in the relevant RFCs. The code has now been updated to be 
+	compliant with that specified in the RFC. I&#39;ve confirmed the fix as operating 
+	correctly by using the gmail SMTP mail server at &quot;smtp.gmail.com&quot; 
+	on the SMTP/SSL port of 465. I&#39;ve also taken the opportunity to update the 
+	documentation to include a section with links to various RFC&#39;s and web pages 
+	for background reference material</li>
+</ul>
+<p><strong>V2.73 (24 December 2007</strong><b>)</b></p>
+<ul>
+	<li>CPJNSMTPException::GetErrorMessage now uses the FORMAT_MESSAGE_IGNORE_INSERTS 
+	flag. For more information please see Raymond Chen&#39;s blog at
+	<a href="http://blogs.msdn.com/oldnewthing/archive/2007/11/28/6564257.aspx">
+	http://blogs.msdn.com/oldnewthing/archive/2007/11/28/6564257.aspx</a>. Thanks 
+	to Alexey Kuznetsov for reporting this issue.</li>
+	<li>All username and password temp strings are now securely destroyed using 
+	SecureZeroMemory.</li>
+</ul>
+<p><strong>V2.74 (31 December 2007</strong><b>)</b></p>
+<ul>
+	<li>Updated the sample app to clean compile on VC 2008</li>
+	<li>Fixed a x64 compile problems in RemoveCustomHeader &amp; AddMultipleAttachments.</li>
+	<li>Fixed a x64 compile problem in CPJNSMTPAppConfigurationDlg::CBAddStringAndData</li>
+	<li>CPJNSMTPException::GetErrorMessage now uses Checked::tcsncpy_s</li>
+	<li>Other Minor coding updates to CPJNSMTPException::GetErrorMessage</li>
+</ul>
+<p><strong>V2.75 (2 February 2008</strong><b>)</b></p>
+<ul>
+	<li>Updated copyright details.</li>
+	<li>Fixed a bug in CPJNSMTPMessage::FormDateHeader where sometimes an invalid &quot;Date:&quot; 
+	header is created. The bug will manifest itself for anywhere that is ahead of 
+	GMT, where the difference isn&#39;t a multiple of one hour. According to the 
+	Windows Time Zone applet, this bug would have occured in: Tehran, Kabul, Chennai, 
+	Kolkata, Mumbai, New Delhi, Sri Jayawardenepura, Kathmandu, Yangon, Adelaide 
+	and Darwin. Thanks to Selwyn Stevens for reporting this bug and providing the 
+	fix.</li>
+</ul>
+<p><strong>V2.76 (1 March 2008</strong><b>)</b></p>
+<ul>
+	<li>CPJNSMTP Priority enum values, specifically NO_PRIORITY have been renamed 
+	to avoid clashing with a #define of the same name in the Windows SDK header 
+	file WinSpool.h. The enum values for DSN_RETURN_TYPE have also been renamed 
+	to maintain consistency. Thanks to Zoran Buntic for reporting this issue.
+	</li>
+	<li>Fixed compile problems related to the recent changes in the Base64 class. 
+	Thanks to Mat Berchtold for reporting this issue.</li>
+	<li>Since the code is now for VC 2005 or later only, the code now uses the Base64 
+	encoding support from the ATL atlenc.h header file. Thanks to Mat Berchtold 
+	for reporting this optimization. This means that client projects no longer need 
+	to include Base64.cpp/h in their projects.</li>
+</ul>
+<p><strong>V2.77 (31 May 2008</strong><b>)</b></p>
+<ul>
+	<li>Code now compiles cleanly using Code Analysis (/analyze)</li>
+	<li>Removed the use of the function QuotedPrintableEncode and replaced with 
+	ATL::QPEncode</li>
+	<li>Removed the use of the function QEncode and replaced with ATL::QEncode</li>
+	<li>Reworked ReadResponse to use CStringA in line with the implementation in 
+	the POP3 class of the author.</li>
+</ul>
+<p><strong>V2.78 (20 July 2008</strong><b>)</b></p>
+<ul>
+	<li>Fixed a bug in ReadResponse where the code is determining if it has received 
+	the terminator. Thanks to Tony Cool for reporting this bug.</li>
+</ul>
+<p><strong>V2.79 (27 July 2008</strong><b>)</b></p>
+<ul>
+	<li>Updated code to compile correctly using _ATL_CSTRING_EXPLICIT_CONSTRUCTORS 
+	define</li>
+	<li>CPJNSMTPMessage::GetHeader now correctly ensures all long headers are properly 
+	folded. In addition this function has been reworked to create the header internally 
+	as an ASCII string rather than as a TCHAR style CString.</li>
+</ul>
+<p><strong>V2.80 (16 August 2008</strong><b>)</b></p>
+<ul>
+	<li>Updated the AUTH_AUTO login support to fall back to no authentication if 
+	no authentication scheme is supported by the SMTP server. Thanks to Mat Berchtold 
+	for this update.</li>
+</ul>
+<p><strong>V2.81 (2 November 2008</strong><b>)</b></p>
+<ul>
+	<li>Improvements to CPJNSMTPAddress constructor which takes a single string. 
+	The code now removes redundant quotes.</li>
+	<li>CPJNSMTPAddress::GetRegularFormat now forms the regular form of the email 
+	address before it Q encodes it.</li>
+	<li>The sample app now uses DPAPI to encrypt the username &amp; password configuration 
+	settings. </li>
+	<li>The sample app is now linked against the latest OpenSSL v0.9.8i dlls.
+	</li>
+	<li>Updated coding references in the html documentation. In addition the zip 
+	file now includes the OpenSSL dlls. Thanks to Michael Grove for reporting this 
+	issues.</li>
+</ul>
+<p><strong>V2.82 (6 November 2008</strong><b>)</b></p>
+<ul>
+	<li>For best compatibility purposes with existing SMTP mail servers, all message 
+	headers which include email addresses are now not Q encoded. Thanks to Christian 
+	Egging for reporting this issue.</li>
+	<li>Optimized use of CT2A class throughout the code</li>
+</ul>
+<p><strong>V2.83 (28 June 2009</strong><b>)</b></p>
+<ul>
+	<li>Updated copyright details</li>
+	<li>Fixed a bug where the Reply-To email address was not correctly added to 
+	the message. Thanks to Dmitriy Maksimov for reporting this issue.</li>
+	<li>Updated the sample app&#39;s project settings to more modern default values.</li>
+	<li>Updated the sample exe to ship with OpenSSL v0.98k</li>
+	<li>Fixed a bug in CPJNSMTPConnection::SendBodyPart where it would cause errors 
+	from OpenSSL when trying to send a body of 0 bytes in size. This can occur when 
+	MHTML based emails are sent and you are using a &quot;multipart/related&quot; 
+	body part. Thanks to &quot;atota&quot; for reporting this issue</li>
+</ul>
+<p><strong>V2.84 (13 November 2009</strong><b>)</b></p>
+<ul>
+	<li>Now includes comprehensive support for MDN&#39;s (Message Disposition Notifications) 
+	as specified in RFC 3798. Thanks to Ron Brunton for prompting this update.</li>
+	<li>Rewrote CPJNSMTPMessage::SaveToDisk method to use CAtlFile</li>
+</ul>
+<p><strong>V2.85 (17 December 2009</strong><b>)</b></p>
+<ul>
+	<li>The sample app is now linked against the latest OpenSSL v0.9.8l dlls</li>
+	<li>Updated the sample code in the documentation to better describe how to use 
+	the various classes. Thanks to Dionisis Kofos for reporting this issue.</li>
+</ul>
+<p><strong>V2.86 (23 May 2010</strong><b>)</b></p>
+<ul>
+	<li>Updated copyright details</li>
+	<li>Updated sample app to compile cleanly on Visual Studio 2010</li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.0 dlls</li>
+	<li>Removed an unused &quot;sRet&quot; variable in CPJNSMTPConnection::AuthCramMD5. 
+	Thanks to Alain Danteny for reporting this issue</li>
+	<li>Replaced all calls to memcpy with memcpy_s</li>
+	<li>The code now supports STARTTLS encryption as defined in RFC 3207</li>
+	<li>If the call to DnsQuery fails, the error value is now preserved using SetLastError</li>
+	<li>AddTextBody now sets the mime type of the root body part multipart/alternative. 
+	This is a more appropriate value to use which is better supported by more email 
+	clients. Thanks to Thane Hubbell for reporting this issue.</li>
+</ul>
+<p><strong>V2.87 (4 June 2010</strong><b>)</b></p>
+<ul>
+	<li>Updated the code and sample app to compile cleanly when CPJNSMTP_NOSSL is 
+	defined. Thanks to &quot;loggerlogger&quot; for reporting this issue.</li>
+</ul>
+<p><strong>V2.88 (10 July 2010</strong><b>)</b></p>
+<ul>
+	<li>Following feedback from multiple users of PJNSMTP, including Chris Bamford 
+	and &quot;loggerlogger&quot;, the change from &quot;multipart/mixed&quot; to &quot;multipart/alternative&quot; 
+	has now been reverted. Using &quot;multipart/mixed&quot; is a more appropriate 
+	value to use. Testing by various clients have shown that this setting works 
+	correctly when sending HTML based email in GMail, Thunderbird and Outlook. Unfortunately 
+	this is the price I must pay when accepting end user contributions to my code 
+	base which I cannot easily test. Going forward I plan to be much more discerning 
+	on what modifications I will accept to avoid these issues. </li>
+	<li>The CPJNSMTPBodyPart now has the concept of whether or not the body is considered 
+	an attachment. Previously the code assumed that if you set the m_sFilename parameter 
+	that the body part was an attachment. Instead now the code uses the &quot;m_bAttachment&quot; 
+	member variable. This allows an in memory representation of an attachment to 
+	be added to a message without the need to write it to an intermediate file first. 
+	For example, here would be the series of steps you would need to go through 
+	to add an in memory jpeg image to an email and have it appear as an attachment:
+	<br><br>const BYTE* pInMemoryImage = pointer to your image; <br>DWORD dwMemoryImageSize 
+	= size in bytes of pInMemoryImage; <br>CPJNSMPTBase64Encode encode; <br>encode.Encode(pInMemoryImage, 
+	dwMemoryImageSize, ATL_BASE64_FLAG_NONE); <br>CPJNSMTPBodyPart imageBodyPart;
+	<br>imageBodyPart.SetRawBody(encode.Result()); <br>imageBodyPart.SetBase64(TRUE);
+	<br>imageBodyPart.SetAttachment(TRUE); <br>imageBodyPart.SetContentType(_T(&quot;image/jpg&quot;));
+	<br>imageBodyPart.SetTitle(_T(&quot;the name of the image&quot;)); <br>CPJNSMTPMessage 
+	message; <br>message.AddBodyPart(imageBodyPart); <br><br>Thanks to Stephan Eizinga 
+	for suggesting this nice addition.&nbsp; </li>
+</ul>
+<p><strong>V2.89 (28 November 2010</strong><b>)</b></p>
+<ul>
+	<li>AddTextBody and AddHTMLBody now allow the root body part&#39;s MIME type 
+	to be changed. Thanks to Thane Hubbell for prompting this update. </li>
+	<li>Added a CPJNSMTPBodyPart::GetBoundary method. </li>
+	<li>Added some sample code to the sample app&#39;s CPJNSMTPAppDlg constructor 
+	to show how to create a message used SMTP body parts. Thanks to Thane Hubbell 
+	for prompting this update. </li>
+	<li>CPJNSMTPBodyPart::GetHeader now allows quoted-printable and raw attachments 
+	to be used </li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.0b dlls</li>
+</ul>
+<p><strong>V2.90 (18 December 2010</strong><b>)</b></p>
+<ul>
+	<li>Removed the methods Set/GetQuotedPrintable and Set/GetBase64 from CPJNSMTPBodyPart 
+	and replaced them with new Set/GetContentTransferEncoding methods which works 
+	with a simple enum. </li>
+	<li>CPJNSMTPBodyPart::SetAttachment and CPJNSMTPBodyPart::SetFilename now automatically 
+	sets the Content-Transfer-Encoding to base64 for attachments. Thanks to Christian 
+	Egging for reporting this issue. </li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.0c dlls
+	</li>
+</ul>
+<p><strong>V2.91 (8 February 2011</strong><b>)</b></p>
+<ul>
+	<li>Updated copyright details </li>
+	<li>Updated code to support latest SSL and Sockets class from the author. This 
+	means that the code now supports IPv6 SMTP servers </li>
+	<li>Connect method now allows binding to a specific IP address </li>
+</ul>
+<p><strong>V2.92 (13 February 2011</strong><b>)</b></p>
+<ul>
+	<li>Remove the IP binding address parameter from the Connect method as there 
+	was already support for binding via the Set/GetBoundAddress methods. </li>
+	<li>Set/GetBoundAddress have been renamed Set/GetBindAddress for consistency 
+	with the sockets class </li>
+</ul>
+<p><strong>V2.93 (1 April 2011</strong><b>)</b></p>
+<ul>
+	<li>Reintroduced the concept of Address Header encoding. By default this setting 
+	is off, but can be enabled via a new CPJNSMPTMessage::m_bAddressHeaderEncoding 
+	boolean value. Thanks to Bostjan Erzen for reporting this issue.&nbsp; </li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.0d dlls.</li>
+</ul>
+<p><strong>V2.94 (4 December 2011</strong><b>)</b></p>
+<ul>
+	<li>Updated CPJNSMTPBodyPart::GetHeader to encode the title of a filename if 
+	it contains non-ASCII characters. Thanks to Anders Gustafsson for reporting 
+	this issue. </li>
+	<li>The sample app is now linked against the latst OpenSSL v1.0.0e dlls.&nbsp;&nbsp;
+	</li>
+</ul>
+<p><strong>V2.95 (12 August 2012</strong><b>)</b></p>
+<ul>
+	<li>STARTTLS support code now uses TLSv1_client_method OpenSSL function instead 
+	of SSLv23_client_method. This fixes a problem where sending emails using Hotmail 
+	/ Windows Live was failing. </li>
+	<li>CPJNSMTPConnection::_Close now provides a bGracefully parameter </li>
+	<li>Updated the code to clean compile on VC 2012 </li>
+	<li>The sample app is now linked against the latst OpenSSL v1.0.1c dlls.
+	</li>
+	<li>SendMessage now throws a CPJNSMTPException if OnSendProgress returns FALSE.
+	</li>
+	<li>Addition of a new ConnectionType called &quot;AutoUpgradeToSTARTTLS&quot; 
+	which will automatically upgrade a plain text connection to STARTTLS if the 
+	code detects that the SMTP server supports STARTTLS. If the server doesn&#39;t 
+	support STARTTLS then the connection will remain as if you specified &quot;PlainText&quot;
+	</li>
+	<li>Reworked the code to determine if it should connect using EHLO instead of 
+	HELO into a new virtual method called DoEHLO. </li>
+	<li>Reworked the internals of the ConnectESMTP method. </li>
+</ul>
+<p><strong>V2.96 (23 September 2012</strong><b>)</b></p>
+<ul>
+	<li>Removed SetContentBase and GetContentBase methods as Content-Base header 
+	is deprecated from MHTML. For details see
+	<a href="http://www.ietf.org/mail-archive/web/apps-discuss/current/msg03220.html">
+	http://www.ietf.org/mail-archive/web/apps-discuss/current/msg03220.html</a>. 
+	Thanks to Mat Berchtold for reporting this issue. </li>
+	<li>Removed the now defunct parameter from the AddHTMLBody method. </li>
+	<li>Removed the FoldHeader method as it was only used by the m_sXMailer header.
+	</li>
+	<li>Updated the logic in the FolderSubjectHeader method to correctly handle 
+	the last line of text to fold. </li>
+</ul>
+<p><strong>V2.97 (24 September 2012</strong><b>)</b></p>
+<ul>
+	<li>Removed an unnecessary line of code from CPJNSMTPConnection::SendRCPTForRecipient. 
+	Thanks to Mat Berchtold for reporting this issue.&nbsp; </li>
+</ul>
+<p><strong>V2.98 (30 September 2012</strong><b>)</b></p>
+<ul>
+	<li>Updated the code to avoid DLL planting security issues when calling LoadLibrary. 
+	Thanks to Mat Berchtold for reporting this issue. </li>
+	<li>A header file called &quot;PJNLoadLibraryFromSystem32.h&quot; is now included 
+	which provides a version of LoadLibrary which loads a DLL without any path information 
+	from the Windows System directory. This helps avoid DLL planting security issues 
+	in your application when you call LoadLibrary with a module name without any 
+	path information.</li>
+</ul>
+<p><strong>V2.99 (25 November 2012</strong><b>)</b></p>
+<ul>
+	<li>Fixed some issues in the code when CPJNSMTP_NOSSL was defined. Looks like 
+	support for compiling without SSL support has been broken for a few versions. 
+	Thanks to Bostjan Erzen for reporting this issue. </li>
+</ul>
+<p><strong>V3.00 (12 March 2013</strong><b>)</b></p>
+<ul>
+	<li>Updated copyright details. </li>
+	<li>CPJNSMTPAddressArray typedef is now defined in the CPJNSMTPMessage class 
+	instead of in the global namespace. In addition this typedef class is now known 
+	as &quot;CAddressArray&quot; </li>
+	<li>The sample project included in the download now links to the various OpenSSL 
+	libraries via defines in stdafx.h instead of via project settings. Thanks to 
+	Ed Nafziger for suggesting this nice addition. </li>
+	<li>The sample app no longer adds the author&#39;s hotmail address to the list 
+	of MDN&#39;s. Thanks to Ed Nafziger for spotting this. </li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.1e dlls.
+	</li>
+	<li>Sample app now statically links to MFC </li>
+</ul>
+<p><strong>V3.01 (3 June 2013</strong><b>)</b></p>
+<ul>
+	<li>The demo app now disables the MIME checkbox after checking it if the email 
+	is to be sent as HTML.</li>
+	<li>Fixed a bug in the sample app where the mime type of the root body part 
+	would be incorrectly set to an empty string when it should use the default which 
+	is &quot;multipart/mixed&quot;. Thanks to Ting L for reporting this bug.&nbsp;
+	</li>
+</ul>
+<p><strong>7 June 2013</strong></p>
+<ul>
+	<li>Minor update to the sample app to fix a spelling mistake in the connection 
+	type string in the configuration dialog. Thanks to &quot;don&quot; for reporting 
+	this issue.</li>
+</ul>
+<p><strong>V3.02 (5 January 2014)</strong></p>
+<ul>
+	<li>Updated copyright details. </li>
+	<li>Updated the code to clean compile on VC 2013 </li>
+	<li>Fixed a problem with NTLM auth where the code did not correctly set the &quot;m_nSize&quot; 
+	parameter value correctly in CPJNSMPTBase64Encode::Encode &amp; Decode. Thanks 
+	to John Pendleton for reporting this bug. </li>
+</ul>
+<p><strong>V3.03 (5 January 2014)</strong></p>
+<ul>
+	<li>The ConvertToUTF8 method now also handles conversion of ASCII data to UTF8. 
+	Thanks to Jean-Christophe Voogden for this update. </li>
+	<li>The CPJNSMTPConnection class now provides Set/GetSSLProtocol methods. This 
+	allows client code to specify the exact flavour of SSL which the code should 
+	speak. Supported protocols are SSL v2/v3, TLS v1.0, TLS v1.1, TLS v1.2 and DTLS 
+	v1.0. This is required for some SMTP servers which use the SSLv2 or v3 protocol 
+	instead of the more modern TLS v1 protocol. The default is to use TLS v1.0. 
+	You may need to use this compatibility setting for the likes of IBM Domino SMTP 
+	servers which only support the older SSLv2/v3 setting. Thanks to Jean-Christophe 
+	Voogden for this update. </li>
+	<li>Removed all the proxy connection methods as they cannot be easily supported 
+	/ tested by the author. </li>
+	<li>Reworked the code in CPJNSMTPConnection::ConnectESMTP to handle all variants 
+	of the 250 response as well as operate case insensitively which is required 
+	by the ESMTP RFC. </li>
+	<li>Made more methods virtual to facilitate further client customisation
+	</li>
+	<li>Fixed an issue in the DoSTARTTLS method where the socket would be left in 
+	a connected state if SSL negotiation failed. This would result in later code 
+	which sent on the socket during the tear down phase hanging. Thanks to Jean-Christophe 
+	Voogden for reporting this issue. </li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.1f dlls.</li>
+</ul>
+<p><strong>V3.04 (26 January 2014)</strong></p>
+<ul>
+	<li>Updated ASSERT logic at the top of the ConnectESMTP method. Thanks to Jean-Christophe 
+	Voogden for reporting this issue. </li>
+</ul>
+<p><strong>V3.05 (9 February 2014)</strong></p>
+<ul>
+	<li>Fixed a compile problem in the CreateSSLSocket method when the CPJNSMTP_NOSSL 
+	preprocessor macro is defined. </li>
+	<li>Reworked the logic which does SecureZeroMemory on sensitive string data&nbsp;
+	</li>
+</ul>
+<p><strong>V3.06 (13 April 2014)</strong></p>
+<ul>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.1g dlls. This 
+	version is the patched version of OpenSSL which does not suffer from the Heartbleed 
+	bug.</li>
+	<li>Please note that by default OpenSSL does not do host name validation. The 
+	sample app provided with the PJNSMTP code also does not do host name validation. 
+	This means that as it stands the sample app is vulnerable to man in the middle 
+	attacks if you use SSL/TLS to connect to a SMTP server. For further information 
+	and sample code which you should incorporate into your real SMTP client applications, 
+	please see <a href="http://wiki.openssl.org/index.php/Hostname_validation">http://wiki.openssl.org/index.php/Hostname_validation</a>,
+	<a href="https://github.com/iSECPartners/ssl-conservatory">https://github.com/iSECPartners/ssl-conservatory</a> 
+	and <a href="http://archives.seul.org/libevent/users/Feb-2013/msg00043.html">
+	http://archives.seul.org/libevent/users/Feb-2013/msg00043.html</a>. </li>
+</ul>
+<p><strong>V3.07 (15 November 2014)</strong></p>
+<ul>
+	<li>CNTLMClientAuth now takes a static dependency on Secure32.dll instead of 
+	using GetProcAddress. </li>
+	<li>The CNTLMClientAuth now calls QuerySecurityPackageInfo to determine the 
+	buffer size to use.</li>
+	<li>The SEC_SUCCESS macro has now been made a method called &quot;SEC_SUCCESS&quot;.</li>
+	<li>General cleanup of the CNTLMClientAuth::GenClientContext method </li>
+	<li>Made the CNTLMClientAuth destructor virtual.</li>
+	<li>Removed the defunct method CPJNSMTPBodyPart::HexDigit.</li>
+	<li>Reworked the CPJNSMTPBodyPart::GetBody method to use ATL::CAtlFile and ATL::CHeapPtr</li>
+	<li>CPJNSMTPConnection now takes a static dependency on Wininet.dll instead 
+	of using GetProcAddress.</li>
+	<li>CPJNSMTPConnection now takes a static dependency on Dnsapi.dll instead of 
+	using GetProcAddress.</li>
+	<li>The default timeout set in the CPJNSMTPConnection constructor is now 60 
+	seconds for both debug and release builds</li>
+	<li>Removed the now defunct CPJNSMTPConnection::MXLookupAvailable method</li>
+	<li>Removed the now defunct CPJNSMTP_NOMXLOOKUP preprocessor value</li>
+	<li>Removed the now defunct PJNLoadLibraryFromSystem32.h module from the distribution</li>
+	<li>CPJNSMTPConnection::SendMessage has been reworked to use ATL::CAtlFile and 
+	ATL::CHeapPtr</li>
+	<li>CPJNSMTPConnection::SendMessage now does a UTF-8 conversion on the body 
+	of the email when sending a plain email i.e. no HTML or mime if the charset 
+	is UTF-8. Thanks to Oliver Pfister for reporting this issue.</li>
+	<li>Sample app has been updated to compile cleanly on VS 2013 Update 3 and higher</li>
+	<li>The sample app shipped with the source code is now Visual Studio 2008 and 
+	as of this release the code is only supported on Visual Studio 2008 and later</li>
+	<li>The sample app is now linked against the latest OpenSSL v1.0.1j dlls</li>
+</ul>
+<p><strong>V3.08 (18 November 2014)</strong></p>
+<ul>
+	<li>Fixed a bug in CPJNSMTPBodyPart::GetBody where file attachments were always 
+	being treated as 0 in size. Thanks to Oliver Pfister for reporting this issue.
+	</li>
+</ul>
+<p><strong>V3.09 (14 December 2014)</strong></p>
+<ul>
+	<li>Updated the code to use the author's SSLWrappers classes (<a href="http://www.naughter.com/sslwrappers.html">http://www.naughter.com/sslwrappers.html</a>) 
+	to provide the SSL functionality for PJNSMTP instead of OpenSSL. Please note 
+	that the the PJNSMTP code when in SSL mode depends on the author's CryptoWrappers 
+	classes (<a href="http://www.naughter.com/cryptowrappers.html">http://www.naughter.com/cryptowrappers.html</a>) 
+	also. You will need to download both of these libraries and copy their modules 
+	into the PJNSMTP directory. Also note that the SSLWrappers and CryptoWrapper 
+	classes are only supported on VC 2013 or later and this means that the PJNSMTP 
+	SSL support is only supported when you compile with VC 2013 or later. The solution 
+	files included in the PJNSMTP download are now for VC 2013. </li>
+	<li>With the change to using SSLWrappers, the code can now support additional 
+	flavours of SSL protocol. They are: SSL v2 on its own, SSL v3 on its own, The 
+	OS SChannel SSL default and AnyTLS. Please see the CPJNSMTPConnection::SSLProtocol 
+	enum for more details. The sample app has been updated to allow these values 
+	to be used and the default enum value is now &quot;OSDefault&quot;. </li>
+</ul>
+<p><strong>V3.10 (16 December 2014)</strong></p>
+<ul>
+	<li>Updated the code to use the latest v1.03 version of SSLWrappers</li>
+</ul>
+<p><strong>V3.11 (16 January 2015)</strong></p>
+<ul>
+	<li>Updated copyright details</li>
+	<li>CPJNSMTPMessage::m_ReplyTo is now an array instead of a single address. 
+	Thanks to Bostjan Erzen for suggesting this update.</li>
+</ul>
+<p><strong>V3.12 (25 January 2015)</strong></p>
+<ul>
+	<li>Addition of CPJNSMTPBodyPart::InsertChildBodyPart and CPJNSMTPMessage::InsertBodyPart 
+	methods. These new methods inserts a body part as the first element in the hierarchy 
+	of child body parts instead of to the end. In addition the CPJNSMTPMessage::AddTextBody 
+	and CPJNSMTPMessage::AddHTMLBody methods now call CPJNSMTPBodyPart::InsertChildBodyPart 
+	instead of CPJNSMTPBodyPart::AddChildBodyPart to ensure that the body text part 
+	of the SMTP message appears as the first child body part. This helps avoid issues 
+	where Microsoft Exchange modifies multipart messages where the body text is 
+	moved to an attachment called ATT00001: For further information please see
+	<a href="http://kb.mit.edu/confluence/pages/viewpage.action?pageId=4981187">
+	http://kb.mit.edu/confluence/pages/viewpage.action?pageId=4981187</a> and
+	<a href="http://support2.microsoft.com/kb/969854">http://support2.microsoft.com/kb/969854</a>. 
+	Thanks to Marco Veldman for reporting this issue. </li>
+	<li>Removed support for DTLSv1 SSL protocol as this is not applicable to SMTP 
+	as DTLS is designed for UDP and not TCP. This removal helps resolve an issue 
+	where the code did not compile in VC 2013 if you used the &quot;Visual Studio 
+	2013 - Windows XP (v120_xp)&quot; Platform Toolset. Thanks to Bostjan Erzen 
+	for reporting this issue. </li>
+</ul>
+<p><strong>V3.13 (31 January 2015)</strong></p>
+<ul>
+	<li>Fixed an error in CPJNSMTPException::GetErrorMessage where it would not 
+	use the full HRESULT value when calling FormatMessage. Thanks to Bostjan Erzen 
+	for reporting this issue.</li>
+	<li>Improved the error handling in CPJNSMTPConnection::Connect when SSL connection 
+	errors occur. Thanks to Bostjan Erzen for reporting this issue.</li>
+	<li>Improved the error handling in CPJNSMTPConnection::DoSTARTTLS when SSL connection 
+	errors occur. Thanks to Bostjan Erzen for reporting this issue.</li>
+</ul>
+<p><strong>V3.14 (1 March 2015)</strong></p>
+<ul>
+	<li>The DoEHLO method has been updated to check for DSN requirements. This 
+	change means that the code will connect with a EHLO instead of HELO when a 
+	DSN is requested. The code will now also check whether DSN's are supported 
+	by the server when attempting to send the DSN. If the server does not 
+	support DSN's in this scenario then a new custom exception will be thrown by 
+	the code in the CPJNSMTPConnection::FormMailFromCommand method. This ensures 
+	the code behaves more consistently with respect to the DSN RFC. Thanks to 
+	Philip Mitchell for prompting this update.</li>
+	<li>Change the enum value for CPJNSMTPMessage::DSN_NOT_SPECIFIED to 0 from 
+	0xFFFFFFFF.</li>
+</ul>
+<p><strong>V3.15 (29 March 2015)</strong></p>
+<ul>
+	<li>Updated CPJNSMTPConnection::AuthLogin to handle more variants of 
+	&quot;username:&quot; and &quot;password:&quot; SMTP server responses. Thanks to Wang Le for 
+	reporting this issue.</li>
+</ul>
+<p><strong>V3.16 (1 June 2015)</strong></p>
+<ul>
+	<li>Removed unused CPJNSMTPMessage::ConvertHTMLToPlainText method. </li>
+	<li>Removed the linkage in the test app's configuration dialog between 
+	sending a message with a HTML body and requiring that the message is MIME 
+	encoded. </li>
+	<li>Removed the code from the test app which added a plain text 
+	attachment to the message in debug builds. </li>
+	<li>Updated CPJNSMTPMessage::AddHTMLBody to handle the case where the 
+	message is not MIME encoded. In this case the root body part of the message is 
+	simply set to HTML. Thanks to Thane Hubbell for reporting this issue. </li>
+</ul>
+<p><strong>V3.17 (12 May 2016)</strong></p>
+<ul>
+	<li>Updated copyright details. </li>
+	<li>Minor update to the sample app to refer to &quot;SSL / TLS&quot; in the 
+	configuration dialog. </li>
+	<li>Verfied the code compiles cleanly using VC 2015. </li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Contact"></a><strong>Contacting the Author</strong></h2>
+<p>PJ Naughter<br />
+Email: <a href="mailto:pjna@naughter.com">pjna@naughter.com</a><br>Web:
+<a href="http://www.naughter.com">http://www.naughter.com</a><br>12 May 2016</p>
+
+</body>
+
+</html>

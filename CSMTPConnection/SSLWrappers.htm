@@ -1,0 +1,1759 @@
+<html>
+
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="content-type">
+<title>SSLWrappers v1.05</title>
+<link href="./naughter.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h2>SSLWrappers v1.05</h2>
+<p>Welcome to SSLWrappers, a set of C++ classes to provide a complete C++ encapsulation 
+of the SSL functionality exposed on Windows via the Schannel Security Service Provider 
+Interface (SSPI). Some references which you should read if you want to understand 
+more about SSL, SSPI and Schannel are as follows:</p>
+<ul>
+	<li>Grab a copy of the classic Win32 book
+	<a href="http://www.amazon.com/Programming-Server-Side-Applications-Microsoft-Windows/dp/0735607532">&quot;Programming 
+	Server-Side Applications for Microsoft Windows 2000&quot;</a> by Jeffrey Richter 
+	and Jason D. Clark.</li>
+	<li>The Windows/Platform SDK samples of
+	<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa378828(v=vs.85).aspx">
+	WebClient and WebServer</a>. I believe these articles and source code have been 
+	retired from the MSDN Online (at least I could not find them!) so you will need 
+	to dig up your old MSDN ISO CD images for this source code. </li>
+	<li>The source code and background information at
+	<a href="http://www.coastrd.com/c-schannel-smtp">http://www.coastrd.com/c-schannel-smtp</a> 
+	and <a href="http://www.coastrd.com/tls-with-schannel">http://www.coastrd.com/tls-with-schannel</a>.
+	</li>
+	<li>For details on SSPI and Schannel please check out the official MSDN documentation 
+	starting at
+	<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa374782(v=vs.85).aspx">
+	http://msdn.microsoft.com/en-us/library/windows/desktop/aa374782(v=vs.85).aspx</a> 
+	for creating a Secure connection Using Schannel,
+	<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa375924(v=vs.85).aspx">
+	http://msdn.microsoft.com/en-us/library/windows/desktop/aa375924(v=vs.85).aspx</a> 
+	for InitializeSecurityContext (Schannel),
+	<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa374708(v=vs.85).aspx">
+	http://msdn.microsoft.com/en-us/library/windows/desktop/aa374708(v=vs.85).aspx</a> 
+	for AcceptSecurityContext (Schannel) &amp;
+	<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa374716(v=vs.85).aspx">
+	http://msdn.microsoft.com/en-us/library/windows/desktop/aa374716(v=vs.85).aspx</a> 
+	for AcquireCredentialsHandle (Schannel). I would have to say the MSDN documentation 
+	is sorely lacking for this part of the Win32 API and online samples in general 
+	are very rare and not easy to follow. It took me the best part of two months 
+	to put together SSLWrappers to encapsulate all of the APIs and implement a complete 
+	tutorial sample and full documentation on how to use the code from your client 
+	applications.</li>
+</ul>
+<p>&nbsp;</p>
+<p>The classes provided are: <strong>SSLWrappers::CCredentials, SSLWrappers::CCachedCredentials, 
+SSLWrappers::CContext, SSLWrappers::CMessage, SSLWrappers::CSSL &amp; SSLWrappers::CSocket</strong>.</p>
+<p><strong><a href="#CCredentials">CCredentials</a></strong> provides a class based 
+encapsulation of a SSL Credentials handle as represented by a CredHandle.</p>
+<p><a href="#CCachedCredentials"><strong>CCachedCredentials</strong></a> is a derived 
+version of CCredentials which is used by the <a href="#CSSL">CSSL</a> class to keep 
+a copy of the SChannel credentials to use for the SSL connection.</p>
+<p><strong><a href="#CContext">CContext</a></strong> provides a class based encapsulation 
+of a SSL Security context as represented by a CtxtHandle.</p>
+<p><strong><a href="#CMessage">CMessage</a></strong> provides a class based encapsulation 
+of a logical SSL message as returned by CSSL::GetMessage.</p>
+<p><strong><a href="#CSSL">CSSL</a></strong> is the most complex class provided 
+by the class framework and implements all the required logic to do client and server 
+SSL handshakes, reading and writing SSL messages, requesting SSL renegotiations, 
+handling SSL renegotiations and sending SSL close notify messages. This class is 
+transport mechanism agnostic meaning that you can implement SSL over any transport 
+by overriding specific virtual methods of this class.</p>
+<p><strong><a href="#CSocket">CSocket</a></strong> is derived from CSSL and provides 
+a concrete SSL implementation over Windows sockets.</p>
+<p>&nbsp;</p>
+&nbsp;
+<table border="0">
+	<tr>
+		<td><a href="#Features">Features</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Usage">Usage</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Copyright">Copyright</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Demo_ouput">Output from Demo Application</a></td>
+	</tr>
+	<tr>
+		<td><a href="#History">History</a></td>
+	</tr>
+	<tr>
+		<td><a href="#APIReference">Class Framework reference</a></td>
+	</tr>
+	<tr>
+		<td><a href="#Contact">Contacting the Author</a></td>
+	</tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Features"></a>Features</h2>
+<ul>
+	<li>Provides one C++ Header only module to encapsulate all of the Schannel SSL 
+	functionality on Windows.</li>
+	<li>Should make it easier to use all the Windows SSL support from C++ going 
+	forward with automatic Resource Acquisition Is Initialization (RAII) resource 
+	management and encapsulation of the truly complicated logic required to be coded 
+	to support SSL via Schannel.</li>
+	<li>A complete demo implementation of a HTTPS client and server using SSLWrappers 
+	is provided. This demonstrates all the features in a easy to follow manner which 
+	you should be able to incorporate into your applications.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Usage"></a>Usage</h2>
+<ul>
+	<li>To use the various SSLWrappers classes in your project simply #include &quot;SSLWrappers.h&quot; 
+	in which ever of the modules in your application requires the SSL functionality. 
+	The header file will look after pulling in any dependent header files and linking 
+	to the relevant Windows DLLs.</li>
+	<li>The classes are only supported on VC 2013 or later.</li>
+	<li>Included in the download is a VC 2013 console based application which exercises 
+	all of the various classes functionality by implemented a demo HTTPS client 
+	and server with full demonstration of all features in SSLWrappers including 
+	requesting client and server renegotiations, handling client and server renegotiations, 
+	sample certificate handling and custom certificate verification on the client 
+	and server side of the demo.</li>
+	<li>To make the SSLWrappers easier to code, the classes make use of the author&#39;s 
+	CryptoWrappers class framework for the various certificate and certificate store 
+	functionality which it needs. You will need to download this from
+	<a href="http://www.naughter.com/cryptowrappers.html">http://www.naughter.com/cryptowrappers.html</a> 
+	and copy in all the CryptoWrappers*.h files into the same directory as where 
+	you have SSLWrappers.h located.</li>
+	<li>To compile the demo application you will also need to download the author's 
+	CWSocket wrapper classes from <a href="http://www.naughter.com/w3mfc.html">http://www.naughter.com/w3mfc.html</a> 
+	and copy SocMFC.cpp and SocMFC.h into the same demo application directory.</li>
+</ul>
+<ul>
+	<li>The steps to implementing a SSL client using the SSLWrappers classes are 
+	as follows:<ul>
+		<li>Create an instance of <a href="#CCachedCredentials">SSLWrappers::CCachedCredentials</a> 
+		and call the <a href="#CCachedCredentials_AcquireClient">CCachedCredentials::AcquireClient</a> 
+		method. If you use the default parameters to this method, then by default 
+		you will not supply any credentials to the server. You can pass non-default 
+		parameters to this method or implement your own version of this method if 
+		you want to customize this behavior. The demo client in SSLWrappersDemo.cpp 
+		has commented out support for providing a client certificate with a common 
+		name of &quot;localhost&quot; if you want to develop a SSL client which 
+		provides real client credentials. For details on generating a self-signed 
+		client certificate please checkout
+		<a href="http://msdn.microsoft.com/en-us/library/ff650751.aspx">http://msdn.microsoft.com/en-us/library/ff650751.aspx</a> 
+		which I found useful while developing the SSL client code.&nbsp; </li>
+		<li>Create your socket connection to the server as you would do with a standard 
+		unencrypted socket application. If you are using the author's CWSocket wrapper 
+		(which the sample app provided with SSLWrapper does) then you would create 
+		a CWSocket instance and then call CreateAndConnect to create the socket 
+		and connect to the server in one step.</li>
+		<li>You then should create a <a href="#CSocket">SSLWrappers::CSocket</a> 
+		instance or a derived version of the same. You might also then want to customize 
+		some of the behavior of this class. For example you might want to call
+		<a href="#CSSL_SetVerifyServerCertificate">CSSL::SetVerifyServerCertificate</a> 
+		if you wanted to do manual verification of the server certificate or
+		<a href="#CSocket_SetReadTimeout">CSocket::SetReadTimeout</a> or
+		<a href="#CSocket_SetWriteTimeout">CSocket::SetWriteTimeout</a> to customize 
+		the timeouts. Please see the code in SSLWrappersDemo.cpp for concrete examples 
+		of this. </li>
+		<li>Connect the cached credentials to the CSocket instance by calling
+		<a href="#CSSL_SetCachedCredentials">CSocket::SetCachedCredentials</a>.</li>
+		<li>You can then attach the raw Windows socket to the CSocket instance using
+		<a href="#CSocket_Attach">CSocket::Attach</a>.</li>
+		<li>You should then call <a href="#CSSL_SSLConnect">CSSL::SSLConnect</a> 
+		to perform the SSL client handshake. If this method returns SEC_E_OK then 
+		you now have a SSL connection with the remote end.</li>
+		<li>You can then call <a href="#CSSL_SendEncryptedMessage">CSSL::SendEncryptedMessage</a> 
+		or <a href="#CSSL_SendEncrypted">CSSL::SendEncrypted</a> 
+		to deliver data to the server and <a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> 
+		to read data from the server. In what order you do this will be dictated 
+		by the details of the protocol you are implementing over SSL. The example 
+		client provided in SSLWrappersDemo.cpp implements a very simple HTTPS client. 
+		Please note that if too much data has been read from the socket for one 
+		SSL message that this extra data will be buffered internally in the CSSL 
+		class and make available when you next call GetEncryptedMessage. To determine 
+		how much of this data is buffered in the class you can call
+		<a href="#CSSL_PendingReadSize">CSSL::PendingReadSize</a>. You might want 
+		to call this function in conjunction with checking your socket for readability 
+		before you make calls to CSSL::GetEncryptedMessage.</li>
+		<li>If you would like to support renegotiation from the server, then you 
+		should handle the SEC_I_RENEGOTIATE error code from the
+		<a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> method 
+		and immediately call <a href="#CSSL_SSLHandleRenegotiationClient">CSSL::SSLHandleRenegotiationClient</a> 
+		to perform the SSL handshake again. If you as the client would like to request 
+		a renegotiation yourself, then you should call
+		<a href="#CSSL_SSLRequestRenegotiationClient">CSSL::SSLRequestRenegotiationClient</a>.
+		</li>
+		<li>When you decide to close down the SSL connection either on the client's 
+		own volition or because the server requested it, you should then call
+		<a href="#CSSL_SendCloseNotify">CSSL::SendCloseNotify(TRUE)</a> to send 
+		the close notify SSL message to the other end. Please note that you can 
+		detect if the other end has sent you a close notify SSL message by checking 
+		the return value from <a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> 
+		for the special error code of SEC_I_CONTEXT_EXPIRED.</li>
+		<li>That should be pretty much all that is required to implement a basic 
+		SSL client to get you going. Again please review the source in SSLWrappersDemo.cpp 
+		for further additional coding details and error handling.</li>
+	</ul>
+	</li>
+	<li>The steps to implementing a SSL server using the SSLWrappers classes are 
+	as follows:
+	<ul>
+		<li>Create an instance of <a href="#CCachedCredentials">SSLWrappers::CCachedCredentials</a> 
+		and call the <a href="#CCachedCredentials_AcquireServer">CCachedCredentials::AcquireServer</a> 
+		method. For a server this would normally be created with application scope 
+		/ lifetime.</li>
+		<li>You need to create a <a href="#CSocket">SSLWrappers::CSocket</a> instance 
+		and call <a href="#CSSL_SetCachedCredentials">CSSL::SetCachedCredentials</a> 
+		to setup the credentials which you will be providing as the server. As part 
+		of SSL you must always as a server provide a server certificate. The demo 
+		app in SSLWrappersDemo.cpp looks for a certificate with a common name of 
+		localhost in the current user certificate store. For details on generating 
+		a self-signed server certificate please checkout
+		<a href="http://www.lombard.me/2008/01/testing-ssl-and-certificate.html">
+		http://www.lombard.me/2008/01/testing-ssl-and-certificate.html</a> and
+		<a href="http://www.yangsoft.com/blog/?p=105">http://www.yangsoft.com/blog/?p=105</a> 
+		which I found useful while developing the SSL server code. For performance 
+		reasons you should call CreateServerCredentials once and not for each client 
+		which connects to you as the SSL server. </li>
+		<li>Create your server application as you would do with a standard unencrypted 
+		socket application. If you are using the author's CWSocket wrapper (which 
+		the sample app provided with SSLWrapper does) then you would create a CWSocket 
+		instance and then call SetBindAddress, CreateAndBind and then Listen.</li>
+		<li>You would then sit in an loop waiting for client connections as per 
+		any sockets server. If you were using the author's CWSocket wrappers a client 
+		connection would be created when the CWSocket::Accept method returns. You 
+		might then want to customize some of the behavior of this
+		<a href="#CSocket">CSocket</a> class at this time. For example you might 
+		want to call <a href="#CSSL_SetVerifyClientCertificate">CSSL::SetVerifyClientCertificate</a> 
+		if you wanted to do custom checking of any client certificate presented 
+		or <a href="#CSocket_SetReadTimeout">CSocket::SetReadTimeout</a> or
+		<a href="#CSocket_SetWriteTimeout">CSocket::SetWriteTimeout</a> to customize 
+		the timeouts. Please see the code in SSLWrappersDemo.cpp for concrete examples 
+		of this. </li>
+		<li>You can then attach the raw Windows client socket to the CSocket instance 
+		using <a href="#CSocket_Attach">CSocket::Attach</a>.</li>
+		<li>You should then call <a href="#CSSL_SSLAccept">CSSL::SSLAccept</a> to 
+		perform the SSL server handshake. If this method returns SEC_E_OK then you 
+		now have a SSL connection with the remote end.</li>
+		<li>You can then call <a href="#CSSL_SendEncryptedMessage">CSSL::SendEncryptedMessage</a> 
+		or <a href="#CSSL_SendEncrypted">CSSL::SendEncrypted</a> 
+		to deliver data to the client and <a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> 
+		to read data from the client. In what order you do this will be dictated 
+		by the details of the protocol you are implementing over SSL. The example 
+		server provided in SSLWrappersDemo.cpp implements a very simple HTTPS server 
+		which serves up a hard coded HTML response page without really doing any 
+		parsing of the HTTPS request received from the client. Please note that 
+		if too much data has been read from the socket for one SSL message that 
+		this extra data will be buffered internally in the CSSL class and make available 
+		when you next call GetEncryptedMessage. To determine how much of this data 
+		is buffered in the class you can call <a href="#CSSL_PendingReadSize">CSSL::PendingReadSize</a>. 
+		You might want to call this function in conjunction with checking your socket 
+		for readability before you make calls to CSSL::GetEncryptedMessage.</li>
+		<li>If you would like to support renegotiation from the server, then you 
+		should handle the SEC_I_RENEGOTIATE error code from the
+		<a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> method 
+		and immediately call <a href="#CSSL_SSLHandleRenegotiationServer">CSSL::SSLHandleRenegotiationServer</a> 
+		to perform the SSL handshake again. If you as the server would like to request 
+		a renegotiation yourself, then you should call
+		<a href="#CSSL_SSLRequestRenegotiationServer">CSSL::SSLRequestRenegotiationServer</a>.
+		</li>
+		<li>When you decide to close down the SSL connection either on the server's 
+		own volition or because the client requested it, you should then call
+		<a href="#CSSL_SendCloseNotify">CSSL::SendCloseNotify(FALSE)</a> to send 
+		the close notify SSL message to the other end. Please note that you can 
+		detect if the other end has sent you a close notify SSL message by checking 
+		the return value from <a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> 
+		for the special error code of SEC_I_CONTEXT_EXPIRED.</li>
+		<li>That should be pretty much all that is required to implement a basic 
+		SSL server to get you going. Again please review the source in SSLWrappersDemo.cpp 
+		for further additional coding details and error handling.</li>
+	</ul>
+	</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Copyright"></a>Copyright</h2>
+<ul>
+	<li>You are allowed to include the source code in any product (commercial, shareware, 
+	freeware or otherwise) when your product is released in binary form.</li>
+	<li>You are allowed to modify the source code in any way you want except you 
+	cannot modify the copyright details at the top of each module.</li>
+	<li>If you want to distribute source code with your application, then you are 
+	only allowed to distribute versions released by the author. This is to maintain 
+	a single distribution point for the source code.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Demo_ouput"></a>Output from Demo application</h2>
+<ul>
+	<li>Here is a screen capture from the test app when it is run with a command 
+	line to make it act as a server (with both the server and client performing 
+	handling renegotiation in midstream) and the test client has connected to it. 
+	You can see from the auditing from the server code that an IIS Express server 
+	certificate with a common name of &quot;localhost&quot; is being used:</li>
+</ul>
+<blockquote>
+	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 1 localhost 443<br>
+	Server certificate properties<br>Subject: CN=localhost<br>Subject Public Key 
+	Bit length<br>0000 00 04 00 00 ....<br>Subject Public Key MD5 hash<br>0000 d4 
+	bc 8b 51 be aa 5e 8e 5f 72 00 ad dc 45 40 b7 ...Q..^._r...E@.<br>MD5 hash<br>
+	0000 e3 bd 22 7e d2 34 c2 c3 8d 21 64 0d 5d ed a1 74 ..&quot;~.4...!d.]..t<br>
+	SHA1 hash<br>0000 d6 c9 06 56 9f 49 17 66 8c 81 20 f5 08 42 79 a6 ...V.I.f.. 
+	..By.<br>0010 94 90 dc 81 ....<br>Key Provider Info<br>0000 c0 3d 3c 00 00 00 
+	00 00 1c 3e 3c 00 00 00 00 00 .=&lt;......&gt;&lt;.....<br>0010 0c 00 00 00 
+	20 00 00 00 00 00 00 00 00 00 00 00 .... ...........<br>0020 00 00 00 00 00 
+	00 00 00 01 00 00 00 00 00 00 00 ................<br>0030 49 00 49 00 53 00 
+	20 00 45 00 78 00 70 00 72 00 I.I.S. .E.x.p.r.<br>0040 65 00 73 00 73 00 20 
+	00 44 00 65 00 76 00 65 00 e.s.s. .D.e.v.e.<br>0050 6c 00 6f 00 70 00 6d 00 
+	65 00 6e 00 74 00 20 00 l.o.p.m.e.n.t. .<br>0060 43 00 65 00 72 00 74 00 69 
+	00 66 00 69 00 63 00 C.e.r.t.i.f.i.c.<br>0070 61 00 74 00 65 00 20 00 43 00 
+	6f 00 6e 00 74 00 a.t.e. .C.o.n.t.<br>0080 61 00 69 00 6e 00 65 00 72 00 00 
+	00 4d 00 69 00 a.i.n.e.r...M.i.<br>0090 63 00 72 00 6f 00 73 00 6f 00 66 00 
+	74 00 20 00 c.r.o.s.o.f.t. .<br>00a0 52 00 53 00 41 00 20 00 53 00 43 00 68 
+	00 61 00 R.S.A. .S.C.h.a.<br>00b0 6e 00 6e 00 65 00 6c 00 20 00 43 00 72 00 
+	79 00 n.n.e.l. .C.r.y.<br>00c0 70 00 74 00 6f 00 67 00 72 00 61 00 70 00 68 
+	00 p.t.o.g.r.a.p.h.<br>00d0 69 00 63 00 20 00 50 00 72 00 6f 00 76 00 69 00 
+	i.c. .P.r.o.v.i.<br>00e0 64 00 65 00 72 00 00 00 d.e.r...<br>Friendly name<br>
+	0000 49 00 49 00 53 00 20 00 45 00 78 00 70 00 72 00 I.I.S. .E.x.p.r.<br>0010 
+	65 00 73 00 73 00 20 00 44 00 65 00 76 00 65 00 e.s.s. .D.e.v.e.<br>0020 6c 
+	00 6f 00 70 00 6d 00 65 00 6e 00 74 00 20 00 l.o.p.m.e.n.t. .<br>0030 43 00 
+	65 00 72 00 74 00 69 00 66 00 69 00 63 00 C.e.r.t.i.f.i.c.<br>0040 61 00 74 
+	00 65 00 00 00 a.t.e...<br>Key Identifier<br>0000 1d 88 f4 6b ea 1d 83 c7 2e 
+	f1 c8 57 67 3a 2b b6 ...k.......Wg:+.<br>0010 d7 4a e9 29 .J.)<br>Signature 
+	hash<br>0000 01 8a 86 9c 27 29 64 6b 5e 93 9b 7d 7e b1 e4 8f ....')dk^..}~...<br>
+	0010 e5 42 f4 e8 .B..<br>CNG Hash Algorithm<br>0000 52 00 53 00 41 00 2f 00 
+	53 00 48 00 41 00 31 00 R.S.A./.S.H.A.1.<br>0010 00 00 ..<br>Binding to localhost:443<br>
+	Listening<br>Waiting for client connection<br>Accepted client connection<br>
+	Performing SSL server handshake<br>Protocol: TLS 1.0<br>Cipher: AES<br>Cipher 
+	strength: 128<br>Hash: SHA<br>Hash strength: 160<br>Key exchange: RSA<br>Key 
+	exchange strength: 1024<br>Getting client request<br>Received request data:<br>
+	0000 47 45 54 20 2f 20 GET /<br>Client requested renegotiation<br>Received request 
+	data:<br>0000 48 54 54 50 2f 31 2e 30 0d 0a 0d 0a HTTP/1.0....<br>Sending client 
+	first part of response<br>Requesting client renegotiation<br>Sending client 
+	second part of response<br>Sending close notify<br>Closing client connection<br>
+	Waiting for client connection</blockquote>
+<ul>
+	<li>Here is a screen capture from the test app when it is run with a command 
+	line to make it act as a client (with both the server and client performing 
+	handling renegotiation in midstream):</li>
+</ul>
+<blockquote>
+	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 0 localhost 443<br>
+	Connecting to localhost:443<br>Performing SSL client handshake<br>Protocol: 
+	TLS 1.0<br>Cipher: AES<br>Cipher strength: 128<br>Hash: SHA<br>Hash strength: 
+	160<br>Key exchange: RSA<br>Key exchange strength: 1024<br>Remote server certificate 
+	properties<br>Subject: CN=localhost<br>Sending server first part of request<br>
+	Requesting server renegotiation<br>Sending server second part of request<br>
+	Getting response<br>Received response data:<br>0000 48 54 54 50 2f 31 2e 30 
+	20 32 30 30 0d 0a 0d 0a HTTP/1.0 200....<br>Server requested renegotiation<br>
+	Received response data:<br>0000 3c 68 74 6d 6c 3e 3c 68 65 61 64 3e 3c 74 69 
+	74 &lt;html&gt;&lt;head&gt;&lt;tit<br>0010 6c 65 3e 53 53 4c 20 44 61 74 61 
+	3c 2f 74 69 74 le&gt;SSL Data&lt;/tit<br>0020 6c 65 3e 3c 2f 68 65 61 64 3e 
+	3c 62 6f 64 79 3e le&gt;&lt;/head&gt;&lt;body&gt;<br>0030 54 68 69 73 20 69 
+	73 20 74 68 65 20 62 6f 64 79 This is the body<br>0040 20 66 6f 6c 6c 6f 77 
+	69 6e 67 20 61 20 72 65 6e following a ren<br>0050 65 67 6f 74 69 61 74 69 6f 
+	6e 3c 2f 62 6f 64 79 egotiation&lt;/body<br>0060 3e 3c 2f 68 74 6d 6c 3e 0d 
+	0a &gt;&lt;/html&gt;..<br>Stopping receive of response because of SEC_I_CONTEXT_EXPIRED 
+	status value from<br>CSSL::GetEncryptedMessage<br>Sending close_notify message<br>
+	<br>D:\Dev\My Code\SSLWrappers\DebugU64&gt;</blockquote>
+<ul>
+	<li>Here is screen capture from the test app when connecting to https://www.microsoft.com 
+	(with the client performing handling renegotiation in midstream):</li>
+</ul>
+<blockquote>
+	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 0 www.microsoft.com 
+	443<br>Connecting to www.microsoft.com:443<br>Performing SSL client handshake<br>
+	Protocol: TLS 1.0<br>Cipher: RC4<br>Cipher strength: 128<br>Hash: MD5<br>Hash 
+	strength: 128<br>Key exchange: RSA<br>Key exchange strength: 2048<br>Remote 
+	server certificate properties<br>Subject: C=US, S=WA, L=Redmond, O=Microsoft 
+	Corporation, OU=MSCOM, CN=www.micros<br>oft.com<br>SHA1 hash<br>0000 ff 11 95 
+	88 3b 90 8f de ea 8d 2d d0 12 58 5c b9 ....;.....-..X\.<br>0010 09 3a b9 64 
+	.:.d<br>Next certificate in chain<br>Subject: DC=com, DC=microsoft, DC=corp, 
+	DC=redmond, CN=MSIT Machine Auth CA 2<br>SHA1 hash<br>0000 ef 86 b4 13 f0 fc 
+	25 ac 51 2b 8b e9 b6 ec 70 f6 ......%.Q+....p.<br>0010 da 34 16 55 .4.U<br>Next 
+	certificate in chain<br>Subject: CN=Microsoft Internet Authority<br>SHA1 hash<br>
+	0000 99 2a d4 4d 7d ce 29 8d e1 7e 6f 2f 56 a7 b9 ca .*.M}.)..~o/V...<br>0010 
+	a4 1d b9 3f ...?<br>Next certificate in chain<br>Subject: C=IE, O=Baltimore, 
+	OU=CyberTrust, CN=Baltimore CyberTrust Root<br>SHA1 hash<br>0000 d4 de 20 d0 
+	5e 66 fc 53 fe 1a 50 88 2c 78 db 28 .. .^f.S..P.,x.(<br>0010 52 ca e4 74 R..t<br>
+	Sending server first part of request<br>Requesting server renegotiation<br>Sending 
+	server second part of request<br>Getting response<br>Received response data:<br>
+	0000 48 H<br>Received response data:<br>0000 54 54 50 2f 31 2e 31 20 32 30 30 
+	20 4f 4b 0d 0a TTP/1.1 200 OK..<br>0010 43 61 63 68 65 2d 43 6f 6e 74 72 6f 
+	6c 3a 20 6e Cache-Control: n<br>0020 6f 2d 63 61 63 68 65 0d 0a 43 6f 6e 74 
+	65 6e 74 o-cache..Content<br>0030 2d 54 79 70 65 3a 20 74 65 78 74 2f 68 74 
+	6d 6c -Type: text/html<br>0040 0d 0a 4c 61 73 74 2d 4d 6f 64 69 66 69 65 64 
+	3a ..Last-Modified:<br>0050 20 4d 6f 6e 2c 20 31 36 20 4d 61 72 20 32 30 30 
+	Mon, 16 Mar 200<br>0060 39 20 32 30 3a 33 35 3a 32 36 20 47 4d 54 0d 0a 9 20:35:26 
+	GMT..<br>0070 41 63 63 65 70 74 2d 52 61 6e 67 65 73 3a 20 62 Accept-Ranges: 
+	b<br>0080 79 74 65 73 0d 0a 45 54 61 67 3a 20 22 36 37 39 ytes..ETag: &quot;679<br>
+	0090 39 31 66 62 64 37 36 61 36 63 39 31 3a 30 22 0d 91fbd76a6c91:0&quot;.<br>
+	00a0 0a 53 65 72 76 65 72 3a 20 4d 69 63 72 6f 73 6f .Server: Microso<br>00b0 
+	66 74 2d 49 49 53 2f 38 2e 30 0d 0a 58 2d 50 6f ft-IIS/8.0..X-Po<br>00c0 77 
+	65 72 65 64 2d 42 79 3a 20 41 53 50 2e 4e 45 wered-By: ASP.NE<br>00d0 54 0d 
+	0a 44 61 74 65 3a 20 57 65 64 2c 20 32 32 T..Date: Wed, 22<br>00e0 20 4f 63 
+	74 20 32 30 31 34 20 32 31 3a 31 34 3a Oct 2014 21:14:<br>00f0 32 39 20 47 4d 
+	54 0d 0a 43 6f 6e 6e 65 63 74 69 29 GMT..Connecti<br>0100 6f 6e 3a 20 63 6c 
+	6f 73 65 0d 0a 43 6f 6e 74 65 on: close..Conte<br>0110 6e 74 2d 4c 65 6e 67 
+	74 68 3a 20 31 30 32 30 0d nt-Length: 1020.<br>0120 0a 0d 0a 3c 68 74 6d 6c 
+	3e 3c 68 65 61 64 3e 3c ...&lt;html&gt;&lt;head&gt;&lt;<br>0130 74 69 74 6c 
+	65 3e 4d 69 63 72 6f 73 6f 66 74 20 title&gt;Microsoft<br>0140 43 6f 72 70 6f 
+	72 61 74 69 6f 6e 3c 2f 74 69 74 Corporation&lt;/tit<br>0150 6c 65 3e 3c 6d 
+	65 74 61 20 68 74 74 70 2d 65 71 le&gt;&lt;meta http-eq<br>0160 75 69 76 3d 
+	22 58 2d 55 41 2d 43 6f 6d 70 61 74 uiv=&quot;X-UA-Compat<br>0170 69 62 6c 65 
+	22 20 63 6f 6e 74 65 6e 74 3d 22 49 ible&quot; content=&quot;I<br>0180 45 3d 
+	45 6d 75 6c 61 74 65 49 45 37 22 3e 3c 2f E=EmulateIE7&quot;&gt;&lt;/<br>0190 
+	6d 65 74 61 3e 3c 6d 65 74 61 20 68 74 74 70 2d meta&gt;&lt;meta http-<br>01a0 
+	65 71 75 69 76 3d 22 43 6f 6e 74 65 6e 74 2d 54 equiv=&quot;Content-T<br>01b0 
+	79 70 65 22 20 63 6f 6e 74 65 6e 74 3d 22 74 65 ype&quot; content=&quot;te<br>
+	01c0 78 74 2f 68 74 6d 6c 3b 20 63 68 61 72 73 65 74 xt/html; charset<br>01d0 
+	3d 75 74 66 2d 38 22 3e 3c 2f 6d 65 74 61 3e 3c =utf-8&quot;&gt;&lt;/meta&gt;&lt;<br>
+	01e0 6d 65 74 61 20 6e 61 6d 65 3d 22 53 65 61 72 63 meta name=&quot;Searc<br>
+	01f0 68 54 69 74 6c 65 22 20 63 6f 6e 74 65 6e 74 3d hTitle&quot; content=<br>
+	0200 22 4d 69 63 72 6f 73 6f 66 74 2e 63 6f 6d 22 20 &quot;Microsoft.com&quot;<br>
+	0210 73 63 68 65 6d 65 3d 22 22 3e 3c 2f 6d 65 74 61 scheme=&quot;&quot;&gt;&lt;/meta<br>
+	0220 3e 3c 6d 65 74 61 20 6e 61 6d 65 3d 22 44 65 73 &gt;&lt;meta name=&quot;Des<br>
+	0230 63 72 69 70 74 69 6f 6e 22 20 63 6f 6e 74 65 6e cription&quot; conten<br>
+	0240 74 3d 22 47 65 74 20 70 72 6f 64 75 63 74 20 69 t=&quot;Get product i<br>
+	0250 6e 66 6f 72 6d 61 74 69 6f 6e 2c 20 73 75 70 70 nformation, supp<br>0260 
+	6f 72 74 2c 20 61 6e 64 20 6e 65 77 73 20 66 72 ort, and news fr<br>0270 6f 
+	6d 20 4d 69 63 72 6f 73 6f 66 74 2e 22 20 73 om Microsoft.&quot; s<br>0280 63 
+	68 65 6d 65 3d 22 22 3e 3c 2f 6d 65 74 61 3e cheme=&quot;&quot;&gt;&lt;/meta&gt;<br>
+	0290 3c 6d 65 74 61 20 6e 61 6d 65 3d 22 54 69 74 6c &lt;meta name=&quot;Titl<br>
+	02a0 65 22 20 63 6f 6e 74 65 6e 74 3d 22 4d 69 63 72 e&quot; content=&quot;Micr<br>
+	02b0 6f 73 6f 66 74 2e 63 6f 6d 20 48 6f 6d 65 20 50 osoft.com Home P<br>02c0 
+	61 67 65 22 20 73 63 68 65 6d 65 3d 22 22 3e 3c age&quot; scheme=&quot;&quot;&gt;&lt;<br>
+	02d0 2f 6d 65 74 61 3e 3c 6d 65 74 61 20 6e 61 6d 65 /meta&gt;&lt;meta name<br>
+	02e0 3d 22 4b 65 79 77 6f 72 64 73 22 20 63 6f 6e 74 =&quot;Keywords&quot; cont<br>
+	02f0 65 6e 74 3d 22 4d 69 63 72 6f 73 6f 66 74 2c 20 ent=&quot;Microsoft,<br>
+	0300 70 72 6f 64 75 63 74 2c 20 73 75 70 70 6f 72 74 product, support<br>0310 
+	2c 20 68 65 6c 70 2c 20 74 72 61 69 6e 69 6e 67 , help, training<br>0320 2c 
+	20 4f 66 66 69 63 65 2c 20 57 69 6e 64 6f 77 , Office, Window<br>0330 73 2c 
+	20 73 6f 66 74 77 61 72 65 2c 20 64 6f 77 s, software, dow<br>0340 6e 6c 6f 
+	61 64 2c 20 74 72 69 61 6c 2c 20 70 72 nload, trial, pr<br>0350 65 76 69 65 
+	77 2c 20 64 65 6d 6f 2c 20 20 62 75 eview, demo, bu<br>0360 73 69 6e 65 73 73 
+	2c 20 73 65 63 75 72 69 74 79 siness, security<br>0370 2c 20 75 70 64 61 74 
+	65 2c 20 66 72 65 65 2c 20 , update, free,<br>0380 63 6f 6d 70 75 74 65 72 2c 
+	20 50 43 2c 20 73 65 computer, PC, se<br>0390 72 76 65 72 2c 20 73 65 61 72 
+	63 68 2c 20 64 6f rver, search, do<br>03a0 77 6e 6c 6f 61 64 2c 20 69 6e 73 
+	74 61 6c 6c 2c wnload, install,<br>03b0 20 6e 65 77 73 22 20 73 63 68 65 6d 
+	65 3d 22 22 news&quot; scheme=&quot;&quot;<br>03c0 3e 3c 2f 6d 65 74 61 3e 3c 
+	6d 65 74 61 20 6e 61 &gt;&lt;/meta&gt;&lt;meta na<br>03d0 6d 65 3d 22 53 65 
+	61 72 63 68 44 65 73 63 72 69 me=&quot;SearchDescri<br>03e0 70 74 69 6f 6e 22 
+	20 63 6f 6e 74 65 6e 74 3d 22 ption&quot; content=&quot;<br>03f0 4d 69 63 72 
+	6f 73 6f 66 74 2e 63 6f 6d 20 48 6f Microsoft.com Ho<br>0400 6d 65 70 61 67 
+	65 22 20 73 63 68 65 6d 65 3d 22 mepage&quot; scheme=&quot;<br>0410 22 3e 3c 
+	2f 6d 65 74 61 3e 3c 2f 68 65 61 64 3e &quot;&gt;&lt;/meta&gt;&lt;/head&gt;<br>
+	0420 3c 62 6f 64 79 3e 3c 70 3e 59 6f 75 72 20 63 75 &lt;body&gt;&lt;p&gt;Your 
+	cu<br>0430 72 72 65 6e 74 20 55 73 65 72 2d 41 67 65 6e 74 rrent User-Agent<br>
+	0440 20 73 74 72 69 6e 67 20 61 70 70 65 61 72 73 20 string appears<br>0450 
+	74 6f 20 62 65 20 66 72 6f 6d 20 61 6e 20 61 75 to be from an au<br>0460 74 
+	6f 6d 61 74 65 64 20 70 72 6f 63 65 73 73 2c tomated process,<br>0470 20 69 
+	66 20 74 68 69 73 20 69 73 20 69 6e 63 6f if this is inco<br>0480 72 72 65 63 
+	74 2c 20 70 6c 65 61 73 65 20 63 6c rrect, please cl<br>0490 69 63 6b 20 74 
+	68 69 73 20 6c 69 6e 6b 3a 3c 61 ick this link:&lt;a<br>04a0 20 68 72 65 66 
+	3d 22 68 74 74 70 3a 2f 2f 77 77 href=&quot;http://ww<br>04b0 77 2e 6d 69 63 
+	72 6f 73 6f 66 74 2e 63 6f 6d 2f w.microsoft.com/<br>04c0 65 6e 2f 75 73 2f 
+	64 65 66 61 75 6c 74 2e 61 73 en/us/default.as<br>04d0 70 78 3f 72 65 64 69 
+	72 3d 74 72 75 65 22 3e 55 px?redir=true&quot;&gt;U<br>04e0 6e 69 74 65 64 20 
+	53 74 61 74 65 73 20 45 6e 67 nited States Eng<br>04f0 6c 69 73 68 20 4d 69 
+	63 72 6f 73 6f 66 74 20 48 lish Microsoft H<br>0500 6f 6d 65 70 61 67 65 3c 
+	2f 61 3e 3c 2f 70 3e 3c omepage&lt;/a&gt;&lt;/p&gt;&lt;<br>0510 2f 62 6f 64 
+	79 3e 3c 2f 68 74 6d 6c 3e 0d 0a /body&gt;&lt;/html&gt;..<br>Stopping receive 
+	of response because of SEC_I_CONTEXT_EXPIRED status value from<br>CSSL::GetEncryptedMessage<br>
+	Sending close_notify message<br><br>D:\Dev\My Code\SSLWrappers\DebugU64&gt;</blockquote>
+<ul>
+	<li>And finally here is the screen capture from the test app when connecting 
+	to https://www.google.com (with the client not performing any client renegotiation 
+	in midstream as Google seem to reject that):</li>
+</ul>
+<blockquote>
+	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 0 www.google.com 
+	443<br>Connecting to www.google.com:443<br>Performing SSL client handshake<br>
+	Protocol: TLS 1.0<br>Cipher: AES<br>Cipher strength: 128<br>Hash: SHA<br>Hash 
+	strength: 160<br>Key exchange algorithm identifier: 0xae06, Class:40960, Type:3584, 
+	SID:6<br>Key exchange strength: 256<br>Remote server certificate properties<br>
+	Subject: C=US, S=California, L=Mountain View, O=Google Inc, CN=www.google.com<br>
+	SHA1 hash<br>0000 93 12 5b b9 7d 02 aa 45 36 b4 ec 9a 7c a0 1a d8 ..[.}..E6...|...<br>
+	0010 92 73 14 db .s..<br>Next certificate in chain<br>Subject: C=US, O=Google 
+	Inc, CN=Google Internet Authority G2<br>SHA1 hash<br>0000 bb dc e1 3e 9d 53 
+	7a 52 29 91 5c b1 23 c7 aa b0 ...&gt;.SzR).\.#...<br>0010 a8 55 e7 98 .U..<br>
+	Next certificate in chain<br>Subject: C=US, O=GeoTrust Inc., CN=GeoTrust Global 
+	CA<br>SHA1 hash<br>0000 73 59 75 5c 6d f9 a0 ab c3 06 0b ce 36 95 64 c8 sYu\m.......6.d.<br>
+	0010 ec 45 42 a3 .EB.<br>Sending request<br>Getting response<br>Received response 
+	data:<br>0000 48 54 54 50 2f 31 2e 30 20 33 30 32 20 46 6f 75 HTTP/1.0 302 Fou<br>
+	0010 6e 64 0d 0a 4c 6f 63 61 74 69 6f 6e 3a 20 68 74 nd..Location: ht<br>0020 
+	74 70 73 3a 2f 2f 77 77 77 2e 67 6f 6f 67 6c 65 tps://www.google<br>0030 2e 
+	69 65 2f 3f 67 77 73 5f 72 64 3d 63 72 26 65 .ie/?gws_rd=cr&amp;e<br>0040 69 
+	3d 57 78 39 49 56 4b 48 53 41 59 66 44 37 67 i=Wx9IVKHSAYfD7g<br>0050 62 48 
+	34 59 48 6f 42 51 0d 0a 43 61 63 68 65 2d bH4YHoBQ..Cache-<br>0060 43 6f 6e 
+	74 72 6f 6c 3a 20 70 72 69 76 61 74 65 Control: private<br>0070 0d 0a 43 6f 
+	6e 74 65 6e 74 2d 54 79 70 65 3a 20 ..Content-Type:<br>0080 74 65 78 74 2f 68 
+	74 6d 6c 3b 20 63 68 61 72 73 text/html; chars<br>0090 65 74 3d 55 54 46 2d 
+	38 0d 0a 53 65 74 2d 43 6f et=UTF-8..Set-Co<br>00a0 6f 6b 69 65 3a 20 50 52 
+	45 46 3d 49 44 3d 63 31 okie: PREF=ID=c1<br>00b0 35 62 31 65 39 63 33 37 65 
+	30 33 64 64 34 3a 46 5b1e9c37e03dd4:F<br>00c0 46 3d 30 3a 54 4d 3d 31 34 31 
+	34 30 31 32 37 36 F=0:TM=141401276<br>00d0 33 3a 4c 4d 3d 31 34 31 34 30 31 
+	32 37 36 33 3a 3:LM=1414012763:<br>00e0 53 3d 59 5f 70 6e 4b 33 6a 63 45 4b 
+	54 77 66 33 S=Y_pnK3jcEKTwf3<br>00f0 79 4a 3b 20 65 78 70 69 72 65 73 3d 46 
+	72 69 2c yJ; expires=Fri,<br>0100 20 32 31 2d 4f 63 74 2d 32 30 31 36 20 32 
+	31 3a 21-Oct-2016 21:<br>0110 31 39 3a 32 33 20 47 4d 54 3b 20 70 61 74 68 3d 
+	19:23 GMT; path=<br>0120 2f 3b 20 64 6f 6d 61 69 6e 3d 2e 67 6f 6f 67 6c /; 
+	domain=.googl<br>0130 65 2e 63 6f 6d 0d 0a 53 65 74 2d 43 6f 6f 6b 69 e.com..Set-Cooki<br>
+	0140 65 3a 20 4e 49 44 3d 36 37 3d 4c 43 47 45 39 47 e: NID=67=LCGE9G<br>0150 
+	47 32 2d 64 4e 54 6a 53 64 2d 30 75 54 59 52 32 G2-dNTjSd-0uTYR2<br>0160 47 
+	46 4e 48 61 53 53 64 67 34 77 6f 33 76 66 66 GFNHaSSdg4wo3vff<br>0170 72 58 
+	76 67 68 6c 55 43 4c 7a 62 4e 79 4c 53 43 rXvghlUCLzbNyLSC<br>0180 69 70 48 
+	38 4f 72 58 39 47 71 58 55 64 47 38 51 ipH8OrX9GqXUdG8Q<br>0190 49 31 5a 58 
+	33 56 62 66 63 44 41 4e 75 4a 68 43 I1ZX3VbfcDANuJhC<br>01a0 77 5f 47 55 59 
+	58 49 6c 43 47 70 6e 56 43 35 62 w_GUYXIlCGpnVC5b<br>01b0 62 6c 55 66 79 38 
+	32 6a 6c 41 55 73 6a 71 41 66 blUfy82jlAUsjqAf<br>01c0 76 37 42 77 75 77 2d 
+	44 33 68 3b 20 65 78 70 69 v7Bwuw-D3h; expi<br>01d0 72 65 73 3d 54 68 75 2c 
+	20 32 33 2d 41 70 72 2d res=Thu, 23-Apr-<br>01e0 32 30 31 35 20 32 31 3a 31 
+	39 3a 32 33 20 47 4d 2015 21:19:23 GM<br>01f0 54 3b 20 70 61 74 68 3d 2f 3b 
+	20 64 6f 6d 61 69 T; path=/; domai<br>0200 6e 3d 2e 67 6f 6f 67 6c 65 2e 63 
+	6f 6d 3b 20 48 n=.google.com; H<br>0210 74 74 70 4f 6e 6c 79 0d 0a 50 33 50 
+	3a 20 43 50 ttpOnly..P3P: CP<br>0220 3d 22 54 68 69 73 20 69 73 20 6e 6f 74 
+	20 61 20 =&quot;This is not a<br>0230 50 33 50 20 70 6f 6c 69 63 79 21 20 53 
+	65 65 20 P3P policy! See<br>0240 68 74 74 70 3a 2f 2f 77 77 77 2e 67 6f 6f 67 
+	6c http://www.googl<br>0250 65 2e 63 6f 6d 2f 73 75 70 70 6f 72 74 2f 61 63 
+	e.com/support/ac<br>0260 63 6f 75 6e 74 73 2f 62 69 6e 2f 61 6e 73 77 65 counts/bin/answe<br>
+	0270 72 2e 70 79 3f 68 6c 3d 65 6e 26 61 6e 73 77 65 r.py?hl=en&amp;answe<br>
+	0280 72 3d 31 35 31 36 35 37 20 66 6f 72 20 6d 6f 72 r=151657 for mor<br>0290 
+	65 20 69 6e 66 6f 2e 22 0d 0a 44 61 74 65 3a 20 e info.&quot;..Date:<br>02a0 
+	57 65 64 2c 20 32 32 20 4f 63 74 20 32 30 31 34 Wed, 22 Oct 2014<br>02b0 20 
+	32 31 3a 31 39 3a 32 33 20 47 4d 54 0d 0a 53 21:19:23 GMT..S<br>02c0 65 72 76 
+	65 72 3a 20 67 77 73 0d 0a 43 6f 6e 74 erver: gws..Cont<br>02d0 65 6e 74 2d 
+	4c 65 6e 67 74 68 3a 20 32 35 39 0d ent-Length: 259.<br>02e0 0a 58 2d 58 53 
+	53 2d 50 72 6f 74 65 63 74 69 6f .X-XSS-Protectio<br>02f0 6e 3a 20 31 3b 20 
+	6d 6f 64 65 3d 62 6c 6f 63 6b n: 1; mode=block<br>0300 0d 0a 58 2d 46 72 61 
+	6d 65 2d 4f 70 74 69 6f 6e ..X-Frame-Option<br>0310 73 3a 20 53 41 4d 45 4f 
+	52 49 47 49 4e 0d 0a 41 s: SAMEORIGIN..A<br>0320 6c 74 65 72 6e 61 74 65 2d 
+	50 72 6f 74 6f 63 6f lternate-Protoco<br>0330 6c 3a 20 34 34 33 3a 71 75 69 
+	63 2c 70 3d 30 2e l: 443:quic,p=0.<br>0340 30 31 0d 0a 0d 0a 3c 48 54 4d 4c 
+	3e 3c 48 45 41 01....&lt;HTML&gt;&lt;HEA<br>0350 44 3e 3c 6d 65 74 61 20 68 
+	74 74 70 2d 65 71 75 D&gt;&lt;meta http-equ<br>0360 69 76 3d 22 63 6f 6e 74 
+	65 6e 74 2d 74 79 70 65 iv=&quot;content-type<br>0370 22 20 63 6f 6e 74 65 6e 
+	74 3d 22 74 65 78 74 2f &quot; content=&quot;text/<br>0380 68 74 6d 6c 3b 63 
+	68 61 72 73 65 74 3d 75 74 66 html;charset=utf<br>0390 2d 38 22 3e 0a 3c 54 
+	49 54 4c 45 3e 33 30 32 20 -8&quot;&gt;.&lt;TITLE&gt;302<br>03a0 4d 6f 76 65 
+	64 3c 2f 54 49 54 4c 45 3e 3c 2f 48 Moved&lt;/TITLE&gt;&lt;/H<br>03b0 45 41 
+	44 3e 3c 42 4f 44 59 3e 0a 3c 48 31 3e 33 EAD&gt;&lt;BODY&gt;.&lt;H1&gt;3<br>
+	03c0 30 32 20 4d 6f 76 65 64 3c 2f 48 31 3e 0a 54 68 02 Moved&lt;/H1&gt;.Th<br>
+	03d0 65 20 64 6f 63 75 6d 65 6e 74 20 68 61 73 20 6d e document has m<br>03e0 
+	6f 76 65 64 0a 3c 41 20 48 52 45 46 3d 22 68 74 oved.&lt;A HREF=&quot;ht<br>
+	03f0 74 70 73 3a 2f 2f 77 77 77 2e 67 6f 6f 67 6c 65 tps://www.google<br>0400 
+	2e 69 65 2f 3f 67 77 73 5f 72 64 3d 63 72 26 61 .ie/?gws_rd=cr&amp;a<br>0410 
+	6d 70 3b 65 69 3d 57 78 39 49 56 4b 48 53 41 59 mp;ei=Wx9IVKHSAY<br>0420 66 
+	44 37 67 62 48 34 59 48 6f 42 51 22 3e 68 65 fD7gbH4YHoBQ&quot;&gt;he<br>0430 
+	72 65 3c 2f 41 3e 2e 0d 0a 3c 2f 42 4f 44 59 3e re&lt;/A&gt;...&lt;/BODY&gt;<br>
+	0440 3c 2f 48 54 4d 4c 3e 0d 0a &lt;/HTML&gt;..<br>Stopping receive of response 
+	because of graceful disconnect status value from CS<br>SL::GetEncryptedMessage<br>
+	<br>D:\Dev\My Code\SSLWrappers\DebugU64&gt;</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="History"></a>History</h2>
+<p><b>V1.0 (22 October 2014)</b></p>
+<ul>
+	<li>Initial Public release</li>
+</ul>
+<p><b>V1.01 (24 October 2014)</b></p>
+<ul>
+	<li>Full review and update of the documentation for incorrect links etc</li>
+</ul>
+<p><b>V1.02 (26 November 2014)</b></p>
+<ul>
+	<li>Changed the CSSL class to contain a credentials reference rather than an 
+	actual instance. A new class called CCachedCredentials is what the CSSL maintains 
+	a reference to.</li>
+</ul>
+<p><b>V1.03 (16 December 2014)</b></p>
+<ul>
+	<li>Removed the unused variable CCachedCredentials::m_Credentials.</li>
+	<li>Removed the memset call and the setting of the dwVersion member variable 
+	of the m_sslCredentials member variable in the AcquireClient and AcquireServer 
+	methods of CCachedCredentials. This allows client code to set specific values 
+	into this structure prior to it being used in these methods.</li>
+	<li>The default value for CSSL::m_dwAuditFlags is now 0 for debug builds in 
+	addition to release builds. </li>
+	<li>Addition of a CSSL::GetSecPkgStreamSizes method to allow access to the internal 
+	m_SecPkgSizes member variable. </li>
+	<li>Addition of a CSSL::SendEncrypted method which handles making multiple calls 
+	to SendEncryptedMessage if the data to send exceeds the maximum SSL message 
+	size. </li>
+</ul>
+<p><b>V1.04 (8 February 2015)</b></p>
+<ul>
+	<li>Updated copyright details </li>
+	<li>Fixed a bug in the CSSL constructor where the &quot;m_lExtraReadData&quot; was not 
+	being initialized to 0. This causes a bug later when GetEncryptedMessage is 
+	called and you have compiled your application without the VC 2013 /sdl 
+	compiler flag which resulted in the bug being hidden as /sdl auto 
+	initializes member variables. Thanks to Bostjan Erzen for reporting this bug</li>
+</ul>
+<p><b>V1.05 (4 November 2015)</b></p>
+<ul>
+	<li>Updated the code to compile cleanly in VC 2015. </li>
+	<li>Fixed a bug in CSSL::VerifyServerCertificate where the code was using 
+	wrong math to calculate the size of the pCerts local variable. </li>
+	<li>Fixed a bug in the demo app's DisplayCertChain method when calculating 
+	the size of the buffer to pass to CertNameToStr API. </li>
+	<li>Reworked various places which allocates heap memory to use ATL::CHeapPtr 
+	instead of raw calls to HeapAlloc. </li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="APIReference"></a>Class Framework Reference</h2>
+<p>The framework consists of the following classes: </p>
+<p><b><a href="#CCredentials">CCredentials</a><br><a href="#CCachedCredentials">
+CCachedCredentials</a><br><a href="#CContext">CContext</a><br>
+<a href="#CMessage">CMessage</a><br><a href="#CSSL">CSSL</a><br>
+<a href="#CSocket">CSocket</a></b> </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a name="CCredentials"></a><strong>CCredentials</strong></p>
+<p>CCredentials provides a class based encapsulation of a SSL Credentials handle 
+as represented by a CredHandle.</p>
+<p>&nbsp;</p>
+<p><strong>Functions this class provides include:</strong></p>
+<p><b><a href="#CCredentials_Constructor">CCredentials</a></b></p>
+<p><b><a href="#CCredentials_Destructor">~CCredentials</a></b></p>
+<p><a href="#CCredentials_Acquire"><strong>Acquire</strong></a></p>
+<p><a href="#CCredentials_Attach"><strong>Attach</strong></a></p>
+<p><a href="#CCredentials_Detach"><strong>Detach</strong></a></p>
+<p><strong><a href="#CCredentials_Free">Free</a></strong></p>
+<p><strong><a href="#CCredentials_Handle">Handle</a></strong></p>
+<p><a href="#CCredentials_QueryAttribute"><strong>QueryAttibute</strong></a></p>
+<p><strong><a href="#CCredentials_ValidHandle">ValidHandle</a></strong></p>
+<p><a href="#CCredentials_operator="><strong>operator=</strong></a></p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Constructor"></a><strong>CCredentials::CCredentials</strong></p>
+<p><strong>CCredentials();</strong></p>
+<p><strong>CCredentials(_In_ CCredentials&amp; </strong><em>credentials</em><strong>);</strong></p>
+<p><strong>CCredentials(_In_ const CredHandle&amp; </strong><em>handle</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the constructor which initializes all the internal variables to a safe 
+state. There are also overridden versions which initialize from an existing instance 
+or from an SDK handle.</p>
+<p><strong>See Also </strong></p>
+<p><a href="#CCredentials_Destructor">~CCredentials</a></p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Destructor"></a><strong>CCredentials::~CCredentials</strong></p>
+<p><strong>~CCredentials();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the standard destructor for the class. Internally if calls
+<a href="#CCredentials_Free">Free</a> to ensure that any handle that is opened is 
+closed.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CCredentials_Constructor">CCredentials</a></p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Acquire"></a><strong>CCredentials::Acquire</strong></p>
+<p><strong>SECURITY_STATUS Acquire(_In_ unsigned long </strong><em>fCredentialUse</em>,
+<strong>_In_opt_ SCHANNEL_CRED*</strong> <em>pAuthData</em>, <strong>_Out_opt_ PTimeStamp</strong>
+<em>ptsExpiry</em> = <strong>nullptr);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;AcquireCredentialsHandle&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Attach"></a><strong>CCredentials::Attach</strong></p>
+<p><strong>void Attach(_In_ const CredHandle&amp;</strong> <em>handle</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This function allows a CCredentials instance to take ownership of an SDK CredHandle 
+value. The handle will be automatically closed in the destructor.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CCredentials_Detach">Detach</a></p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Detach"></a><strong>CCredentials::Detach</strong></p>
+<p><strong>CredHandle Detach();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This function allows a CCredentials instance to release ownership of an SDK CredHandle 
+value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CCredentials_Attach">Attach</a></p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Free"></a><strong>CCredentials::Free</strong></p>
+<p><strong>SECURITY_STATUS Free();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;FreeCredentialsHandle&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_Handle"></a><strong>CCredentials::Handle</strong></p>
+<p><strong>CredHandle Handle() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>Provides access to the underlying handle which this CCrendentials instance is 
+currently managing.</p>
+<p><strong>Return Value</strong></p>
+<p>The CredHandle instance this class is managing.</p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_QueryAttribute"></a><strong>CCredentials::QueryAtrribute</strong></p>
+<p><strong>SECURITY_STATUS QueryAttribute(_In_ unsigned long </strong><em>ulAttribute</em><strong>, 
+_Inout_ void* </strong><em>pBuffer</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;QueryCredentialsAttribute&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_ValidHandle"></a><strong>CCredentials::ValidHandle</strong></p>
+<p><strong>BOOL ValidHandle() const</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is used to indicate if this CCredentials currently is encapsulating 
+a valid handle or not.</p>
+<p><strong>Return Value</strong></p>
+<p>Returns TRUE if the current instance is encapsulating a valid handle otherwise 
+FALSE.</p>
+<p>&nbsp;</p>
+<p><a name="CCredentials_operator="></a><strong>CCredentials::operator=</strong></p>
+<p><strong>CCredentials&amp; operator=(_In_ CCredentials&amp; </strong><em>credentials</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the standard C++ operator= method which allows assignment from one CCredentials 
+instance to another.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard C++ reference to the current CCredentials instance.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><a name="CCachedCredentials"></a>CCachedCredentials</strong></p>
+<p>CCachedCredentials is a derived version of CCredentials which is used by the
+<a href="#CSSL">CSSL</a> class to keep a copy of the SChannel credentials to use 
+for the SSL connection. It is a separate object because at least for a SSL server, 
+the lifetime of the credentials will be different than the ssl socket instance used 
+to service SSL clients. The class internally supports setting up credentials for 
+a client with or without a windows certificate and for a server with a windows certificate 
+via a Cryptowrappers::CCertificate instance. The class also internally keeps a copy 
+of a SDK SCHANNEL_CRED SDK structure.</p>
+<p>&nbsp;</p>
+<p><strong>Functions this class provides include:</strong></p>
+<p><b><a href="#CCachedCredentials_Constructor">CCachedCredentials</a></b></p>
+<p><strong><a href="#CCachedCredentials_AcquireClient">AcquireClient</a></strong></p>
+<p><strong><a href="#CCachedCredentials_AcquireServer">AcquireServer</a></strong></p>
+<p>&nbsp;</p>
+<p><a name="CCachedCredentials_Constructor"></a><strong>CCachedCredentials::CCachedCredentials</strong></p>
+<p><strong>CCachedCredentials();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the constructor which initializes all the internal variables to a safe 
+state.</p>
+<p>&nbsp;</p>
+<p><strong><a name="CCachedCredentials_AcquireClient"></a>CCachedCredentials::AcquireClient</strong></p>
+<p><strong>SECURITY_STATUS AcquireClient(_In_opt_ LPTSTR</strong> <em>pszClientCertificateName</em> 
+= <strong>nullptr</strong>, <strong>_In_ LPCSTR</strong> <em>lpszStoreProvider</em> 
+= <strong>CERT_STORE_PROV_SYSTEM</strong>, <strong>_In_ DWORD</strong> <em>dwCertOpenStoreFlags</em> 
+= <strong>CERT_SYSTEM_STORE_CURRENT_USER | CERT_STORE_READONLY_FLAG</strong>,
+<strong>_In_opt_ const void*</strong> <em>pvCertOpenStorePara</em> = <strong>L&quot;MY&quot;)</strong>
+</p>
+<p><strong>Remarks</strong></p>
+<p>This is the helper function which optionally sets up a client certificate and 
+then calls CCredentials::Acquire appropriate for a client connection.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><strong><a name="CCachedCredentials_AcquireServer"></a>CCachedCredentials::AcquireServer</strong></p>
+<p><strong>SECURITY_STATUS AcquireClient(_In_opt_ LPTSTR</strong> <em>pszClientCertificateName</em> 
+= <strong>nullptr</strong>, <strong>_In_ LPCSTR</strong> <em>lpszStoreProvider</em> 
+= <strong>CERT_STORE_PROV_SYSTEM</strong>, <strong>_In_ DWORD</strong> <em>dwCertOpenStoreFlags</em> 
+= <strong>CERT_SYSTEM_STORE_CURRENT_USER | CERT_STORE_READONLY_FLAG</strong>,
+<strong>_In_opt_ const void*</strong> <em>pvCertOpenStorePara</em> = <strong>L&quot;MY&quot;)</strong>
+</p>
+<p><strong>Remarks</strong></p>
+<p>This is the helper function which optionally sets up a client certificate and 
+then calls CCredentials::Acquire appropriate for a server connection.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><a name="CContext"></a>CContext</strong></p>
+<p>CContext provides a class based encapsulation of a SSL Security context as represented 
+by a CtxtHandle.</p>
+<p>&nbsp;</p>
+<p><strong>Functions this class provides include:</strong></p>
+<p><b><a href="#CContext_Constructor">CContext</a></b></p>
+<p><strong><a href="#CContext_Destructor">~CContext</a></strong></p>
+<p><strong><a href="#CContext_Accept">Accept</a></strong></p>
+<p><strong><a href="#CContext_ApplyControlToken">ApplyControlToken</a></strong></p>
+<p><strong><a href="#CContext_Attach">Attach</a></strong></p>
+<p><strong><a href="#CContext_DecryptMessage">DecryptMessage</a></strong></p>
+<p><a href="#CContext_Delete"><strong>Delete</strong></a></p>
+<p><strong><a href="#CContext_Detach">Detach</a></strong></p>
+<p><strong><a href="#CContext_EncryptMessage">EncryptMessage</a></strong></p>
+<p><strong><a href="#CContext_Export">Export</a></strong></p>
+<p><strong><a href="#CContext_Handle">Handle</a></strong></p>
+<p><strong><a href="#CContext_Impersonate">Impersonate</a></strong></p>
+<p><strong><a href="#CContext_Import">Import</a></strong></p>
+<p><strong><a href="#CContext_Initialize">Initialize</a></strong></p>
+<p><strong><a href="#CContext_QueryAttribute">QueryAttribute</a></strong></p>
+<p><strong><a href="#CContext_QueryToken">QueryToken</a></strong></p>
+<p><strong><a href="#CContext_Revert">Revert</a></strong></p>
+<p><strong><a href="#CContext_SetAttribute">SetAttribute</a></strong></p>
+<p><strong><a href="#CContext_ValidHandle">ValidHandle</a></strong></p>
+<p><strong><a href="#CContext_operator=">operator=</a></strong></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Constructor"></a><strong>CContext::CContext</strong></p>
+<p><strong>CContext();</strong></p>
+<p><strong>CContext(_In_ CContext&amp; context);</strong></p>
+<p><strong>CContext(_In_ const CtxtHandle&amp; handle);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the constructor which initializes all the internal variables to a safe 
+state. There are also overridden versions which initialize from an existing instance 
+or from an SDK handle.</p>
+<p><strong>See Also </strong><a href="#CContext_Destructor">~CContext</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Destructor"></a><strong>CContext::~CContext</strong></p>
+<p><strong>~CContext();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the standard destructor for the class. Internally if calls
+<a href="#CContext_Delete">Delete</a> to ensure that any handle that is opened is 
+closed.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Constructor">CContext</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Accept"></a><strong>CContext::Accept</strong></p>
+<p><strong>SECURITY_STATUS Accept(_In_ CCredentials&amp; </strong><em>credentials</em><strong>, 
+_In_opt_ PSecBufferDesc </strong><em>pInput</em><strong>, _In_ unsigned long
+</strong><em>fContextReq</em><strong>, _Inout_opt_ PSecBufferDesc </strong><em>pOutput</em><strong>, 
+_Out_ unsigned long* </strong><em>pfContextAttr</em><strong>, _Out_opt_ PTimeStamp
+</strong><em>ptsExpiry</em><strong> = nullptr);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;AcceptSecurityContext&quot;. This 
+is the main method used by SSL servers to perform handshakes.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Initialize">Initialize</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_ApplyControlToken"></a><strong>CContext::ApplyControlToken</strong></p>
+<p><strong>SECURITY_STATUS ApplyControlToken(_In_ PSecBufferDesc </strong><em>pInput</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;AcceptControlToken&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><a name="CContext_Attach"></a><strong>CContext::Attach</strong></p>
+<p><strong>void Attach(_In_ const CtxtHandle&amp; </strong><em>handle</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This function allows a CContext instance to take ownership of an SDK CtxtHandle 
+value. The handle will be automatically closed in the destructor.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Detach">Detach</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_DecryptMessage"></a><strong>CContext::DecryptMessage</strong></p>
+<p><strong>SECURITY_STATUS DecryptMessage(_In_ PSecBufferDesc </strong><em>pMessage</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;DecryptMessage&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_EncryptMessage">EncryptMessage</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Delete"></a><strong>CContext::Delete</strong></p>
+<p><strong>SECURITY_STATUS Delete();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;DeleteSecurityContext&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><a name="CContext_Detach"></a><strong>CContext::Detach</strong></p>
+<p><strong>CtxtHandle Detach();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This function allows a CContext instance to release ownership of an SDK CtxtHandle 
+value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Attach">Attach</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_EncryptMessage"></a><strong>CContext::EncryptMessage</strong></p>
+<p><strong>SECURITY_STATUS EncryptMessage(_In_ PSecBufferDesc </strong><em>pMessage</em><strong>, 
+_In_ unsigned long </strong><em>fQOP</em><strong> = 0);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;EncryptMessage&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_DecryptMessage">DecryptMessage</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Export"></a><strong>CContext::Export</strong></p>
+<p><strong>SECURITY_STATUS Export(_In_ ULONG </strong><em>fFlags</em><strong>, _Out_ 
+PSecBuffer </strong><em>pPackedContext</em><strong>, _Out_ void** </strong><em>pToken</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;ExportSecurityContext&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Import">Import</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Handle"></a><strong>CContext::Handle</strong></p>
+<p><strong>CtxtHandle Handle() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>Provides access to the underlying handle which this CContext instance is currently 
+managing.</p>
+<p><strong>Return Value</strong></p>
+<p>The CtxtHandle instance this class is managing.</p>
+<p>&nbsp;</p>
+<p><a name="CContext_Impersonate"></a><strong>CContext::Impersonate</strong></p>
+<p><strong>SECURITY_STATUS Impersonate();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;ImpersonateSecurityContext&quot;. 
+This is the corollary method to <a href="#CContext_Revert">Revert</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Revert">Revert</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Import"></a><strong>CContext::Import</strong></p>
+<p><strong>SECURITY_STATUS Import(_In_ PSecBuffer </strong><em>pPackedContext</em><strong>, 
+_In_ VOID* </strong><em>Token</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;ImportSecurityContext&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Export">Export</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CContext_Initialize"></a>CContext::Initialize</strong></p>
+<p><strong>SECURITY_STATUS Initialize(_In_ CCredentials&amp; </strong><em>credentials</em><strong>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#ifdef _UNICODE<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+_In_opt_ SEC_WCHAR* </strong><em>pszTargetName</em><strong>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#else<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+_In_opt_ SEC_CHAR* </strong><em>pszTargetName</em><strong>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#endif<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+_In_ unsigned long </strong><em>fContextReq</em><strong>, _In_opt_ PSecBufferDesc
+</strong><em>pInput</em><strong>, _Inout_opt_ PSecBufferDesc </strong><em>pOutput</em><strong>, 
+_Out_ unsigned long* </strong><em>pfContextAttr</em><strong>, _Out_opt_ PTimeStamp
+</strong><em>ptsExpiry</em><strong> = nullptr);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;InitializeSecurityContext&quot;. 
+This is the main method used by SSL clients to perform handshakes.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Accept">Accept</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CContext_QueryAttribute"></a>CContext::QueryAttribute</strong></p>
+<p><strong>SECURITY_STATUS QueryAttribute(_In_ unsigned long </strong><em>ulAttribute</em><strong>, 
+_Out_ void* </strong><em>pBuffer</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;QueryContextAttributes&quot;. 
+This is the corollary method to <a href="#CContext_SetAttribute">SetAttribute</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_DecryptMessage">SetAttribute</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CContext_QueryToken"></a>CContext::QueryToken</strong></p>
+<p><strong>SECURITY_STATUS QueryToken(_Out_ void** </strong><em>phToken</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;QuerySecurityContextToken&quot;.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_SetAttribute">SetAttribute</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_Revert"></a><strong>CContext::Revert</strong></p>
+<p><strong>SECURITY_STATUS Revert();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;RevertSecurityContext&quot;. This 
+is the corollary method to <a href="#CContext_Impersonate">Impersonate</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_Impersonate">Impersonate</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CContext_SetAttribute"></a>CContext::SetAttribute</strong></p>
+<p><strong>SECURITY_STATUS SetAttribute(_In_ unsigned long </strong><em>ulAttribute</em><strong>, 
+_In_reads_bytes_(cbBuffer) void* </strong><em>pBuffer</em><strong>, _In_ unsigned 
+long </strong><em>cbBuffer</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the wrapper for the SDK function &quot;SetContextAttributes&quot;. This 
+is the corollary method to <a href="#CContext_QueryAttribute">QueryAttribute</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CContext_QueryAttribute">QueryAttribute</a></p>
+<p>&nbsp;</p>
+<p><a name="CContext_ValidHandle"></a><strong>CContext::ValidHandle</strong></p>
+<p><strong>BOOL ValidHandle() const</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is used to indicate if this CContext currently is encapsulating a 
+valid handle or not.</p>
+<p><strong>Return Value</strong></p>
+<p>Returns TRUE if the current instance is encapsulating a valid handle otherwise 
+FALSE.</p>
+<p>&nbsp;</p>
+<p><a name="CContext_operator="></a><strong>CContext::operator=</strong></p>
+<p><strong>CContext&amp; operator=(_In_ CContext&amp; </strong><em>context</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the standard C++ operator= method which allows assignment from one CContext 
+instance to another.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard C++ reference to the current CContext instance.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><a name="CMessage"></a>CMessage</strong></p>
+<p>CMessage provides a class based encapsulation of a logical SSL message as returned 
+by <a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a>. The memory 
+for the message is allocated from the Win32 Heap using the SDK function &quot;HeapAlloc&quot;.</p>
+<p>&nbsp;</p>
+<p><strong>Functions this class provides include:</strong></p>
+<p><b><a href="#CMessage_Constructor">CMessage</a></b></p>
+<p><strong><a href="#CMessage_Destructor">~CMessage</a></strong></p>
+<p><strong><a href="#CMessage_Allocate">Allocate</a></strong></p>
+<p><strong><a href="#CMessage_Deallocate">Deallocate</a></strong></p>
+<p><strong><a href="#CMessage_m_lSize">m_lSize</a></strong></p>
+<p><strong><a href="#CMessage_m_pbyData">m_pbyData</a></strong></p>
+<p>&nbsp;</p>
+<p><a name="CMessage_Constructor"></a><strong>CMessage::CMessage</strong></p>
+<p><strong>CMessage();</strong></p>
+<p><strong>CMessage(_In_ CMessage&amp; message);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the constructor which initializes all the internal variables to a safe 
+state. There is also an overridden version which initializes from an existing instance.
+</p>
+<p><strong>See Also </strong><a href="#CMessage_Destructor">~CMessage</a></p>
+<p>&nbsp;</p>
+<p><a name="CMessage_Destructor"></a><strong>CMessage::~CMessage</strong></p>
+<p><strong>~CMessage();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the standard destructor for the class. Internally if calls
+<a href="#CMessage_Destructor">Deallocate</a> to ensure the heap memory is freed.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CMessage_Constructor">CMessage</a></p>
+<p>&nbsp;</p>
+<p><a name="CMessage_Allocate"></a><strong>CMessage::Allocate</strong></p>
+<p><strong>SECURITY_STATUS Allocate(_In_ ULONG </strong><em>lSize</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method allocates the specified amount of memory for the message using the 
+Win32 HeapAlloc SDK function.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value. SEC_E_OK is returned if the memory was allocated 
+or for example SEC_E_INSUFFICIENT_MEMORY if the memory could not be allocated.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CMessage_Deallocate">Deallocate</a></p>
+<p>&nbsp;</p>
+<p><a name="CMessage_Deallocate"></a><strong>CMessage::Deallocate</strong></p>
+<p><strong>SECURITY_STATUS Deallocate(</strong><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is the corollary to the Allocate method and frees the heap memory 
+currently assigned to the CMessage instance using the Win32 HeapFree SDK function.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value. SEC_E_OK will be returned if the memory was 
+de-allocated ok.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CMessage_Allocate">Allocate</a></p>
+<p>&nbsp;</p>
+<p><a name="CMessage_m_lSize"></a><strong>CMessage::m_lSize</strong></p>
+<p><strong>ULONG m_lSize;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>The size of the message in bytes.</p>
+<p>&nbsp;</p>
+<p><a name="CMessage_m_pbyData"></a><strong>CMessage::m_pbyData</strong></p>
+<p><strong>BYTE* m_pbyData;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>The actual message contents as a BYTE pointer.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL"></a>CSSL</strong></p>
+<p>CSSL is the most complex class provided by the class framework and implements 
+all the required logic to do client and server SSL handshakes, reading and writing 
+SSL messages, requesting SSL renegotiations, handling SSL renegotiations and sending 
+SSL close notify messages. This class is transport mechanism agnostic meaning that 
+you can implement SSL over any transport by overriding specific virtual methods 
+of this class.</p>
+<p>&nbsp;</p>
+<p><strong>Functions this class provides include:</strong></p>
+<p><b><a href="#CSSL_Constructor">CSSL</a></b></p>
+<p><strong><a href="#CSSL_Destructor">~CSSL</a></strong></p>
+<p><strong><a href="#CSSL_Audit">Audit</a></strong></p>
+<p><strong><a href="#CSSL_AuditData">AuditData</a></strong></p>
+<p><strong><a href="#CSSL_GetAuditFlags">GetAuditFlags</a></strong></p>
+<p><strong><a href="#CSSL_GetCachedCredentials">GetCachedCredentials</a></strong></p>
+<p><strong><a href="#CSSL_GetCertGetCertificateChainFlags">GetCertGetCertificateChainFlags</a></strong></p>
+<p><strong><a href="#CSSL_GetCertVerifyCertificateChainPolicyFlags">GetCertVerifyCertificateChainPolicyFlags</a></strong></p>
+<p><strong><a href="#CSSL_GetCheckServerCertificateRevocation">GetCheckServerCertificateRevocation</a></strong></p>
+<p><strong><a href="#CSSL_GetClientContextRequest">GetClientContextRequest</a></strong></p>
+<p><strong><a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a></strong></p>
+<p><strong><a href="#CSSL_GetServerContextRequest">GetServerContextRequest</a></strong></p>
+<p><strong><a href="#CSSL_GetVerifyClientCertificate">GetVerifyClientCertificate</a></strong></p>
+<p><strong><a href="#CSSL_GetVerifyServerCertificate">GetVerifyServerCertificate</a></strong></p>
+<p><strong><a href="#CSSL_PendingReadSize">PendingReadSize</a></strong></p>
+<p><strong><a href="#CSSL_ReceiveData">ReceiveData</a></strong></p>
+<p><strong><a href="#CSSL_SendCloseNotify">SendCloseNotify</a></strong></p>
+<p><strong><a href="#CSSL_SendData">SendData</a></strong></p>
+<p><strong><a href="#CSSL_SendEncrypted">SendEncrypted</a></strong></p>
+<p><strong><a href="#CSSL_SendEncryptedMessage">SendEncryptedMessage</a></strong></p>
+<p><strong><a href="#CSSL_SetAuditFlags">SetAuditFlags</a></strong></p>
+<p><strong><a href="#CSSL_SetCachedCredentials">SetCachedCredentials</a></strong></p>
+<p><strong><a href="#CSSL_SetCertGetCertifcateChainFlags">SetCertGetCertificateChainFlags</a></strong></p>
+<p><strong><a href="#CSSL_SetCertVerifyCertificateChainPolicyFlags">SetCertVerifyCertificateChainPolicyFlags</a></strong></p>
+<p><strong><a href="#CSSL_SetCheckServerCertificateRevocation">SetCheckServerCertificateRevocation</a></strong></p>
+<p><strong><a href="#CSSL_SetVerifyClientCertificate">SetVerifyClientCertificate</a></strong></p>
+<p><strong><a href="#CSSL_SetVerifyServerCertificate">SetVerifyServerCertificate</a></strong></p>
+<p><strong><a href="#CSSL_SSLAccept">SSLAccept</a></strong></p>
+<p><strong><a href="#CSSL_SSLConnect">SSLConnect</a></strong></p>
+<p><strong><a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient</a></strong></p>
+<p><strong><a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer</a></strong></p>
+<p><strong><a href="#CSSL_SSLRequestRenegotiationClient">SSLRequestRenegotiationClient</a></strong></p>
+<p><strong><a href="#CSSL_SSLRequestRenegotiationServer">SSLRequestRenegotiationServer</a></strong></p>
+<p><strong><a href="#CSSL_VerifyClientCertificate">VerifyClientCertificate</a></strong></p>
+<p><strong><a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a></strong></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_Constructor"></a><strong>CSSL::CSSL</strong></p>
+<p><strong>CSSL();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the constructor which initializes all the internal variables to a safe 
+state.</p>
+<p><strong>See Also </strong></p>
+<p><a href="#CSSL_Destructor">~CSSL</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_Destructor"></a><strong>CSSL::~CSSL</strong></p>
+<p><strong>~CSSL();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the standard destructor for the class. Internally if looks after freeing 
+up the read and write buffers which the class manages.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_Constructor">CSSL</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_Audit"></a><strong>CSSL::Audit</strong></p>
+<p><strong>virtual BOOL Audit(_In_z_ _Printf_format_string_ LPCTSTR </strong>
+<em>pszFormat</em><strong>, ...);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is called at various times throughout the lifetime of an CSSL instance 
+to perform auditing of the flow of code. Because the code to handle the various 
+SSL handshakes, sending and receiving of encrypted messages and logic to handle 
+renegotiation is quite involved, the CSSL class includes an extensible auditing 
+mechanism to help diagnose issues when they occur. The default implementation is 
+to call the Win32 API function &quot;OutputDebugString&quot;. Derived classes are 
+free to customize this behaviour.</p>
+<p><strong>Return Value</strong></p>
+<p>A boolean value to indicate if auditing was successful.</p>
+<p>&nbsp;</p>
+<p><a name="CSSL_AuditData"></a><strong>CSSL::AuditData</strong></p>
+<p><strong>virtual BOOL AuditData(_In_ LPCTSTR </strong><em>pszTitle</em><strong>, 
+_In_reads_bytes_(lSize) const BYTE* </strong><em>pbyData</em><strong>, _In_ ULONG
+</strong><em>lSize</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is similar to the Audit method except that it is called for logging 
+/ auditing actual data as opposed to generic events. This is useful to analyze the 
+data as the various SSL handshakes are performed and encrypted messages are sent 
+and received. The default implementation uses the Win32 API function &quot;CryptBinaryToString&quot; 
+to convert the data to printable data before it is displayed using the Win32 API 
+function &quot;OutputDebugString&quot;. Derived classes are free to customize this 
+behaviour.</p>
+<p><strong>Return Value</strong></p>
+<p>A boolean value to indicate if auditing was successful.</p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetAuditFlags"></a><strong>CSSL::GetAuditFlags</strong></p>
+<p><strong>DWORD GetAuditFlags() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns a bitmask which indicates what auditing events are logged 
+by the code. The events values are defined as follows: </p>
+<blockquote>
+	enum <br>{&nbsp;&nbsp;&nbsp;&nbsp; <br>&nbsp;AUDIT_DATA&nbsp;&nbsp; = 0x1,&nbsp;&nbsp;&nbsp;&nbsp;
+	<br>&nbsp;AUDIT_EVENTS = 0x02,&nbsp;&nbsp;&nbsp;&nbsp; <br>&nbsp;AUDIT_ERRORS 
+	= 0x04 <br>};</blockquote>
+<p><strong>Return Value</strong></p>
+<p>A DWORD value which specifies the current audit flags in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SetAuditFlags">SetAuditFlags</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetCachedCredentials"></a><strong>CSSL::GetCachedCredentials</strong></p>
+<p><strong>CCachedCredentials* GetCachedCredentials() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the CCachedCredentials value used by the class</p>
+<p><strong>Return Value</strong></p>
+<p>A pointer which specifies the current value in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SetCachedCredentials">SetCachedCredentials</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetCertGetCertificateChainFlags"></a><strong>CSSL::GetCertGetCertificateChainFlags</strong></p>
+<p><strong>DWORD GetCertGetCertificateChainFlags() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the DWORD value passed to the
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> method as the 
+dwCertGetCertificateChainFlags parameter</p>
+<p><strong>Return Value</strong></p>
+<p>A DWORD value which specifies the current value in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SetCertGetCertifcateChainFlags">SetCertGetCertificateChainFlags</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetCertVerifyCertificateChainPolicyFlags"></a><strong>CSSL::GetCertVerifyCertificateChainPolicyFlags</strong></p>
+<p><strong>DWORD GetCertVerifyCertificateChainPolicyFlags() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the DWORD value passed to the
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> method as the 
+dwCertVerifyCertificateChainPolicyFlags parameter</p>
+<p><strong>Return Value</strong></p>
+<p>A DWORD value which specifies the current value in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SetCertVerifyCertificateChainPolicyFlags">SetCertVerifyCertificateChainPolicyFlags</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetCheckServerCertificateRevocation"></a><strong>CSSL::GetCheckServerCertificateRevocation</strong></p>
+<p><strong>BOOL GetCheckServerCertificateRevocation() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns a boolean value which indicates if a server certificate is 
+checked for revocation when the <a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> 
+method is called.</p>
+<p><strong>Return Value</strong></p>
+<p>A BOOL value which specifies the current value in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SetCheckServerCertificateRevocation">SetCheckServerCertificateRevocation</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetClientContextRequest"></a><strong>CSSL::GetClientContextRequest</strong></p>
+<p><strong>virtual unsigned long GetClientContextRequest();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the context request value passed to the
+<a href="#CContext_Initialize">CContext::Initialize</a> call during calls to the
+<a href="#CSSL_SSLConnect">SSLConnect</a>,
+<a href="#CSSL_SSLRequestRenegotiationClient">SSLRequestRenegotiationClient</a>,
+<a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient</a> and
+<a href="#CSSL_SendCloseNotify">SendCloseNotify</a> methods. This value is used 
+by the SSPI infrastructure to specify low level details on the connection such as 
+detecting replay attempts etc.</p>
+<p><strong>Return Value</strong></p>
+<p>An unsigned long value which specifies the value to use.</p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetEncryptedMessage"></a><strong>CSSL::GetEncryptedMessage</strong></p>
+<p><strong>virtual SECURITY_STATUS GetEncryptedMessage(_Inout_ CMessage&amp;
+</strong><em>message</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is called to read one SSL message from the other side of the SSL 
+connection. If successful the message read will be returned in the &quot;message&quot; 
+parameter. Internally this function will call the <a href="#CSSL_ReceiveData">ReceiveData</a> 
+method if it needs more data to read an SSL message. This need to read additional 
+data is handled internally by this method by checking the return value from the 
+SDK DecryptMessage function for the return value SEC_E_INCOMPLETE_MESSAGE. This 
+function will also handle the case where more data is read from the other side of 
+the SSL connection to provide one SSL message. Subsequent calls to GetEncryptedMessage 
+will examine this pending read buffer to produce further SSL messages. If this method 
+returns the standard SEC_I_RENEGOTIATE error code then your code can decide to handle 
+renegotiation by calling either <a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient</a> 
+or <a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_PendingReadSize">PendingReadSize</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_GetServerContextRequest"></a><strong>CSSL::GetServerContextRequest</strong></p>
+<p><strong>virtual unsigned long GetServerContextRequest();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the context request value passed to the
+<a href="#CContext_Accept">CContext::Accept</a> call during calls to the
+<a href="#CSSL_SSLAccept">SSLAccept</a>,
+<a href="#CSSL_SSLRequestRenegotiationServer">SSLRequestRenegotiationServer</a>,
+<a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer</a> and
+<a href="#CSSL_SendCloseNotify">SendCloseNotify</a> methods. This value is used 
+by the SSPI infrastructure to specify low level details on the connection such as 
+detecting replay attempts etc.</p>
+<p><strong>Return Value</strong></p>
+<p>An unsigned long value which specifies the value to use.</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_GetVerifyClientCertificate"></a>CSSL::GetVerifyClientCertificate</strong></p>
+<p><strong>BOOL GetVerifyClientCertificate() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns a boolean value which indicates if a client certificate is 
+verified by calling the method <a href="#CSSL_VerifyClientCertificate">VerifyClientCertificate</a> 
+as the server SSL handshake is being performed.</p>
+<p><strong>Return Value</strong></p>
+<p>A BOOL value which specifies the current value in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetVerifyServerCertificate">SetVerifyServerCertificate</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_GetVerifyServerCertificate"></a>CSSL::GetVerifyServerCertificate</strong></p>
+<p><strong>BOOL GetVerifyServerCertificate() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns a boolean value which indicates if a server certificate is 
+verified by calling the method <a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> 
+as the client SSL handshake is being performed.</p>
+<p><strong>Return Value</strong></p>
+<p>A BOOL value which specifies the current value in operation</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SetVerifyClientCertificate">SetVerifyClientCertificate</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_PendingReadSize"></a>CSSL::PendingReadSize</strong></p>
+<p><strong>unsigned long PendingReadSize() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the current pending number of bytes which the class is maintaining 
+in its read buffers. The CSSL class maintains this buffer as it is possible that 
+the amount of data read is not enough for exactly one SSL message. The
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a> method is designed to 
+only return one message at a time and as such the CSSL class maintains any pending 
+data which has already been read from the other side of the SSL conversation but 
+has not been used yet by GetEncryptedMessage for returning one full SSL message.</p>
+<p><strong>Return Value</strong></p>
+<p>A unsigned long which specifies the current pending number of bytes</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_ReceiveData"></a>CSSL::ReceiveData</strong></p>
+<p><strong>virtual SECURITY_STATUS ReceiveData(_Out_writes_bytes_to_(lSize, lReceived) 
+BYTE* </strong><em>pbyData</em><strong>, _In_ ULONG </strong><em>lSize</em><strong>, 
+_Out_ ULONG&amp; </strong><em>lReceived</em><strong>) ;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is called during the SSL client and server handshake processes and 
+during calls to <a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a> when 
+more data is required to be read to produce one full SSL message. This method is 
+not implemented in CSSL and is implemented by derived classes such as
+<a href="#CSocket">CSocket</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>The implementation of this method should return a standard HRESULT to indicate 
+success or failure.</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SendCloseNotify"></a>CSSL::SendCloseNotify</strong></p>
+<p><strong>virtual SECURITY_STATUS SendCloseNotify(_In_ BOOL </strong><em>bOperatingAsClient</em><strong>) 
+;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method can be called to send a standard SSL close notify message to the 
+other end. This message is recommended to be send to the other side of the SSL conversation 
+when the SSL connection is being closed. The bOperatingAsClient value indicates 
+what part of the connection the calling code of this method is acting as. For example 
+if the current code is acting as the SSL client then bOperatingAsClient should be 
+set to TRUE when this function is being called. After calling this function no further 
+sending of data should be performed.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SendData"></a>CSSL::SendData</strong></p>
+<p><strong>virtual SECURITY_STATUS SendData(_In_reads_bytes_(lSize) const BYTE*
+</strong><em>pbyData</em><strong>, _In_ ULONG </strong><em>lSize</em><strong>) ;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is called during the SSL client and server handshakes process and 
+during calls to <a href="#CSSL_SendEncryptedMessage">SendEncryptedMessage</a> when 
+data is to be transmitted to the other end of the SSL connection. This method is 
+not implemented in CSSL and is implemented by derived classes such as
+<a href="#CSocket">CSocket</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>The implementation of this method should return a standard SECURITY_STATUS 
+value to indicate 
+success or failure.</p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SendEncrypted"></a><strong>CSSL::SendEncrypted</strong></p>
+<p><strong>virtual SECURITY_STATUS SendEncrypted(_In_reads_bytes_(lSize) 
+const BYTE* </strong><em>pbyData</em><strong>, _In_ ULONG </strong><em>lSize</em><strong>) 
+;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is a convenience wrapper over
+<a href="#CSSL_SendEncryptedMessage">SendEncryptedMessage</a> where if the total 
+amount of data to send is greater than the maximum size of an SSL message then more 
+than one call will be made to <a href="#CSSL_SendEncryptedMessage">SendEncryptedMessage</a> 
+internally in this method to send all the data.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SendEncryptedMessage">SendEncryptedMessage</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SendEncryptedMessage"></a><strong>CSSL::SendEncryptedMessage</strong></p>
+<p><strong>virtual SECURITY_STATUS SendEncryptedMessage(_In_reads_bytes_(lSize) 
+const BYTE* </strong><em>pbyData</em><strong>, _In_ ULONG </strong><em>lSize</em><strong>) 
+;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is called to write one SSL message to the other side of the SSL connection. 
+Internally this function will call the <a href="#CSSL_SendData">SendData</a> method 
+with the actual encrypted data of the SSL message.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SendEncrypted">SendEncrypted</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetAuditFlags"></a><strong>CSSL::SetAuditFlags</strong></p>
+<p><strong>void SetAuditFlags(_In_ DWORD </strong><em>dwAuditFlags</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the bitmask which indicates what auditing events are logged 
+by the code.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetAuditFlags">GetAuditFlags</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetCachedCredentials"></a><strong>CSSL::SetCachedCredentials</strong></p>
+<p><strong>void SetCachedCredentials(_In_ DCCachedCredentials* </strong><em>pCachedCredentials</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the cached credentials which this class will use.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetAuditFlags">GetCachedCredentials</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetCertGetCertifcateChainFlags"></a><strong>CSSL::SetCertGetCertificateChainFlags</strong></p>
+<p><strong>void SetCertGetCertificateChainFlags(_In_ DWORD </strong><em>dwFlags</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the DWORD value passed to the
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> method as the 
+dwCertGetCertificateChainFlags parameter</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetCertGetCertificateChainFlags">GetCertGetCertificateChainFlags</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetCertVerifyCertificateChainPolicyFlags"></a><strong>CSSL::SetCertVerifyCertificateChainPolicyFlags</strong></p>
+<p><strong>void SetCertVerifyCertificateChainPolicyFlags(_In_ DWORD </strong>
+<em>dwFlags</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the DWORD value passed to the
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> method as the 
+dwCertVerifyCertificateChainPolicyFlags parameter</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetCertGetCertificateChainFlags">GetCertVerifyCertificateChainPolicyFlags</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetCheckServerCertificateRevocation"></a><strong>CSSL::SetCheckServerCertificateRevocation</strong></p>
+<p><strong>void SetCheckServerCertificateRevocation(_In_ BOOL </strong><em>bCheckServerCertificateRevocation</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the boolean value used to decide if a server certificate is 
+checked for revocation when the <a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> 
+method is called.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetCheckServerCertificateRevocation">GetCheckServerCertificateRevocation</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetVerifyClientCertificate"></a><strong>CSSL::SetVerifyClientCertificate</strong></p>
+<p><strong>void SetVerifyClientCertificate(_In_ BOOL </strong><em>bVerifyClientCertificate</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets whether a client certificate is verified by calling the method
+<a href="#CSSL_VerifyClientCertificate">VerifyClientCertificate</a> as the server 
+SSL handshake is being performed.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetVerifyClientCertificate">GetVerifyClientCertificate</a></p>
+<p>&nbsp;</p>
+<p><a name="CSSL_SetVerifyServerCertificate"></a><strong>CSSL::SetVerifyServerCertificate</strong></p>
+<p><strong>void SetVerifyServerCertificate(_In_ BOOL </strong><em>bVerifyServerCertificate</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets whether a server certificate is verified by calling the method
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> as the client 
+SSL handshake is being performed.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_GetVerifyServerCertificate">GetVerifyServerCertificate</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SSLAccept"></a>CSSL::SSLAccept</strong></p>
+<p><strong>virtual SECURITY_STATUS SSLAccept(_In_ BOOL </strong><em>bClientAuth</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the main method which an SSL server calls to perform the initial SSL 
+handshake. Internally this method will call the <a href="#CSSL_ReceiveData">ReceiveData</a> 
+method if it needs to read more SSL handshake data. This need to read additional 
+data is handled internally by this method by checking the return value from the
+<a href="#CContext_Accept">CContext::Accept</a> method for SEC_E_INCOMPLETE_MESSAGE. 
+Internally this method will also call the <a href="#CSSL_SendData">SendData</a> 
+method when it needs to send a SSL handshake message data to the other side. The 
+bClientAuth value indicates if the ASC_REQ_MUTUAL_AUTH is passed to the
+<a href="#CContext_Accept">CContext::Accept</a> method. This method will also handle 
+the case where more data is read from the other side of the SSL connection for the 
+last received SSL handshake message. This is application level data which will be 
+made available to subsequent calls to <a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SSLConnect">SSLConnect</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SSLConnect"></a>CSSL::SSLConnect</strong></p>
+<p><strong>virtual SECURITY_STATUS SSLConnect(_In_ LPCTSTR </strong><em>pszServerName</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the main method which an SSL client calls to perform the initial SSL 
+handshake. Internally this method will call the <a href="#CSSL_ReceiveData">ReceiveData</a> 
+method if it needs to read more SSL handshake data. This need to read additional 
+data is handled internally by this method by checking the return value from the
+<a href="#CContext_Initialize">CContext::Initialize</a> method for SEC_E_INCOMPLETE_MESSAGE. 
+Internally this method will also call the <a href="#CSSL_SendData">SendData</a> 
+method when it needs to send a SSL handshake message data to the other side. The 
+pszServerName value should be the domain name of the server being connected to. 
+This will be used for SSL host name validation either automatically via Schannel 
+or manually via the <a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> 
+method. This method will also handle the case where more data is read from the other 
+side of the SSL connection for the last received SSL handshake message. This is 
+application level data which will be made available to subsequent calls to
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SSLAccept">SSLAccept</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SSLHandleRenegotiationClient"></a>CSSL::SSLHandleRenegotiationClient</strong></p>
+<p><strong>virtual SECURITY_STATUS SSLHandleRenegotiationClient(_In_ LPCTSTR
+</strong><em>pszServerName</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the method which SSL clients should call to handle a renegotiation when
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a> returns the standard 
+SEC_I_RENEGOTIATE error code. If your client does not want to handle the renegotiation 
+then you can treat the SEC_I_RENEGOTIATE error like any other error code returned. 
+Internally this method runs much the same code which <a href="#CSSL_SSLConnect">
+SSLConnect</a> uses. Internally this method will call the
+<a href="#CSSL_ReceiveData">ReceiveData</a> method if it needs to read more SSL 
+handshake data. This need to read additional data is handled internally by this 
+method by checking the return value from the <a href="#CContext_Initialize">CContext::Initialize</a> 
+method for SEC_E_INCOMPLETE_MESSAGE. Internally this method will also call the
+<a href="#CSSL_SendData">SendData</a> method when it needs to a send SSL handshake 
+message data to the other side. The pszServerName value should be the domain name 
+of the server being connected to. This will be used for SSL host name validation 
+either automatically via Schannel or manually via the
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> method. This 
+method will also handle the case where more data is read from the other side of 
+the SSL connection for the last received SSL handshake message. This is application 
+level data which will be made available to subsequent calls to
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SSLRequestRenegotiationClient">SSLRequestRenegotiationClient</a>,
+<a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer</a>,
+<a href="#CSSL_SSLRequestRenegotiationServer">SSLRequestRenegotiationServer</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SSLHandleRenegotiationServer"></a>CSSL::SSLHandleRenegotiationServer</strong></p>
+<p><strong>virtual SECURITY_STATUS SSLHandleRenegotiationServer(_In_ BOOL
+</strong><em>bClientAuth</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the method which SSL servers should call to handle a renegotiation when
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a> returns the standard 
+SEC_I_RENEGOTIATE error code. If your server does not want to handle the renegotiation 
+then you can treat the SEC_I_RENEGOTIATE error like any other error code returned. 
+Internally this method runs much the same code which <a href="#CSSL_SSLAccept">SSLAccept</a> 
+uses. Internally this method will call the <a href="#CSSL_ReceiveData">ReceiveData</a> 
+method if it needs to read more SSL handshake data. This need to read additional 
+data is handled internally by this method by checking the return value from the
+<a href="#CContext_Accept">CContext::Accept</a> method for SEC_E_INCOMPLETE_MESSAGE. 
+Internally this method will also call the <a href="#CSSL_SendData">SendData</a> 
+method when it needs to send a SSL handshake message data to the other side. The 
+bClientAuth value indicates if the ASC_REQ_MUTUAL_AUTH is passed to the
+<a href="#CContext_Accept">CContext::Accept</a> method. This method will also handle 
+the case where more data is read from the other side of the SSL connection for the 
+last received SSL handshake message. This is application level data which will be 
+made available to subsequent calls to <a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SSLRequestRenegotiationServer">SSLRequestRenegotiationServer</a>,
+<a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient</a>,
+<a href="#CSSL_SSLRequestRenegotiationClient">SSLRequestRenegotiationClient</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SSLRequestRenegotiationClient"></a>CSSL::SSLRequestRenegotiationClient</strong></p>
+<p><strong>virtual SECURITY_STATUS SSLRequestRenegotiationClient(_In_ LPCTSTR
+</strong><em>pszServerName</em><strong>);</strong> </p>
+<p><strong>Remarks</strong></p>
+<p>This is the method which an SSL clients should call to request a renegotiation. 
+The other end of the connection will then receive a SEC_I_RENEGOTIATE error when 
+it next calls <a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>. After 
+sending the renegotiation request, this method will then execute much the same code 
+which <a href="#CSSL_SSLConnect">SSLConnect</a> uses. Internally this method will 
+call the <a href="#CSSL_ReceiveData">ReceiveData</a> method if it needs to read 
+more SSL handshake data. This need to read additional data is handled internally 
+by this method by checking the return value from the
+<a href="#CContext_Initialize">CContext::Initialize</a> method which this method 
+for SEC_E_INCOMPLETE_MESSAGE. Internally this method will also call the
+<a href="#CSSL_SendData">SendData</a> method when it needs to send a SSL handshake 
+message data to the other side. The pszServerName value should be the domain name 
+of the server being connected to. This will be used for SSL host name validation 
+either automatically via Schannel or manually via the
+<a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a> method. This 
+method will also handle the case where more data is read from the other side of 
+the SSL connection for the last received SSL handshake message. This is application 
+level data which will be made available to subsequent calls to
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient</a>,
+<a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer, </a>
+<a href="#CSSL_SSLRequestRenegotiationServer">SSLRequestRenegotiationServer</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_SSLRequestRenegotiationServer"></a>CSSL::SSLRequestRenegotiationServer</strong></p>
+<p><strong>virtual SECURITY_STATUS SSLRequestRenegotiationServer(_In_ BOOL
+</strong><em>bClientAuth</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the method which an SSL servers should call to request a renegotiation. 
+The other end of the connection will then receive a SEC_I_RENEGOTIATE error when 
+it next calls <a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>. After 
+sending the renegotiation request, this method will then execute much the same code 
+which <a href="#CSSL_SSLAccept">SSLAccept</a> uses. Internally this method will 
+call the <a href="#CSSL_ReceiveData">ReceiveData</a> method if it needs to read 
+more SSL handshake data. This need to read additional data is handled internally 
+by this method by checking the return value from the <a href="#CContext_Accept">
+CContext::Accept</a> method for SEC_E_INCOMPLETE_MESSAGE. Internally this method 
+will also call the <a href="#CSSL_SendData">SendData</a> method when it needs to 
+send a SSL handshake message data to the other side. The bClientAuth value indicates 
+if the ASC_REQ_MUTUAL_AUTH is passed to the <a href="#CContext_Accept">CContext::Accept</a> 
+method. This method will also handle the case where more data is read from the other 
+side of the SSL connection for the last received SSL handshake message. This is 
+application level data which will be made available to subsequent calls to
+<a href="#CSSL_GetEncryptedMessage">GetEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer</a>,
+<a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient, </a>
+<a href="#CSSL_SSLRequestRenegotiationClient">SSLRequestRenegotiationClient</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_VerifyClientCertificate"></a>CSSL::VerifyClientCertificate</strong></p>
+<p><strong>virtual SECURITY_STATUS VerifyClientCertificate(_In_ CryptoWrappers::CCertificate&amp;
+</strong><em>clientCertificate</em>);</p>
+<p><strong>Remarks</strong></p>
+<p>This method is called during processing a SSL Server handshake via
+<a href="#CSSL_SSLAccept">SSLAccept</a> or
+<a href="#CSSL_SSLHandleRenegotiationServer">SSLHandleRenegotiationServer</a> if 
+the <a href="#CSSL_SetVerifyClientCertificate">SetVerifyClientCertificate</a> method 
+was called with a TRUE parameter. The default implementation of this method in this 
+method does not do anything. Derived classes are free to customize this behaviour. 
+The clientCertificate parameter is a C++ class encapsulation of the client certificate 
+which was provided.</p>
+<p><strong>Return Value</strong></p>
+<p>The implementation of this method should return a standard HRESULT to indicate 
+success or failure.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_VerifyServerCertificate">VerifyServerCertificate</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSSL_VerifyServerCertificate"></a>CSSL::VerifyServerCertificate</strong></p>
+<p><strong>virtual SECURITY_STATUS VerifyServerCertificate(_In_ CryptoWrappers::CCertificate&amp;
+</strong><em>serverCertificate</em><strong>, _In_opt_ LPCWSTR </strong><em>pszServerName</em><strong>, 
+_In_ DWORD </strong><em>dwCertGetCertificateChainFlags</em><strong>, _In_ DWORD
+</strong><em>dwCertVerifyCertificateChainPolicyFlags</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is called during processing a SSL client handshake via the
+<a href="#CSSL_SSLConnect">SSLConnect</a> or
+<a href="#CSSL_SSLHandleRenegotiationClient">SSLHandleRenegotiationClient</a> methods 
+if the <a href="#CSSL_SetVerifyServerCertificate">SetVerifyServerCertificate</a> 
+method was called with a TRUE parameter. The default implementation of this method 
+does a comprehensive check of the server certificate. Derived classes are free to 
+do their own custom validation. Note that if you do want to do custom validation 
+then you should probably turn of auto validation of the server certificate by Schannel 
+by using the SCH_CRED_MANUAL_CRED_VALIDATION flag in the call to the
+<a href="#CSSL_CreateClientCredentials">CreateClientCredentials</a> method and then 
+to enable VerifyServerCertificate to be called at runtime, you should use
+<a href="#CSSL_SetVerifyServerCertificate">SetVerifyServerCertificate</a>(TRUE). 
+For an example of this validation please review the SSLWrappersDemo.cpp module included 
+in the download. Derived classes are free to customize this behaviour. The serverCertificate 
+parameter is a C++ class encapsulation of the server certificate which was provided. 
+The pszServerName parameter is the value which was passed to
+<a href="#CSSL_SSLConnect">SSLConnect</a> or
+<a href="#CSSL_SSLRequestRenegotiationClient">SSLHandleRenegotiationClient</a>. 
+The dwCertGetCertificateChainFlags parameter is set via
+<a href="#CSSL_SetCertGetCertifcateChainFlags">SetCertGetCertificateChainFlags</a> 
+method and the default value is CERT_CHAIN_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT. 
+The dwCertVerifyCertificateChainPolicyFlags parameter is set via
+<a href="#CSSL_SetCertVerifyCertificateChainPolicyFlags">SetCertVerifyCertificateChainPolicyFlags</a> 
+method and the default value is 0.</p>
+<p><strong>Return Value</strong></p>
+<p>A standard SECURITY_STATUS value. Derived class implementations of this method 
+should return a standard HRESULT to indicate success or failure.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSSL_VerifyClientCertificate">VerifyClientCertificate</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSocket"></a>CSocket</strong></p>
+<p>CSocket is derived from CSSL and provides a concrete SSL implementation over 
+Windows sockets.</p>
+<p>&nbsp;</p>
+<p><strong>Functions this class provides include:</strong></p>
+<p><b><a href="#CSocket_Constructor">CSocket</a></b></p>
+<p><strong><a href="#CSocket_Attach">Attach</a></strong></p>
+<p><strong><a href="#CSocket_Detach">Detach</a></strong></p>
+<p><strong><a href="#CSocket_GetReadTimeout">GetReadTimeout</a></strong></p>
+<p><strong><a href="#CSocket_GetWriteTimeout">GetWriteTimeout</a></strong></p>
+<p><strong><a href="#CSocket_ReceiveData">ReceiveData</a></strong></p>
+<p><strong><a href="#CSocket_SendData">SendData</a></strong></p>
+<p><strong><a href="#CSocket_SetReadTimeout">SetReadTimeout</a></strong></p>
+<p><strong><a href="#CSocket_SetWriteTimeout">SetWriteTimeout</a></strong></p>
+<p>&nbsp;</p>
+<p><a name="CSocket_Constructor"></a><strong>CSocket::CSocket</strong></p>
+<p><strong>CSocket();</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This is the constructor which initializes all the internal variables to a safe 
+state.</p>
+<p>&nbsp;</p>
+<p><a name="CSocket_Attach"></a><strong>CSocket::Attach</strong></p>
+<p><strong>void Attach(_In_ SOCKET </strong><em>hSocket</em><strong>) </strong>
+</p>
+<p><strong>Remarks</strong></p>
+<p>This method allows you to associate a Windows socket handle of &quot;hSocket&quot; 
+with the current CSocket instance.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSocket_Detach">Detach</a></p>
+<p>&nbsp;</p>
+<p><a name="CSocket_Detach"></a><strong>CSocket::Detach</strong></p>
+<p><strong>SOCKET Detach() </strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method breaks the connection which a CSocket instance has with a Windows 
+socket handle. The return value from this method is the socket handle which has 
+just been detached.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSocket_Attach">Attach</a></p>
+<p>&nbsp;</p>
+<p><a name="CSocket_GetReadTimeout"></a><strong>CSocket::GetReadTimeout</strong></p>
+<p><strong>DWORD GetReadTimeout() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the timeout which the <a href="#CSocket_ReceiveData">ReceiveData</a> 
+method will wait for data from the socket before it will fail with an error code 
+of MAKE_HRESULT(SEVERITY_ERROR, FACILITY_WIN32, ERROR_TIMEOUT).</p>
+<p><strong>Return Value</strong></p>
+<p>A DWORD value which specifies the current timeout in operation in milliseconds.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSocket_SetReadTimeout">SetReadTimeout</a></p>
+<p>&nbsp;</p>
+<p><a name="CSocket_GetWriteTimeout"></a><strong>CSocket::GetWriteTimeout</strong></p>
+<p><strong>DWORD GetWriteTimeout() const;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method returns the timeout which the <a href="#CSocket_SendData">SendData</a> 
+method will wait for the socket to become writable before it will fail with an error 
+code of MAKE_HRESULT(SEVERITY_ERROR, FACILITY_WIN32, ERROR_TIMEOUT).</p>
+<p><strong>Return Value</strong></p>
+<p>A DWORD value which specifies the current timeout in operation in milliseconds.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSocket_SetWriteTimeout">SetWriteTimeout</a></p>
+<p>&nbsp;</p>
+<p><strong><a name="CSocket_ReceiveData"></a>CSocket::ReceiveData</strong></p>
+<p><strong>virtual SECURITY_STATUS ReceiveData(_Out_writes_bytes_to_(lSize, lReceived) 
+BYTE* </strong><em>pbyData</em><strong>, _In_ ULONG </strong><em>lSize</em><strong>, 
+_Out_ ULONG&amp; </strong><em>lReceived</em><strong>) ;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is a concrete implementation of <a href="#CSSL_ReceiveData">CSSL::ReceiveData</a> 
+specifically to receive SSL data over a Windows socket. Internally the method will 
+handle checking the socket for readability using the timeout specified by
+<a href="#CSocket_SetReadTimeout">SetReadTimeout</a> and fail the method if the 
+socket is not readable with a standard error value of MAKE_HRESULT(SEVERITY_ERROR, 
+FACILITY_WIN32, ERROR_TIMEOUT). Also any socket receive error will also be reported 
+by the return value from this method. This method will be called during the SSL 
+client and server handshake processes and during calls to
+<a href="#CSSL_GetEncryptedMessage">CSSL::GetEncryptedMessage</a> when more data 
+is required to be read to produce one full SSL message.</p>
+<p><strong>Return Value</strong></p>
+<p>Returns SEC_E_OK if data was received correctly otherwise a standard HRESULT 
+is returned to indicate failure.</p>
+<p>&nbsp;</p>
+<p><strong><a name="CSocket_SendData"></a>CSocket::SendData</strong></p>
+<p><strong>virtual SECURITY_STATUS SendData(_In_reads_bytes_(lSize) const BYTE* 
+pbyData, _In_ ULONG lSize) ;</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method is a concrete implementation of <a href="#CSSL_SendData">CSSL::SendData</a> 
+specifically to send SSL data over a Windows socket. Internally the method will 
+handle checking the socket for writability using the timeout specified by
+<a href="#CSocket_SetWriteTimeout">SetWriteTimeout</a>. This check is necessary 
+if the socket is in non-blocking mode. If the socket is not writable then the method 
+will fail with a standard error value of MAKE_HRESULT(SEVERITY_ERROR, FACILITY_WIN32, 
+ERROR_TIMEOUT). Also any socket send error will also be reported by the return value 
+from this method. This method will be called during the SSL client and server handshake 
+processes and during calls to <a href="#CSSL_SendEncryptedMessage">CSSL::SendEncryptedMessage</a>.</p>
+<p><strong>Return Value</strong></p>
+<p>Returns SEC_E_OK if data was sent correctly otherwise a standard HRESULT is returned 
+to indicate failure.</p>
+<p>&nbsp;</p>
+<p><a name="CSocket_SetReadTimeout"></a><strong>CSocket::SetReadTimeout</strong></p>
+<p><strong>void SetReadTimeout(_In_ DWORD </strong><em>dwReadTimeout</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the timeout which the <a href="#CSocket_ReceiveData">ReceiveData</a> 
+method will wait for data from the socket before it will fail. The dwReadTimeout 
+parameter is specified in milliseconds.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSocket_GetReadTimeout">GetReadTimeout</a></p>
+<p>&nbsp;</p>
+<p><a name="CSocket_SetWriteTimeout"></a><strong>CSocket::SetWriteTimeout</strong></p>
+<p><strong>void SetReadTimeout(_In_ DWORD </strong><em>dwWriteTimeout</em><strong>);</strong></p>
+<p><strong>Remarks</strong></p>
+<p>This method sets the timeout which the <a href="#CSocket_SendData">SendData</a> 
+method will wait for the socket to become writable before it will fail. The dwWriteTimeout 
+parameter is specified in milliseconds.</p>
+<p><strong>See Also</strong></p>
+<p><a href="#CSocket_GetWriteTimeout">GetWriteTimeout</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="Contact"></a>Contacting the Author</h2>
+<p>PJ Naughter<br>Email: <a href="mailto:pjna@naughter.com">pjna@naughter.com</a><br>
+Web: <a href="http://www.naughter.com">http://www.naughter.com</a><br>4 November 
+2015</p>
+
+</body>
+
+</html>
