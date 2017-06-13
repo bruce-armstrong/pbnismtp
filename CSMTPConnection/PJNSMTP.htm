@@ -2,7 +2,7 @@
 
 <head>
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
-<title>CPJNSMTPConnection v3.17</title>
+<title>CPJNSMTPConnection v3.22</title>
 <link href="naughter.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -10,8 +10,8 @@
 
 <h2>
 <img alt="PJNSMTP.gif (295 bytes)" height="38" src="PJNSMTP.gif" width="39" /><strong>CPJNSMTPConnection 
-v3.17</strong></h2>
-<p>Welcome to <strong>CPJNSMTPConnection</strong>, a collection of MFC classes to 
+v3.22</strong></h2>
+<p>Welcome to <strong>CPJNSMTPConnection</strong>, a collection of C++ classes to 
 support the SMTP protocol. SMTP for those not familiar with all the internet protocols 
 is the protocol used to send internet email. </p>
 <p>Also included with the SMTP classes in the download is a class called &quot;CPJNMD5Hash&quot; 
@@ -91,6 +91,13 @@ this kind without my explicit written consent.</p>
 	is implemented by CPJNSMTPConnection.</li>
 	<li><a href="http://www.ietf.org/rfc/rfc3207.txt">RFC 3207</a> define how STARTTLS 
 	operates.</li>
+	<li>
+	<a href="https://developers.google.com/gmail/xoauth2_protocol">
+	https://developers.google.com/gmail/xoauth2_protocol</a> defines the XOAUTH2 
+	Authentication protocol when used with the Gmail SMTP servers.</li>
+	<li>Initial Client Response (SASL-IR) support is described in
+	<a href="https://tools.ietf.org/html/rfc4959">
+	RFC 4959</a>. </li>
 </ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -102,8 +109,7 @@ this kind without my explicit written consent.</p>
 	model than using asynchronous sockets.</li>
 	<li>The code does not rely on the MFC socket classes. These classes have a number 
 	of shortcomings, one of which causes problems when they are used in NT services.</li>
-	<li>The code can be used in a console application without any problems (Again 
-	this is not the case for the MFC socket classes).</li>
+	<li>The code can be used in a console application without any problems.</li>
 	<li>A configurable timeout for the connection can be set through the class API.</li>
 	<li>The classes are fully Unicode compliant and include Unicode built options 
 	in the workspace file.</li>
@@ -120,8 +126,8 @@ this kind without my explicit written consent.</p>
 	are fully supported over SSL. For example to use Gmail you will require some 
 	form of authentication such as AUTH PLAIN because it does not operate as an 
 	open relay (which would facilitate spam).</li>
-	<li>Supports numerous authentication protocols including &quot;AUTH CRAM-MD5&quot;, &quot;AUTH 
-	LOGIN&quot;, &quot;AUTH PLAIN&quot; and &quot;AUTH NTLM&quot;. An &quot;Auto 
+	<li>Supports numerous authentication protocols including &quot;AUTH CRAM-MD5&quot;, 
+	&quot;AUTH LOGIN&quot;, &quot;AUTH PLAIN&quot;, &quot;AUTH NTLM&quot; &amp; &quot;AUTH XOAUTH2&quot;. An &quot;Auto 
 	Detection&quot; form of authentication is also supported. In this mode, the 
 	authentication protocols supported by the server are detected and the most appropriate 
 	protocol is used.</li>
@@ -136,6 +142,11 @@ this kind without my explicit written consent.</p>
 	different port.</li>
 	<li>Optionally supports Address header encoding.</li>
 	<li>As of v3.09, the classes are only supported on VC 2013 or later.</li>
+	<li>As of v3.18, the SMTP classes can now optionally compile without MFC. By 
+	default the classes now use STL classes and idioms but if you define 
+	CWSOCKET_MFC_EXTENSTIONS the classes will revert back to the MFC behaviour.</li>
+	<li>As of v3.21, the SMTP classes now support Initial Client Response 
+	(SASL-IR).</li>
 </ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1571,13 +1582,82 @@ smtp.SendMessage(m);</pre>
 	configuration dialog. </li>
 	<li>Verfied the code compiles cleanly using VC 2015. </li>
 </ul>
+<p><strong>V3.18 (11 August 2016)</strong></p>
+<ul>
+	<li>Reworked the SMTP classes to optionally compile without MFC. By default 
+	the classes now use STL classes and idioms but if you define 
+	CWSOCKET_MFC_EXTENSTIONS the classes will revert back to the MFC behaviour.</li>
+	<li>Reworked the CPJNSMPTBase64Encode class to use ATL::CHeapPtr.</li>
+	<li>Reworked the CPJNSMPTQPEncode class to use ATL::CHeapPtr. </li>
+	<li>Reworked the CPJNSMPTQEncode class to use ATL::CHeapPtr.</li>
+	<li>Added SAL annotations to all the code.</li>
+	<li>CPJNSMTPBodyPart::ConvertToUTF8 now internally uses ATL::CHeapPtr.</li>
+	<li>The CPJNSMTPMessage::m_CustomHeaders member variable is now 
+	public. As such the AddCustomHeader, GetCustomHeader, 
+	GetNumberOfCustomHeaders &amp; RemoveCustomHeader methods have been removed.</li>
+	<li>Removed unnecessary code which catches and rethrows a 
+	CPJNSMTPException exception from the version of 
+	CPJNSMTPConnection::SendMessage which sends a message from a memory buffer.</li>
+	<li>Reworked the CPJNSMTPMessage::ParseMultipleRecipients method to 
+	avoid the use of the C++ new allocator.</li>
+	<li>Reworked the CPJNSMTPMessage::AddMultipleAttachments method to 
+	avoid the use of the C++ new allocator.</li>
+	<li>Reworked the sample app to exercise the SendMessage method which 
+	sends from a memory buffer.</li>
+	<li>Removed defunct comments about VC 6 in CPJNMD5 class. </li>
+	<li>Reworked the CPJNMD5 class to optionally compile without MFC. By default 
+	the class now uses STL classes and idioms but if you define 
+	CPJNMD5_MFC_EXTENSIONS the classes will revert back to the MFC behaviour. </li>
+	<li>Reworked the CNTLMClientAuth class to optionally compile without MFC. By 
+	default the class now uses STL classes and idioms but if you define 
+	CNTLMCLIENTAUTH_MFC_EXTENSIONS the class will revert back to the MFC 
+	behaviour. </li>
+</ul>
+<p><strong>V3.19 (17 August 2016)</strong></p>
+<ul>
+	<li>Reworked CPJNSMTPConnection class to be inherited from 
+	SSLWrappers::CSocket. This allows for easier overloading of the various 
+	SSLWrappers class framework virtual functions </li>
+</ul>
+<p><strong>V3.20 (19 August 2016)</strong></p>
+<ul>
+	<li>Reworked the CPJNSMTPException::GetErrorMessage to not bother putting 
+	the last response into the return error message text. </li>
+	<li>CPJNSMTPConnection class is now protected inherited from 
+	SSLWrappers::CSocket. </li>
+</ul>
+<p><strong>V3.21 (19 September 2016)</strong></p>
+<ul>
+	<li>Added support for XOAUTH2 authentication. For more information 
+	about this SMTP authentication mechanism please see
+	<a href="https://developers.google.com/gmail/xoauth2_protocol">
+	https://developers.google.com/gmail/xoauth2_protocol</a>.</li>
+	<li>Reworked the CPJNSMTPConnection::AuthPlain to provide the userid in the 
+	authorization identity value. This is a more compatible form of the auth 
+	request and avoids issues using AuthPlain against the gmail SMTP servers. </li>
+	<li>Added Initial Client Response (SASL-IR) support to the AuthLogin, 
+	AuthPlain &amp; AuthXOAUTH2 methods. For more information about SASL-IR please 
+	see <a href="https://tools.ietf.org/html/rfc4959">
+	https://tools.ietf.org/html/rfc4959</a>. </li>
+</ul>
+<p><strong>V3.22 (13 October 2016)</strong></p>
+<ul>
+	<li>Fixed a bug in the declaration of the CPJNSMTPConnection class when the CPJNSMTP_NONTLM preprocessor value is defined. Thanks to Chris 
+	Korda for reporting this issue.</li>
+	<li>Provided a new overload of the CPJNSMTPBodyPart::AddChildBodyPart method to allow an already heap allocated bodyPart to be added.</li>
+	<li>Provided a new overload of the CPJNSMTPBodyPart::InsertChildBodyPart method to allow an already heap allocated bodyPart to be added.</li>
+	<li>Made most of the methods of CPJNSMTPBodyPart virtual to allow for easier end user customization of its functionality.</li>
+	<li>Provided a new overload of the CPJNSMTPMessage::AddChildBodyPart method to allow an already heap allocated bodyPart to be added.</li>
+	<li>Provided a new overload of the CPJNSMTPMessage::InsertChildBodyPart method to allow an already heap allocated bodyPart to be added.</li>
+	<li>Made most of the methods of CPJNSMTPMessage virtual to allow for easier end user customization of its functionality.</li>
+</ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h2><a name="Contact"></a><strong>Contacting the Author</strong></h2>
 <p>PJ Naughter<br />
 Email: <a href="mailto:pjna@naughter.com">pjna@naughter.com</a><br>Web:
-<a href="http://www.naughter.com">http://www.naughter.com</a><br>12 May 2016</p>
+<a href="http://www.naughter.com">http://www.naughter.com</a><br>13 October 2016</p>
 
 </body>
 

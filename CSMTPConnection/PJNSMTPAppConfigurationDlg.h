@@ -37,6 +37,7 @@ public:
   CString m_sEncodingCharset;
   DWORD m_Priority;
   BOOL  m_bMDN;
+  BOOL  m_bInitialClientResponse;
 
 protected:
   virtual void DoDataExchange(CDataExchange* pDX);

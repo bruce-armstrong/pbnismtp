@@ -34,6 +34,12 @@ History: PJN / 05-09-2005 1. Function pointer to CompleteAuthToken is now constr
                           4. General cleanup of the CNTLMClientAuth::GenClientContext method
                           5. Made the CNTLMClientAuth destructor virtual
          PJN / 16-01-2015 1. Updated copright details
+         PJN / 11-08-2016 1. Minor review and tidy up of the CNTLMClientAuth code
+                          2. Reworked the class to optionally compile without MFC. By default the class now uses STL 
+                          classes and idioms but if you define CNTLMCLIENTAUTH_MFC_EXTENSIONS the class will revert back to the
+                          MFC behaviour.
+         PJN / 14-11-2016 1. Updated the non MFC code path in CNTLMClientAuth::NTLMAuthenticate to handle a NULL pszUsername
+                          parameter being passed. Thanks to Christopher Craft for reporting this issue.
 
 Copyright (c) 2005 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
@@ -64,9 +70,11 @@ to maintain a single distribution point for the source code.
 
 #pragma comment(lib, "Secur32.lib") //Automatically link in the Secur32 dll
 
+#ifdef CNTLMCLIENTAUTH_MFC_EXTENSIONS
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif //#ifdef _DEBUG
+#endif //#ifdef CNTLMCLIENTAUTH_MFC_EXTENSIONS
 
 
 //////////////// Implementation ///////////////////////////////////////////////
@@ -100,21 +108,43 @@ void CNTLMClientAuth::ReleaseHandles()
   }
 }
 
-SECURITY_STATUS CNTLMClientAuth::NTLMAuthenticate(LPCTSTR pszUserName, LPCTSTR pszPassword)
+SECURITY_STATUS CNTLMClientAuth::NTLMAuthenticate(_In_opt_z_ LPCTSTR pszUsername, _In_opt_z_ LPCTSTR pszPassword)
 {
-  //allow "pszUserName" to be of the format "DomainName\UserName"
+  //Allow "pszUsername" parameter to be of the format "DomainName\UserName"
   LPCTSTR pszDomain = _T("");
-  CString sUserName(pszUserName);
-  int nSlashSeparatorOffset = sUserName.Find(_T('\\'));
+#ifdef CNTLMCLIENTAUTH_MFC_EXTENSIONS
+  CString sUsername(pszUsername);
+  int nSlashSeparatorOffset = sUsername.Find(_T('\\'));
   CString sDomain;
-  CString sUserNameWithoutDomain;
+  CString sUsernameWithoutDomain;
   if (nSlashSeparatorOffset != -1)
   {
-    sDomain = sUserName.Left(nSlashSeparatorOffset);
+    sDomain = sUsername.Left(nSlashSeparatorOffset);
     pszDomain = sDomain.operator LPCTSTR();
-    sUserNameWithoutDomain = sUserName.Mid(nSlashSeparatorOffset + 1);
-    pszUserName = sUserNameWithoutDomain.operator LPCTSTR();
+    sUsernameWithoutDomain = sUsername.Mid(nSlashSeparatorOffset + 1);
+    pszUsername = sUsernameWithoutDomain.operator LPCTSTR();
   }
+#else
+#ifdef _UNICODE
+  std::wstring sUsername(pszUsername != NULL ? pszUsername : L"");
+  std::wstring::size_type nSlashSeparatorOffset = sUsername.find(_T('\\'));
+  std::wstring sDomain;
+  std::wstring sUsernameWithoutDomain;
+  if (nSlashSeparatorOffset != std::wstring::npos)
+#else
+  std::string sUsername(pszUsername != NULL ? pszUsername : "");
+  std::string::size_type nSlashSeparatorOffset = sUsername.find(_T('\\'));
+  std::string sDomain;
+  std::string sUsernameWithoutDomain;
+  if (nSlashSeparatorOffset != std::string::npos)
+#endif //#ifdef _UNICODE
+  {
+    sDomain = sUsername.substr(0, nSlashSeparatorOffset);
+    pszDomain = sDomain.c_str();
+    sUsernameWithoutDomain = sUsername.substr(nSlashSeparatorOffset + 1);
+    pszUsername = sUsernameWithoutDomain.c_str();
+  }
+#endif //#ifdef CNTLMCLIENTAUTH_MFC_EXTENSIONS
 
   //Release the handles before we try to authenticate (we do this here to ensure any previous calls
   //to NTLMAuthenticate which throw exceptions are cleaned up prior to any new calls to DoNTLMAuthentication)
@@ -132,7 +162,7 @@ SECURITY_STATUS CNTLMClientAuth::NTLMAuthenticate(LPCTSTR pszUserName, LPCTSTR p
   m_dwBufferSize = pSecInfo->cbMaxToken;
 
   //Call the helper function which does all the work
-  ss = DoNTLMAuthentication(pszUserName, pszPassword, pszDomain);
+  ss = DoNTLMAuthentication(pszUsername, pszPassword, pszDomain);
 
   //Now free up the handles now that we are finished the authentication (note it is not critical that this code is
   //called since the various NTLMAuthPhase(*) functions may throw exceptions)
@@ -141,12 +171,12 @@ SECURITY_STATUS CNTLMClientAuth::NTLMAuthenticate(LPCTSTR pszUserName, LPCTSTR p
   return ss;
 }
 
-BOOL CNTLMClientAuth::SEC_SUCCESS(SECURITY_STATUS ss)
+BOOL CNTLMClientAuth::SEC_SUCCESS(_In_ SECURITY_STATUS ss)
 {
   return (ss == SEC_E_OK) || (ss == SEC_I_COMPLETE_AND_CONTINUE) || (ss == SEC_I_COMPLETE_NEEDED) || (ss == SEC_I_CONTINUE_NEEDED);
 }
 
-SECURITY_STATUS CNTLMClientAuth::DoNTLMAuthentication(LPCTSTR pszUserName, LPCTSTR pszPassword, LPCTSTR pszDomain)
+SECURITY_STATUS CNTLMClientAuth::DoNTLMAuthentication(_In_opt_z_ LPCTSTR pszUsername, _In_opt_z_ LPCTSTR pszPassword, _In_opt_z_ LPCTSTR pszDomain)
 {
   //Allocate some heap space to contain the in and out buffers for SSPI
   ATL::CHeapPtr<BYTE> inBuf;
@@ -160,7 +190,7 @@ SECURITY_STATUS CNTLMClientAuth::DoNTLMAuthentication(LPCTSTR pszUserName, LPCTS
   DWORD cbMaxMessage = m_dwBufferSize;
   DWORD cbOut = cbMaxMessage;
   BOOL bDone = FALSE;
-  SECURITY_STATUS ss = GenClientContext(NULL, 0, outBuf.m_pData, &cbOut, &bDone, pszUserName, pszPassword, pszDomain);
+  SECURITY_STATUS ss = GenClientContext(NULL, 0, outBuf.m_pData, &cbOut, &bDone, pszUsername, pszPassword, pszDomain);
   if (!SEC_SUCCESS(ss))
     return ss;
 
@@ -177,7 +207,7 @@ SECURITY_STATUS CNTLMClientAuth::DoNTLMAuthentication(LPCTSTR pszUserName, LPCTS
 
     cbOut = cbMaxMessage;
 
-    ss = GenClientContext(inBuf.m_pData, cbIn, outBuf.m_pData, &cbOut, &bDone, pszUserName, pszPassword, pszDomain);
+    ss = GenClientContext(inBuf.m_pData, cbIn, outBuf.m_pData, &cbOut, &bDone, pszUsername, pszPassword, pszDomain);
     if (!SEC_SUCCESS(ss))
       return ss;
 
@@ -189,23 +219,28 @@ SECURITY_STATUS CNTLMClientAuth::DoNTLMAuthentication(LPCTSTR pszUserName, LPCTS
   return ss;
 }
 
-SECURITY_STATUS CNTLMClientAuth::GenClientContext(BYTE* pIn, DWORD cbIn, BYTE* pOut, DWORD* pcbOut, BOOL* pfDone, LPCTSTR pszUserName, LPCTSTR pszPassword, LPCTSTR pszDomain)
+SECURITY_STATUS CNTLMClientAuth::GenClientContext(_In_reads_bytes_opt_(cbIn) BYTE* pIn, _In_ DWORD cbIn, _Out_writes_bytes_(*pcbOut) BYTE* pOut, _Inout_ DWORD* pcbOut, _Inout_ BOOL* pfDone, _In_opt_z_ LPCTSTR pszUserName, _In_opt_z_ LPCTSTR pszPassword, _In_opt_z_ LPCTSTR pszDomain)
 {
   //Validate our parameters
-  AFXASSUME(pcbOut != NULL);
-  AFXASSUME(pfDone != NULL);
+  ATLASSUME(pcbOut != NULL);
+  ATLASSUME(pfDone != NULL);
 
   SECURITY_STATUS ss = SEC_E_OK;
-  if (NULL == pIn)  
+  if (pIn == NULL)  
   {   
     SEC_WINNT_AUTH_IDENTITY authInfo;
     memset(&authInfo, 0, sizeof(authInfo));
     void* pvLogonID = NULL;
-    if ((pszUserName != NULL) && (lstrlen(pszUserName)))
+    size_t nUserNameLength = 0;
+    if (pszUserName != NULL)
+      nUserNameLength = _tcslen(pszUserName);
+    if (nUserNameLength)
     {
-      authInfo.UserLength = lstrlen(pszUserName);
-      authInfo.DomainLength = lstrlen(pszDomain);
-      authInfo.PasswordLength = lstrlen(pszPassword);
+      authInfo.UserLength = static_cast<unsigned long>(nUserNameLength);
+      ATLASSUME(pszDomain != NULL);
+      authInfo.DomainLength = static_cast<unsigned long>(_tcslen(pszDomain));
+      ATLASSUME(pszPassword != NULL);
+      authInfo.PasswordLength = static_cast<unsigned long>(_tcslen(pszPassword));
     #ifdef _UNICODE
       authInfo.User = reinterpret_cast<unsigned short*>(const_cast<LPTSTR>(pszUserName));
       authInfo.Domain = reinterpret_cast<unsigned short*>(const_cast<LPTSTR>(pszDomain));

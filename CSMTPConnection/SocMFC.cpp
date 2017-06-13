@@ -223,14 +223,6 @@ BOOL CWSocketException::GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszErr
   return bSuccess;
 }
 
-CWSocketException::~CWSocketException(void)
-{
-}
-
-void CWSocketException::Delete(void)
-{
-}
-
 #ifdef CWSOCKET_MFC_EXTENSIONS
 CString CWSocketException::GetErrorMessage()
 {

@@ -45,13 +45,15 @@
     <OutDir>.\Unicode_Release\</OutDir>
     <IntDir>.\Unicode_Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)126</TargetName>
+    <TargetName>$(ProjectName)125</TargetName>
+    <TargetExt>.pbx</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'">
     <OutDir>.\Unicode_Debug\</OutDir>
     <IntDir>.\Unicode_Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)126d</TargetName>
+    <TargetName>$(ProjectName)125</TargetName>
+    <TargetExt>.pbx</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Release|Win32'">
     <Midl>
@@ -65,7 +67,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.6\SDK\PBNI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.5\SDK\PBNI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -85,12 +87,12 @@
       <AdditionalOptions>/IGNORE:4089 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.6\SDK\PBNI\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ProgramDatabaseFile>.\Unicode_Release/pbnismtp126.pdb</ProgramDatabaseFile>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.5\SDK\PBNI\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
-      <ImportLibrary>.\Unicode_Release/pbnismtp126.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <OutputFile>$(OutDir)$(TargetName).pbx</OutputFile>
     </Link>
@@ -113,7 +115,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.6\SDK\PBNI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.5\SDK\PBNI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -133,7 +135,7 @@
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Sybase\PowerBuilder 12.5\SDK\PBNI\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -159,12 +161,14 @@
     <ClCompile Include="CSMTPConnection\PJNNTLMAuth.cpp" />
     <ClCompile Include="CSMTPConnection\PJNSMTP.cpp" />
     <ClCompile Include="CSMTPConnection\SocMFC.cpp" />
+    <ClCompile Include="CSMTPConnection\StdAfx.cpp" />
     <ClCompile Include="pbnismtp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSMTPConnection\PJNNTLMAuth.h" />
     <ClInclude Include="CSMTPConnection\PJNSMTP.h" />
     <ClInclude Include="CSMTPConnection\SocMFC.h" />
+    <ClInclude Include="CSMTPConnection\StdAfx.h" />
     <ClInclude Include="pbnismtp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

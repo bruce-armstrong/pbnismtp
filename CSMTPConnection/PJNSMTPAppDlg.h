@@ -2,24 +2,24 @@
 
 #include "PJNSMTP.h"
 
+
 class CPJNSMTPAppDlg : public CDialog
 {
 public:
   CPJNSMTPAppDlg(CWnd* pParent = NULL);
 
   enum { IDD = IDD_MAIN_DIALOG };
-  CEdit	                                   m_wndBody;
-  CString	                                 m_sBCC;
-  CString	                                 m_sBody;
-  CString	                                 m_sCC;
-  CString	                                 m_sFile;
-  CString	                                 m_sSubject;
-  CString	                                 m_sTo;
-  BOOL	                                   m_bDirectly;
-  BOOL	                                   m_bDNSLookup;
-  CString	                                 m_sAddress;
-  CString	                                 m_sHost;
-  CString	                                 m_sName;
+  CEdit                                    m_wndBody;
+  CString                                  m_sBCC;
+  CString                                  m_sBody;
+  CString                                  m_sCC;
+  CString                                  m_sFile;
+  CString                                  m_sSubject;
+  CString                                  m_sTo;
+  BOOL                                     m_bDNSLookup;
+  CString                                  m_sAddress;
+  CString                                  m_sHost;
+  CString                                  m_sName;
   int                                      m_nPort;
   CPJNSMTPConnection::AuthenticationMethod m_Auth;
   CString                                  m_sUsername;
@@ -40,6 +40,7 @@ public:
   BOOL                                     m_bDSNDelay;
   BOOL                                     m_bDSNHeaders;
   BOOL                                     m_bMDN;
+  BOOL                                     m_bInitialClientResponse;
 
   virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -48,6 +49,8 @@ protected:
 
   static UINT _SendingWorkerThread(LPVOID lpParam);
   CPJNSMTPMessage* CreateMessage();
+  void SendFromDisk(BOOL bUI);
+  void SendFromMemory(BOOL bUI);
 
   virtual BOOL OnInitDialog();
   afx_msg void OnPaint();
@@ -57,7 +60,10 @@ protected:
   afx_msg void OnBrowseFile();
   afx_msg void OnDestroy();
   afx_msg void OnSendFromDisk();
-  afx_msg void OnSave();
+  afx_msg void OnSendFromDiskWithUI();
+  afx_msg void OnSendFromMemory();
+  afx_msg void OnSendFromMemoryWithUI();
+  afx_msg void OnSaveToDisk();
 
   DECLARE_MESSAGE_MAP()
 };

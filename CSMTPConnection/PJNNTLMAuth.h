@@ -46,20 +46,20 @@ public:
   virtual ~CNTLMClientAuth();
 
 //Methods
-  SECURITY_STATUS NTLMAuthenticate(LPCTSTR pszUserName = NULL, LPCTSTR pszPassword = NULL);
+  SECURITY_STATUS NTLMAuthenticate(_In_opt_z_ LPCTSTR pszUsername = NULL, _In_opt_z_ LPCTSTR pszPassword = NULL);
   DWORD GetBufferSize() const { return m_dwBufferSize; };
-  void SetBufferSize(DWORD dwBufferSize) { m_dwBufferSize = dwBufferSize; };
+  void SetBufferSize(_In_ DWORD dwBufferSize) { m_dwBufferSize = dwBufferSize; };
 
 //Virtual methods
-  virtual SECURITY_STATUS NTLMAuthPhase1(PBYTE pBuf, DWORD cbBuf) = 0;
-  virtual SECURITY_STATUS NTLMAuthPhase2(PBYTE pBuf, DWORD cbBuf, DWORD* pcbRead) = 0;
-  virtual SECURITY_STATUS NTLMAuthPhase3(PBYTE pBuf, DWORD cbBuf) = 0;
+  virtual SECURITY_STATUS NTLMAuthPhase1(_In_reads_bytes_(cbBuf) PBYTE pBuf, _In_ DWORD cbBuf) = 0;
+  virtual SECURITY_STATUS NTLMAuthPhase2(_Inout_updates_(cbBuf) PBYTE pBuf, _In_ DWORD cbBuf, _Out_ DWORD* pcbRead) = 0;
+  virtual SECURITY_STATUS NTLMAuthPhase3(_In_reads_bytes_(cbBuf) PBYTE pBuf, _In_ DWORD cbBuf) = 0;
 
 protected:
 //Misc Methods
-  static BOOL SEC_SUCCESS(SECURITY_STATUS ss);
-  SECURITY_STATUS GenClientContext(BYTE* pIn, DWORD cbIn, BYTE* pOut, DWORD* pcbOut, BOOL* pfDone, LPCTSTR pszUserName, LPCTSTR pszPassword, LPCTSTR pszDomain);
-  SECURITY_STATUS DoNTLMAuthentication(LPCTSTR pszUserName, LPCTSTR pszPassword, LPCTSTR pszDomain);
+  static BOOL SEC_SUCCESS(_In_ SECURITY_STATUS ss);
+  SECURITY_STATUS GenClientContext(_In_reads_bytes_opt_(cbIn) BYTE* pIn, _In_ DWORD cbIn, _Out_writes_bytes_(*pcbOut) BYTE* pOut, _Inout_ DWORD* pcbOut, _Inout_ BOOL* pfDone, _In_opt_z_ LPCTSTR pszUserName, _In_opt_z_ LPCTSTR pszPassword, _In_opt_z_ LPCTSTR pszDomain);
+  SECURITY_STATUS DoNTLMAuthentication(_In_opt_z_ LPCTSTR pszUsername, _In_opt_z_ LPCTSTR pszPassword, _In_opt_z_ LPCTSTR pszDomain);
   void ReleaseHandles();
   
 //Member variables
