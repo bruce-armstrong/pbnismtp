@@ -24,11 +24,12 @@
 #define IDS_PJNSMTP_UNEXPECTED_AUTH_PLAIN_RESPONSE 530
 #define IDS_PJNSMTP_UNEXPECTED_STARTTLS_RESPONSE 531
 #define IDS_PJNSMTP_UNEXPECTED_AUTH_CRAM_MD5_RESPONSE 535
-#define IDS_PJNSMTP_UNEXPECTED_CRAMD_MD5_DIGEST_RESPONSE 536
+#define IDS_PJNSMTP_UNEXPECTED_CRAM_MD5_DIGEST_RESPONSE 536
 #define IDS_PJNSMTP_FAILED_NTLM_AUTHENTICATION 537
 #define IDS_PJNSMTP_UNEXPECTED_AUTH_NTLM_RESPONSE 538
 #define IDS_PJNSMTP_FAIL_BASE64_DECODE  539
 #define IDS_PJNSMTP_FAIL_BASE64_ENCODE  540
+#define IDS_PJNSMTP_UNEXPECTED_XOAUTH2_RESPONSE 541
 #define IDS_PJNSMTP_GRACEFUL_DISCONNECT 548
 #define IDS_PJNSMTP_FAIL_QP_ENCODE      549
 #define IDS_PJNSMTP_FAIL_Q_ENCODE       550
@@ -56,20 +57,23 @@
 #define IDC_ENCODING                    1021
 #define IDC_MIME                        1022
 #define IDC_HTML                        1023
-#define IDC_SAVE                        1024
 #define IDC_PRIORITY                    1024
+#define IDC_SAVE_TO_DISK                1024
 #define IDC_SEND_FROM_DISK              1025
 #define IDC_CONNECTIONTYPE              1025
-#define IDC_DIRECTLY                    1026
 #define IDC_SSL_PROTOCOL                1026
 #define IDC_PROGRESS1                   1027
 #define IDC_DNS_LOOKUP                  1027
+#define IDC_SEND_FROM_DISK_WITH_UI      1028
+#define IDC_SEND_FROM_MEMORY            1029
 #define IDC_DSN                         1030
+#define IDC_SEND_FROM_MEMORY_WITH_UI    1030
 #define IDC_DSN_SUCCESS                 1031
 #define IDC_DSN_FAILURE                 1032
 #define IDC_DSN_DELAY                   1033
 #define IDC_DSN_HEADERS                 1034
 #define IDC_MDN                         1035
+#define IDC_INITIAL_CLIENT_RESPONSE     1036
 
 // Next default values for new objects
 // 

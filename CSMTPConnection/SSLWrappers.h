@@ -30,8 +30,15 @@ History: PJN / 22-10-2014 1. Initial public release
                           of the buffer to pass to CertNameToStr API.
                           4. Reworked various places which allocates heap memory to use ATL::CHeapPtr instead 
                           of raw calls to HeapAlloc.
+         PJN / 16-10-2016 1. Updated copyright details.
+                          2. Updated the sample app to compile using the latest version of the author's 
+                          CWSocket class.
+                          3. Binaries of the demo app are now included in the SSLWrappers zip file download.
+         PJN / 22-10-2016 1. Updated the sample app to do better logging of the certificate & connection
+                          details. The sample app now logs details if the cipher used is CALG_ECDH_EPHEM.
+                          2. Fixed up the audit text in some of the code when allocating heap memory.
 
-Copyright (c) 2014 - 2015 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 2014 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 
@@ -1314,7 +1321,7 @@ public:
       if (!auditString.Allocate(cchString))
       {
         if (m_dwAuditFlags & AUDIT_ERRORS)
-          Audit(_T("CSSL::AuditData, %s, failed call to HeapAlloc, Error:%u\n"), pszTitle, GetLastError());
+          Audit(_T("CSSL::AuditData, %s, failed call to allocate memory for display string, Error:%u\n"), pszTitle, GetLastError());
 
         return FALSE;
       }
@@ -1365,7 +1372,7 @@ protected:
     {
       //Do auditing if necessary
       if (m_dwAuditFlags & AUDIT_ERRORS)  
-        Audit(_T("CSSL::AllocateSendBuffer, failed call to HeapAlloc, Error:%u\n"), GetLastError());
+        Audit(_T("CSSL::AllocateSendBuffer, failed call to allocate send buffer, Error:%u\n"), GetLastError());
 
       return SEC_E_INSUFFICIENT_MEMORY;
     }

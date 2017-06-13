@@ -119,40 +119,42 @@ IDR_MAINFRAME           ICON                    "res\\Mail.ico"
 // Dialog
 //
 
-IDD_MAIN_DIALOG DIALOGEX 0, 0, 369, 266
+IDD_MAIN_DIALOG DIALOGEX 0, 0, 369, 276
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Demo app for CPJNSMTPConnection MFC class"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     LTEXT           "&To:",IDC_STATIC,7,9,12,8
-    EDITTEXT        IDC_TO,32,7,277,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TO,32,7,330,14,ES_AUTOHSCROLL
     LTEXT           "&CC:",IDC_STATIC,7,25,12,8
-    EDITTEXT        IDC_CC,32,23,277,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_CC,32,23,330,14,ES_AUTOHSCROLL
     LTEXT           "&BCC:",IDC_STATIC,8,41,17,8
-    EDITTEXT        IDC_BCC,32,39,277,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_BCC,32,39,330,14,ES_AUTOHSCROLL
     LTEXT           "&File(s):",IDC_STATIC,7,57,21,8
     EDITTEXT        IDC_FILE,32,55,277,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDC_BROWSE_FILE,311,55,50,14
+    PUSHBUTTON      "...",IDC_BROWSE_FILE,312,55,50,14
     LTEXT           "&Subject:",IDC_STATIC,7,81,27,8
-    EDITTEXT        IDC_SUBJECT,7,91,303,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SUBJECT,7,91,355,14,ES_AUTOHSCROLL
     LTEXT           "&Body",IDC_STATIC,7,111,17,8
-    EDITTEXT        IDC_BODY,7,121,303,94,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
-    PUSHBUTTON      "Configuration",IDC_CONFIGURATION,173,222,61,14
-    PUSHBUTTON      "Send !",IDC_SEND,261,223,50,14
-    PUSHBUTTON      "&Save to Disk...",IDC_SAVE,96,222,57,14
-    PUSHBUTTON      "Send From Disk...",IDC_SEND_FROM_DISK,7,222,63,14
-    CONTROL         "Send Directly from Disk",IDC_DIRECTLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,245,94,11
+    EDITTEXT        IDC_BODY,7,121,355,94,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    PUSHBUTTON      "Send ",IDC_SEND,7,219,50,14
+    PUSHBUTTON      "Send From Disk...",IDC_SEND_FROM_DISK,88,219,69,14
+    PUSHBUTTON      "Send From Disk (with UI)...",IDC_SEND_FROM_DISK_WITH_UI,181,219,98,14
+    PUSHBUTTON      "&Save to Disk...",IDC_SAVE_TO_DISK,305,219,57,14
+    PUSHBUTTON      "Send From Memory...",IDC_SEND_FROM_MEMORY,7,237,91,14
+    PUSHBUTTON      "Send From Memory (with UI)...",IDC_SEND_FROM_MEMORY_WITH_UI,135,237,113,14
+    PUSHBUTTON      "Configuration",IDC_CONFIGURATION,305,237,57,14
     CONTROL         "Use DNS MX lookup to determine mail server to use",IDC_DNS_LOOKUP,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,245,182,11
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,255,182,11
 END
 
-IDD_CONFIGURATION DIALOGEX 0, 0, 246, 379
+IDD_CONFIGURATION DIALOGEX 0, 0, 247, 391
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configuration"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Sender",IDC_STATIC,7,7,232,111
+    GROUPBOX        "Sender",IDC_STATIC,7,7,233,111
     LTEXT           "&Name:",IDC_STATIC,15,23,22,8
     EDITTEXT        IDC_NAME,72,20,153,14,ES_AUTOHSCROLL
     LTEXT           "&Address:",IDC_STATIC,15,42,28,8
@@ -163,7 +165,7 @@ BEGIN
     EDITTEXT        IDC_USERNAME,72,79,153,14,ES_AUTOHSCROLL
     LTEXT           "&Password:",IDC_PROMPT_PASSWORD,16,102,34,8
     EDITTEXT        IDC_PASSWORD,72,99,153,14,ES_PASSWORD | ES_AUTOHSCROLL
-    GROUPBOX        "Server",IDC_STATIC,7,120,232,83
+    GROUPBOX        "Server",IDC_STATIC,7,120,233,83
     LTEXT           "&Host Name / Address:",IDC_STATIC,15,130,71,8
     EDITTEXT        IDC_HOST,93,128,128,14,ES_AUTOHSCROLL
     LTEXT           "P&ort Number:",IDC_STATIC,15,152,42,8
@@ -172,7 +174,7 @@ BEGIN
     COMBOBOX        IDC_CONNECTIONTYPE,93,165,128,66,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&SSL Protocol:",IDC_STATIC,15,184,72,8
     COMBOBOX        IDC_SSL_PROTOCOL,93,183,128,66,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Misc",IDC_STATIC,7,206,232,144
+    GROUPBOX        "Misc",IDC_STATIC,7,206,233,157
     CONTROL         "Auto Connect to the Internet",IDC_AUTOCONNECT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,218,105,10
     LTEXT           "Bind to:",IDC_STATIC,16,232,25,8
     COMBOBOX        IDC_IPS,80,229,124,46,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -186,10 +188,12 @@ BEGIN
     CONTROL         "SUCCESS",IDC_DSN_SUCCESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,308,49,10
     CONTROL         "FAILURE",IDC_DSN_FAILURE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,123,308,46,10
     CONTROL         "DELAY",IDC_DSN_DELAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,183,308,39,10
-    CONTROL         "DSN Includes Headers Only",IDC_DSN_HEADERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,321,105,10
-    CONTROL         "MDN",IDC_MDN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,334,105,10
-    DEFPUSHBUTTON   "OK",IDOK,131,358,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,189,358,50,14
+    CONTROL         "DSN Includes Headers Only",IDC_DSN_HEADERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,322,105,10
+    CONTROL         "MDN",IDC_MDN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,335,31,10
+    CONTROL         "Use ""Initial Client Response"" (SASL-IR) for Authentication",IDC_INITIAL_CLIENT_RESPONSE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,348,225,10
+    DEFPUSHBUTTON   "OK",IDOK,131,370,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,190,370,50,14
 END
 
 IDD_PROGRESS DIALOGEX 0, 0, 197, 54
@@ -212,14 +216,18 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_MAIN_DIALOG, DIALOG
     BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 362
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 266
     END
 
     IDD_CONFIGURATION, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 239
+        RIGHTMARGIN, 240
         TOPMARGIN, 7
-        BOTTOMMARGIN, 372
+        BOTTOMMARGIN, 384
     END
 
     IDD_PROGRESS, DIALOG
@@ -246,57 +254,49 @@ END
 STRINGTABLE
 BEGIN
     IDS_PJNSMTP_UNEXPECTED_SMTP_LOGIN_RESPONSE 
-                            "Unexpected SMTP Login response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_EHLO_RESPONSE 
-                            "Unexpected EHLO response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_HELO_RESPONSE 
-                            "Unexpected HELO response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_QUIT_RESPONSE 
-                            "Unexpected QUIT response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_MAIL_FROM_RESPONSE 
-                            "Unexpected MAIL FROM response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_DATA_RESPONSE 
-                            "Unexpected DATA response, Last Response: %1"
+                            "Unexpected SMTP Login response"
+    IDS_PJNSMTP_UNEXPECTED_EHLO_RESPONSE "Unexpected EHLO response"
+    IDS_PJNSMTP_UNEXPECTED_HELO_RESPONSE "Unexpected HELO response"
+    IDS_PJNSMTP_UNEXPECTED_QUIT_RESPONSE "Unexpected QUIT response"
+    IDS_PJNSMTP_UNEXPECTED_MAIL_FROM_RESPONSE "Unexpected MAIL FROM response"
+    IDS_PJNSMTP_UNEXPECTED_DATA_RESPONSE "Unexpected DATA response"
     IDS_PJNSMTP_UNEXPECTED_END_OF_MESSAGE_RESPONSE 
-                            "Unexpected End of Message response, Last Response: %1"
+                            "Unexpected End of Message response"
     IDS_PJNSMTP_FILE_SIZE_TO_SEND_TOO_LARGE "File too large to mail"
     IDS_PJNSMTP_CANNOT_SEND_ZERO_BYTE_MESSAGE "Cannot mail 0 byte length file"
-    IDS_PJNSMTP_UNEXPECTED_RCPT_TO_RESPONSE 
-                            "Unexpected RCPT TO response, Last Response: %1"
+    IDS_PJNSMTP_UNEXPECTED_RCPT_TO_RESPONSE "Unexpected RCPT TO response"
     IDS_PJNSMTP_UNEXPECTED_AUTH_LOGIN_RESPONSE 
-                            "Unexpected AUTH LOGIN response, Last Response: %1"
+                            "Unexpected AUTH LOGIN response"
     IDS_PJNSMTP_UNEXPECTED_AUTH_LOGIN_USERNAME_REQUEST 
-                            "Unexpected AUTH LOGIN username request, Last Response: %1"
+                            "Unexpected AUTH LOGIN username request"
     IDS_PJNSMTP_UNEXPECTED_AUTH_LOGIN_USERNAME_RESPONSE 
-                            "Unexpected AUTH LOGIN username response, Last Response: %1"
+                            "Unexpected AUTH LOGIN username response"
 END
 
 STRINGTABLE
 BEGIN
     IDS_PJNSMTP_UNEXPECTED_AUTH_LOGIN_PASSWORD_REQUEST 
-                            "Unexpected AUTH LOGIN password request, Last Response: %1"
+                            "Unexpected AUTH LOGIN password request"
     IDS_PJNSMTP_UNEXPECTED_AUTH_LOGIN_PASSWORD_RESPONSE 
-                            "Unexpected AUTH LOGIN password response, Last Response: %1"
+                            "Unexpected AUTH LOGIN password response"
     IDS_PJNSMTP_UNEXPECTED_AUTH_PLAIN_RESPONSE 
-                            "Unexpected AUTH PLAIN response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_STARTTLS_RESPONSE 
-                            "Unexpected STARTTLS response, Last Response: %1"
+                            "Unexpected AUTH PLAIN response"
+    IDS_PJNSMTP_UNEXPECTED_STARTTLS_RESPONSE "Unexpected STARTTLS response"
     IDS_PJNSMTP_UNEXPECTED_AUTH_CRAM_MD5_RESPONSE 
-                            "Unexpected CRAM-MD5 response, Last Response: %1"
-    IDS_PJNSMTP_UNEXPECTED_CRAMD_MD5_DIGEST_RESPONSE 
-                            "Unexpected CRAM-MD5 digest response, Last Response: %1"
+                            "Unexpected CRAM-MD5 response"
+    IDS_PJNSMTP_UNEXPECTED_CRAM_MD5_DIGEST_RESPONSE 
+                            "Unexpected CRAM-MD5 digest response"
     IDS_PJNSMTP_FAILED_NTLM_AUTHENTICATION 
                             "Failed to perform NTLM authentication"
-    IDS_PJNSMTP_UNEXPECTED_AUTH_NTLM_RESPONSE 
-                            "Unexpected AUTH NTLM response, Last Response: %1"
+    IDS_PJNSMTP_UNEXPECTED_AUTH_NTLM_RESPONSE "Unexpected AUTH NTLM response"
     IDS_PJNSMTP_FAIL_BASE64_DECODE "Failed to base64 decode data"
     IDS_PJNSMTP_FAIL_BASE64_ENCODE "Failed to base64 encode data"
+    IDS_PJNSMTP_UNEXPECTED_XOAUTH2_RESPONSE "Unexpected XOAUTH2 response"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_PJNSMTP_GRACEFUL_DISCONNECT 
-                            "A graceful disconnect had occurred, Last Response: %1"
+    IDS_PJNSMTP_GRACEFUL_DISCONNECT "A graceful disconnect had occurred"
     IDS_PJNSMTP_FAIL_QP_ENCODE "Failed to QP encode data"
     IDS_PJNSMTP_FAIL_Q_ENCODE "Failed to Q encode data"
     IDS_PJNSMTP_DSN_NOT_SUPPORTED_BY_SERVER 

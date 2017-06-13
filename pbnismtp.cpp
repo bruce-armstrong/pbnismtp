@@ -32,6 +32,7 @@ PBXEXPORT LPCTSTR PBXCALL PBX_GetDescription()
 		_T ( "subroutine SetRecipientEmail ( string pbrecipientemail )\n" )
 		_T ( "subroutine SetCCRecipientEmail ( string pbCCrecipientemail )\n" )
 		_T ( "subroutine SetBCCRecipientEmail ( string pbBCCrecipientemail )\n" )
+		_T ( "subroutine SetReplyToEmail ( string pbreplytoemail )\n" )
 		_T ( "subroutine SetSenderEmail ( string pbsenderemail )\n" )
 		_T ( "subroutine SetSMTPServer ( string pbsmtpserver )\n" )
 		_T ( "subroutine SetSubject ( string pbsubject )\n" )
@@ -40,10 +41,10 @@ PBXEXPORT LPCTSTR PBXCALL PBX_GetDescription()
 		_T ( "subroutine SetErrorMessagesOff ( )\n" )
 		_T ( "subroutine SetCharSet ( string pbcharset )\n" )
 		_T ( "subroutine SetUsernamePassword ( string pbusername, string pbpassword )\n" )
-		_T ( "subroutine SetNTMLAuthentication ( )\n" )
 		_T ( "subroutine SetPort ( integer port )\n" )
-		_T ( "subroutine SetSSL ( )\n" )
-		_T ( "subroutine SetTLS ( )\n" )
+		_T ( "subroutine SetAuthMethod ( integer authmethod )\n" )
+		_T ( "subroutine SetConnectionType ( integer connecttype )\n" )
+		_T ( "function string GetLastErrorMessage ( )\n")
 		_T ( "end class\n" )
 	};
 	return (LPCTSTR)desc ;
@@ -78,18 +79,19 @@ enum MethodIDs
 	SETRECIPIENTEMAIL = 3,
 	SETCCRECIPIENTEMAIL = 4,
 	SETBCCRECIPIENTEMAIL = 5,
-	SETSENDEREMAIL = 6,
-	SETSMTPSERVER = 7,
-	SETSUBJECT = 8,
-	SETATTACHMENT = 9,
-	SETERRORMESSAGESON = 10,   
-	SETERRORMESSAGESOFF = 11,
-	SETMSGCHARSET = 12,
-	SETUSERNAMEPASSWORD = 13,
-	SETNTLMAUTHENTICATION = 14,
+	SETREPLYTOEMAIL = 6,
+	SETSENDEREMAIL = 7,
+	SETSMTPSERVER = 8,
+	SETSUBJECT = 9,
+	SETATTACHMENT = 10,
+	SETERRORMESSAGESON = 11,   
+	SETERRORMESSAGESOFF = 12,
+	SETMSGCHARSET = 13,
+	SETUSERNAMEPASSWORD = 14,
 	SETPORT = 15,
-	SETSSL = 16,
-	SETTLS = 17,
+	SETAUTHMETHOD = 16,
+	SETCONNECTIONTYPE = 17,
+	GETLASTERRORMESSAGE = 18,
 	ENTRY_COUNT
 };
 
@@ -109,6 +111,7 @@ CSMTP::CSMTP()
 	RecipientEmailArg = NULL ;
 	CCRecipientEmailArg = NULL ;
 	BCCRecipientEmailArg = NULL ;
+	ReplyToEmailArg = NULL;
 	SMTPServerArg = NULL ;
 	SubjectArg = NULL ;
 	AttachmentArg = NULL ;
@@ -121,6 +124,7 @@ CSMTP::CSMTP()
 	RecipientEmail = NULL;
 	CCRecipientEmail = NULL;
 	BCCRecipientEmail = NULL;
+	ReplyToEmail = NULL;
 	SMTPServer = NULL;
 	Subject = NULL; 
 	Attachment = NULL;
@@ -132,10 +136,9 @@ CSMTP::CSMTP()
 
 	HTMLBody = FALSE ;
 
-	NTLMAuthentication = FALSE;
 	Port = 25 ;
-	SSL = FALSE ;
-	TLS = FALSE ;
+	AuthMethod = 5 ; /* Default to Auto Detect */
+	ConnectType = 0 ; /* Default to Plain Text */
 
 }
 
@@ -150,187 +153,170 @@ CSMTP::~CSMTP(void)
 int CSMTP::Send()
 {
 
-	TCHAR	title[] = _T ( "Debug" ) ;
-	CPJNSMTPConnection connection ;
-	CPJNSMTPMessage msg ;
-	CPJNSMTPConnection::ConnectionType ConnectType = CPJNSMTPConnection::PlainText ;
+	TCHAR	title[] = _T("Debug");
+	CPJNSMTPConnection connection;
+	CPJNSMTPMessage msg;
+	BOOLEAN CloseGracefully = TRUE;
+	INT	ReturnCode = UNDEFINEDERR;
 
-	try
+	// Validate the passed in values first
+	if (SenderEmail == NULL)
 	{
-
-		if ( SenderEmail == NULL )
-		{
-			return INVALIDSENDEREMAIL ;
-		}
-
-		if ( RecipientEmail == NULL && CCRecipientEmail == NULL && BCCRecipientEmail == NULL)
-		{
-			return INVALIDRECIPIENTEMAIL ;
-		}
-
-		if ( SMTPServer == NULL )
-		{
-			return INVALIDSMTPSERVER ;
-		}
-
-		if ( Subject == NULL )
-		{
-			Subject = _T ( "" ) ;
-		}
-			
-		if ( Message == NULL )
-		{
-			Message = _T ( "" ) ;
-		}
-
-		if ( TLS )
-		{
-			ConnectType = CPJNSMTPConnection::STARTTLS ;
-		}
-		else
-		{
-			if ( SSL )
-			{
-				ConnectType = CPJNSMTPConnection::SSL_TLS ;
-			}
-		}
-
-		//Connect to SMTP server
-		#ifdef _DEBUG
-			MessageBox( NULL, _T ( "Connecting to SMTP Server" ), title, MB_ICONEXCLAMATION | MB_OK );
-		#endif
-		if ( NTLMAuthentication )
-		{
-			connection.Connect( SMTPServer, CPJNSMTPConnection::AUTH_NTLM, Username, Password, Port, ConnectType ) ;
-		}
-		else if ( Username == NULL )
-		{
-			connection.Connect ( SMTPServer, CPJNSMTPConnection::AUTH_NONE, Username, Password, Port, ConnectType ) ;
-		}
-		else
-		{
-			connection.Connect ( SMTPServer, CPJNSMTPConnection::AUTH_AUTO, Username, Password, Port, ConnectType ) ;
-		}
+		return INVALIDSENDEREMAIL;
 	}
-	catch(CPJNSMTPException* pEx)
+
+	if (RecipientEmail == NULL && CCRecipientEmail == NULL && BCCRecipientEmail == NULL)
 	{
-		if (ErrorMessageBoxesOn == TRUE)
-		{
-			//Display the error
-			CString sMsg;
-			sMsg.Format(_T("Could not connect to SMTP server: Error:%08X\nDescription:%s"), pEx->m_hr, pEx->m_sLastResponse);
-			MessageBox ( NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
-		}
-		pEx->Delete();
-		return SMTPCONNECTFAILED ;
+		return INVALIDRECIPIENTEMAIL;
+	}
+
+	if (SMTPServer == NULL)
+	{
+		return INVALIDSMTPSERVER;
+	}
+
+	if (Subject == NULL)
+	{
+		Subject = _T("");
+	}
+
+	if (Message == NULL)
+	{
+		Message = _T("");
 	}
 
 	try
 	{
+		// Set the Return Code if Exception is raised for the following calls
+		ReturnCode = INVALIDRECIPIENTEMAIL;
 
-		//Set the Charset
-		msg.SetCharset ( (CString)CharSet ) ;
+		// Set the Charset
+		msg.SetCharset ( CharSet ) ;
 
-		//Say who the email is from
-		CPJNSMTPAddress address ( (CString)SenderEmail ) ;
+		// Set the Sender
+		CPJNSMTPAddress address ( SenderEmail ) ;
 		msg.m_From = address ;
-
-		//Say who the email is to
-		msg.ParseMultipleRecipients ( (CString)RecipientEmail, msg.m_To ) ;
-	}
-	catch(CPJNSMTPException* pEx)
-	{
-		if (ErrorMessageBoxesOn == TRUE)
-		{
-			//Display the error
-			CString sMsg;
-			sMsg.Format(_T("Could not add TO recipient: Error:%08X\nDescription:%s"), pEx->m_hr, pEx->m_sLastResponse);
-			MessageBox ( NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
-		}
-		pEx->Delete();
-		return INVALIDRECIPIENTEMAIL ;
-	}
-	
-	try
-	{
-		//Say who it's going to for cc
+		
+		// Set the Recipient
+		msg.ParseMultipleRecipients ( RecipientEmail, msg.m_To ) ;
+		
+		// Set the CC
 		if ( CCRecipientEmail != NULL )
 		{
-			msg.ParseMultipleRecipients ( (CString)CCRecipientEmail, msg.m_CC ) ;
+			msg.ParseMultipleRecipients ( CCRecipientEmail, msg.m_CC ) ;
 		}
-	}
-	catch(CPJNSMTPException* pEx)
-	{
-		if (ErrorMessageBoxesOn == TRUE)
-		{
-			//Display the error
-			CString sMsg;
-			sMsg.Format(_T("Could not add CC recipient: Error:%08X\nDescription:%s"), pEx->m_hr, pEx->m_sLastResponse);
-			MessageBox ( NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
-		}
-		pEx->Delete();
-		return INVALIDRECIPIENTEMAIL ;
-	}
-
-	try
-	{
-		//Say who it's going to for bcc
+		// Set the BCC
 		if ( BCCRecipientEmail != NULL )
 		{
-			msg.ParseMultipleRecipients ( (CString)BCCRecipientEmail, msg.m_BCC ) ;
+			msg.ParseMultipleRecipients ( BCCRecipientEmail, msg.m_BCC ) ;
 		}
-	}
-	catch(CPJNSMTPException* pEx)
-	{
-		if (ErrorMessageBoxesOn == TRUE)
+		// Set the Reply To
+		if ( ReplyToEmail != NULL )
 		{
-			//Display the error
-			CString sMsg;
-			sMsg.Format(_T("Could not add BCC recipient: Error:%08X\nDescription:%s"), pEx->m_hr, pEx->m_sLastResponse);
-			MessageBox ( NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
+			msg.ParseMultipleRecipients( ReplyToEmail, msg.m_ReplyTo );
 		}
-		pEx->Delete();
-		return INVALIDRECIPIENTEMAIL ;
-	}
 
-	try
-	{
-		//Set the subject and message
+		// Set the Return Code if Exception is raised for the following calls
+		ReturnCode = MESSAGEBODYERROR;
+
+		// Set the subject and message
 		msg.m_sSubject = (CString)Subject ; 
-		msg.m_sXMailer = _T ( "PBNISMTP 3.0" ) ;
+		msg.m_sXMailer = _T ( "PBNISMTP 3.2" ) ;
 		if ( HTMLBody )
 		{
 			msg.SetMime(TRUE) ;
-			msg.AddHTMLBody ( (CString)Message, _T ( "" ) ) ;
+			msg.AddHTMLBody(Message);
 		}
 		else
 		{
-			msg.AddTextBody ( (CString)Message ) ;
+			msg.AddTextBody (Message) ;
 		}
 
-		//Add any attachment
+		// Add any attachment
 		if ( Attachment != NULL )
 		{
-			msg.AddMultipleAttachments ( (CString)Attachment ) ;
+			msg.AddMultipleAttachments(Attachment);
 		}
 
-		//Now send the message
+		// Set the Return Code if Exception is raised for the following calls
+		ReturnCode = SMTPCONNECTFAILED;
+
+		// Connect to SMTP server
+		#ifdef _DEBUG
+			MessageBox(NULL, _T("Connecting to SMTP Server"), title, MB_ICONEXCLAMATION | MB_OK);
+		#endif
+		connection.Connect(SMTPServer, CPJNSMTPConnection::AuthenticationMethod(AuthMethod), Username, Password, Port, CPJNSMTPConnection::ConnectionType(ConnectType));
+
+		// Set the Return Code if Exception is raised for the following calls
+		ReturnCode = MESSAGESENDERROR;
+
+		// Now send the message
+		#ifdef _DEBUG
+			MessageBox(NULL, _T("Sending Message"), title, MB_ICONEXCLAMATION | MB_OK);
+		#endif
 		connection.SendMessage ( msg ) ;
+		
+		// Everything was Successful!
+		ReturnCode = SUCCESSFUL;
 	}
-	catch(CPJNSMTPException* pEx)
-	{
-		if (ErrorMessageBoxesOn == TRUE)
+	#ifdef CPJNSMTP_MFC_EXTENSIONS
+		catch (CPJNSMTPException* pEx)
 		{
-			//Display the error
-			CString sMsg;
-			sMsg.Format(_T("Could not send message: Error:%08X\nDescription:%s"), pEx->m_hr, pEx->m_sLastResponse);
-			MessageBox ( NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
+			CloseGracefully = FALSE;
+			LastErrorMsg = pEx->m_sLastResponse;
+			if (LastErrorMsg == "")
+			{
+				LastErrorMsg = (CString) pEx->GetErrorMessage().operator LPCTSTR();
+			}
+			if (ErrorMessageBoxesOn == TRUE)
+			{
+				//Display the error
+				CString sMsg;
+				sMsg.Format(_T("Could not send message: Error:%08X\nDescription:%s"), pEx->m_hr, LastErrorMsg);
+				MessageBox(NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
+			}
+			pEx->Delete();
 		}
-		pEx->Delete();
-		return MESSAGESENDERROR ;
-	}
+	#else
+		catch (CPJNSMTPException& e)
+		{
+			CloseGracefully = FALSE;
+			LastErrorMsg = e.m_sLastResponse.c_str();
+			if (LastErrorMsg == "")
+			{
+				TCHAR szError[4096];
+				szError[0] = _T('\0');
+				e.GetErrorMessage(szError, _countof(szError));
+				LastErrorMsg = (CString) szError;
+			}
+			if (ErrorMessageBoxesOn == TRUE)
+			{
+				//Display the error
+				CString sMsg;
+				sMsg.Format(_T("Could not send message: Error:%08X\nDescription:%s"), e.m_hr, LastErrorMsg); // e.m_sLastResponse.c_str());
+				MessageBox(NULL, sMsg, title, MB_ICONEXCLAMATION | MB_OK);
+			}
+		}
+	#endif
 
-	return 1 ;	
+	// Disconnect from the server
+	try
+	{
+		if (connection.IsConnected())
+			connection.Disconnect(CloseGracefully);
+	}
+	#ifdef CPJNSMTP_MFC_EXTENSIONS
+		catch (CPJNSMTPException* pEx)
+		{
+			pEx->Delete();
+		}
+	#else
+		catch (CPJNSMTPException& /*e*/)
+		{
+		}
+	#endif
+		
+	return ReturnCode ;
 
 } ;
 
@@ -343,16 +329,16 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 	{
 	case SEND:
 		{
-		int	rc ;
-		rc = Send ( ) ; 
-		ci->returnValue->SetInt((pbint)rc );
+		int	rc;
+		rc = Send();
+		ci->returnValue->SetInt((pbint)rc);
 		return PBX_OK;
 		}
 	case SETMESSAGE:
 		{
 		MessageArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbMessage = MessageArg->GetString() ;
-		Message = (LPTSTR)session->GetString(pbMessage) ;
+		Message = session->GetString(pbMessage) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, Message, _T ( "Message" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -362,19 +348,23 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		MessageArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbMessage = MessageArg->GetString() ;
-		Message = (LPTSTR)session->GetString(pbMessage) ;
+		Message = session->GetString(pbMessage) ;
+		IPB_Value * HTMLArg = session->AcquireValue ( ci->pArgs->GetAt(1) ) ;
+		HTMLBody = (bool)HTMLArg->GetBool() ;
+		if (HTMLArg)
+		{
+			Session->ReleaseValue(HTMLArg);
+		}
 		#ifdef _DEBUG
-			MessageBox( NULL, Message, _T ( "Message" ), MB_ICONEXCLAMATION | MB_OK );
+			MessageBox(NULL, Message, _T("MessageHTML"), MB_ICONEXCLAMATION | MB_OK);
 		#endif
-		MessageArg = session->AcquireValue ( ci->pArgs->GetAt(1) ) ;
-		HTMLBody = MessageArg->GetBool() ;
 		return PBX_OK;
 		}
 	case SETRECIPIENTEMAIL:
 		{
 		RecipientEmailArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbRecipientEmail = RecipientEmailArg->GetString() ;
-		RecipientEmail = (LPTSTR)session->GetString(pbRecipientEmail) ;
+		RecipientEmail = session->GetString(pbRecipientEmail) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, RecipientEmail, _T ( "RecipientEmail" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -384,7 +374,7 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		CCRecipientEmailArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbCCRecipientEmail = CCRecipientEmailArg->GetString() ;
-		CCRecipientEmail = (LPTSTR)session->GetString(pbCCRecipientEmail) ;
+		CCRecipientEmail = session->GetString( pbCCRecipientEmail ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, CCRecipientEmail, _T ( "CCRecipientEmail" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -394,9 +384,19 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		BCCRecipientEmailArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbBCCRecipientEmail = BCCRecipientEmailArg->GetString() ;
-		BCCRecipientEmail = (LPTSTR)session->GetString(pbBCCRecipientEmail) ;
+		BCCRecipientEmail = session->GetString( pbBCCRecipientEmail ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, BCCRecipientEmail, _T ( "BCCRecipientEmail" ), MB_ICONEXCLAMATION | MB_OK );
+		#endif
+		return PBX_OK;
+		}
+	case SETREPLYTOEMAIL:
+		{
+		ReplyToEmailArg = session->AcquireValue ( ci->pArgs->GetAt(0) );
+		pbstring pbReplyToEmail = ReplyToEmailArg->GetString();
+		ReplyToEmail = session->GetString( pbReplyToEmail );
+		#ifdef _DEBUG
+			MessageBox(NULL, ReplyToEmail, _T("ReplyToEmail"), MB_ICONEXCLAMATION | MB_OK);
 		#endif
 		return PBX_OK;
 		}
@@ -404,7 +404,7 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		SenderEmailArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbSenderEmail = SenderEmailArg->GetString() ;
-		SenderEmail = (LPTSTR)session->GetString ( pbSenderEmail ) ;
+		SenderEmail = session->GetString ( pbSenderEmail ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, SenderEmail, _T ( "SenderEmail" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -414,7 +414,7 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		SMTPServerArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbSMTPServer = SMTPServerArg->GetString() ;
-		SMTPServer = (LPTSTR)session->GetString ( pbSMTPServer ) ;
+		SMTPServer = session->GetString ( pbSMTPServer ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, SMTPServer, _T ( "SMTPServer" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -424,7 +424,7 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		SubjectArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbSubject = SubjectArg->GetString() ;
-		Subject = (LPTSTR)session->GetString ( pbSubject ) ;
+		Subject = session->GetString ( pbSubject ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, Subject, _T ( "Subject" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -434,7 +434,7 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		AttachmentArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbAttachment = AttachmentArg->GetString() ;
-		Attachment = (LPTSTR)session->GetString ( pbAttachment ) ;
+		Attachment = session->GetString ( pbAttachment ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, Attachment, _T ( "Attachment" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -454,7 +454,7 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		CharSetArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbCharSet = CharSetArg->GetString() ;
-		CharSet = (LPTSTR)session->GetString ( pbCharSet ) ;
+		CharSet = session->GetString ( pbCharSet ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, CharSet, _T ( "CharSet" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
@@ -464,38 +464,51 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		{
 		UsernameArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		pbstring pbUsername = UsernameArg->GetString() ;
-		Username = (LPTSTR)session->GetString ( pbUsername ) ;
+		Username = session->GetString ( pbUsername ) ;
 		PasswordArg = session->AcquireValue ( ci->pArgs->GetAt(1) ) ;
 		pbstring pbPassword = PasswordArg->GetString() ;
-		Password = (LPTSTR)session->GetString ( pbPassword ) ;
+		Password = session->GetString ( pbPassword ) ;
 		#ifdef _DEBUG
 			MessageBox( NULL, Username, _T ( "Username" ), MB_ICONEXCLAMATION | MB_OK );
-			MessageBox( NULL, Password, _T ( "Password" ), MB_ICONEXCLAMATION | MB_OK );
 		#endif
 		return PBX_OK;
-		}
-	case SETNTLMAUTHENTICATION:
-		{
-			NTLMAuthentication = TRUE; 
-			return PBX_OK;
 		}
 	case SETPORT:
 		{
 		IPB_Value * PortArg = session->AcquireValue ( ci->pArgs->GetAt(0) ) ;
 		Port = (int)PortArg->GetInt();
+		if (PortArg)
+		{
+			Session->ReleaseValue(PortArg);
+		}
 		return PBX_OK;
 		}
-	case SETSSL:
+	case SETAUTHMETHOD:
 		{
-			SSL = TRUE; 
-			return PBX_OK;
-		}
-	case SETTLS:
+		IPB_Value * AuthArg = session->AcquireValue ( ci->pArgs->GetAt(0) );
+		AuthMethod = (int)AuthArg->GetInt();
+		if (AuthArg)
 		{
-			TLS = TRUE; 
-			return PBX_OK;
+			Session->ReleaseValue( AuthArg );
 		}
-		return PBX_E_INVOKE_METHOD_AMBIGUOUS;
+		return PBX_OK;
+		}
+	case SETCONNECTIONTYPE:
+		{
+		IPB_Value * ConnectionArg = session->AcquireValue ( ci->pArgs->GetAt(0) );
+		ConnectType = (int)ConnectionArg->GetInt();
+		if (ConnectionArg)
+		{
+			Session->ReleaseValue( ConnectionArg );
+		}
+		return PBX_OK;
+		}
+	case GETLASTERRORMESSAGE:
+		{
+		ci->returnValue->SetString(LastErrorMsg);
+		return PBX_OK;
+		}
+	return PBX_E_INVOKE_METHOD_AMBIGUOUS;
 	}
 }
 
@@ -523,6 +536,10 @@ void CSMTP::CleanUp()
 	{
 		Session->ReleaseValue ( BCCRecipientEmailArg ) ;
 	}
+	if (ReplyToEmailArg)
+	{
+		Session->ReleaseValue( ReplyToEmailArg );
+	}
 	if (SMTPServerArg)
 	{
 		Session->ReleaseValue ( SMTPServerArg ) ;
@@ -538,6 +555,14 @@ void CSMTP::CleanUp()
 	if (CharSetArg)
 	{
 		Session->ReleaseValue ( CharSetArg ) ;
+	}
+	if (UsernameArg)
+	{
+		Session->ReleaseValue( UsernameArg );
+	}
+	if (PasswordArg)
+	{
+		Session->ReleaseValue( PasswordArg );
 	}
 }
 

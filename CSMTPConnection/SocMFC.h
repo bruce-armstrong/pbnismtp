@@ -126,8 +126,6 @@ class SOCKMFC_EXT_CLASS CWSocketException : public std::exception
 public:
 //Constructors / Destructors
   CWSocketException(_In_ int nError);
-  ~CWSocketException(void);
-  void Delete(void);
 
 //Methods
 #ifdef CWSOCKET_MFC_EXTENSIONS
@@ -180,7 +178,7 @@ public:
   BOOL    IsCreated() const; 
   BOOL    IsReadible(_In_ DWORD dwTimeout);
   BOOL    IsWritable(_In_ DWORD dwTimeout);
-  void    SetBindAddress(_In_ const CString& sBindAddress) { m_sBindAddress = sBindAddress; };
+  void    SetBindAddress(_In_ const String& sBindAddress) { m_sBindAddress = sBindAddress; };
   String  GetBindAddress() const { return m_sBindAddress; };
 
 //Methods

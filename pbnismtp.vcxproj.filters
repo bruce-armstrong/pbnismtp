@@ -21,6 +21,9 @@
     <ClCompile Include="CSMTPConnection\SocMFC.cpp">
       <Filter>CSMTPConnection</Filter>
     </ClCompile>
+    <ClCompile Include="CSMTPConnection\StdAfx.cpp">
+      <Filter>CSMTPConnection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSMTPConnection\PJNNTLMAuth.h">
@@ -31,6 +34,9 @@
     </ClInclude>
     <ClInclude Include="pbnismtp.h" />
     <ClInclude Include="CSMTPConnection\SocMFC.h">
+      <Filter>CSMTPConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="CSMTPConnection\StdAfx.h">
       <Filter>CSMTPConnection</Filter>
     </ClInclude>
   </ItemGroup>

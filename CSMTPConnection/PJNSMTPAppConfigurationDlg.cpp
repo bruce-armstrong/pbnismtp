@@ -62,7 +62,8 @@ CPJNSMTPAppConfigurationDlg::CPJNSMTPAppConfigurationDlg(CWnd* pParent)	: CDialo
                                                                           m_sEncodingFriendly(_T("Western European (ISO)")),
                                                                           m_sEncodingCharset(_T("iso-8859-1")),
                                                                           m_Priority(CPJNSMTPMessage::NoPriority),
-                                                                          m_bMDN(FALSE)
+                                                                          m_bMDN(FALSE),
+                                                                          m_bInitialClientResponse(FALSE)
 {
 }
 
@@ -96,6 +97,7 @@ void CPJNSMTPAppConfigurationDlg::DoDataExchange(CDataExchange* pDX)
   #ifndef CPJNSMTP_NONTLM
     CBAddStringAndData(this, IDC_AUTH, _T("NTLM"), CPJNSMTPConnection::AUTH_NTLM);
   #endif //#ifndef CPJNSMTP_NONTLM
+    CBAddStringAndData(this, IDC_AUTH, _T("XOAUTH2"), CPJNSMTPConnection::AUTH_XOAUTH2);
     CBAddStringAndData(this, IDC_AUTH, _T("Auto Detect"), CPJNSMTPConnection::AUTH_AUTO);
 
     //Add the charset methods to the combo box
@@ -165,6 +167,7 @@ void CPJNSMTPAppConfigurationDlg::DoDataExchange(CDataExchange* pDX)
   DDX_CBData(pDX, IDC_AUTH, m_Auth);
   DDX_CBData(pDX, IDC_PRIORITY, m_Priority);
   DDX_Check(pDX, IDC_MDN, m_bMDN);
+  DDX_Check(pDX, IDC_INITIAL_CLIENT_RESPONSE, m_bInitialClientResponse);
 
   if (pDX->m_bSaveAndValidate)
   {
@@ -254,7 +257,7 @@ BOOL CPJNSMTPAppConfigurationDlg::AddLocalIpsToBindCombo()
   ASSERT(pAddresses != NULL);
 
 
-  //Add the addresses to the combo box (Note this app only bother's added IPv4 addresses)
+  //Add the addresses to the combo box (Note this app only bother's adding IPv4 addresses)
   m_ctrlIPAddresses.ResetContent();
   m_ctrlIPAddresses.AddString(_T("ANY_IP_ADDRESS"));
   ADDRINFOT* pCurrentAddress = pAddresses;
@@ -328,18 +331,7 @@ void CPJNSMTPAppConfigurationDlg::OnConnectionType()
 {
   CDataExchange DX(this, TRUE);
   DDX_CBData(&DX, IDC_CONNECTIONTYPE, m_ConnectionType);
-#ifndef CPJNSMTP_NOSSL
-  if (m_ConnectionType == CPJNSMTPConnection::SSL_TLS)
-    m_nPort = 465;
-  else
-    m_nPort = 25;
-#else
-  m_nPort = 25;
-#endif //#ifndef CPJNSMTP_NOSSL
   GetDlgItem(IDC_SSL_PROTOCOL)->EnableWindow(m_ConnectionType != CPJNSMTPConnection::PlainText);
-
-  CDataExchange DX2(this, FALSE);
-  DDX_Text(&DX2, IDC_PORT, m_nPort);
 }
 
 void CPJNSMTPAppConfigurationDlg::OnDSN() 

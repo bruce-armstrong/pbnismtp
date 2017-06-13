@@ -2,13 +2,13 @@
 
 <head>
 <meta content="text/html; charset=iso-8859-1" http-equiv="content-type">
-<title>SSLWrappers v1.05</title>
+<title>SSLWrappers v1.07</title>
 <link href="./naughter.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 
-<h2>SSLWrappers v1.05</h2>
+<h2>SSLWrappers v1.07</h2>
 <p>Welcome to SSLWrappers, a set of C++ classes to provide a complete C++ encapsulation 
 of the SSL functionality exposed on Windows via the Schannel Security Service Provider 
 Interface (SSPI). Some references which you should read if you want to understand 
@@ -302,44 +302,67 @@ a concrete SSL implementation over Windows sockets.</p>
 	certificate with a common name of &quot;localhost&quot; is being used:</li>
 </ul>
 <blockquote>
-	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 1 localhost 443<br>
-	Server certificate properties<br>Subject: CN=localhost<br>Subject Public Key 
-	Bit length<br>0000 00 04 00 00 ....<br>Subject Public Key MD5 hash<br>0000 d4 
-	bc 8b 51 be aa 5e 8e 5f 72 00 ad dc 45 40 b7 ...Q..^._r...E@.<br>MD5 hash<br>
-	0000 e3 bd 22 7e d2 34 c2 c3 8d 21 64 0d 5d ed a1 74 ..&quot;~.4...!d.]..t<br>
-	SHA1 hash<br>0000 d6 c9 06 56 9f 49 17 66 8c 81 20 f5 08 42 79 a6 ...V.I.f.. 
-	..By.<br>0010 94 90 dc 81 ....<br>Key Provider Info<br>0000 c0 3d 3c 00 00 00 
-	00 00 1c 3e 3c 00 00 00 00 00 .=&lt;......&gt;&lt;.....<br>0010 0c 00 00 00 
-	20 00 00 00 00 00 00 00 00 00 00 00 .... ...........<br>0020 00 00 00 00 00 
-	00 00 00 01 00 00 00 00 00 00 00 ................<br>0030 49 00 49 00 53 00 
-	20 00 45 00 78 00 70 00 72 00 I.I.S. .E.x.p.r.<br>0040 65 00 73 00 73 00 20 
-	00 44 00 65 00 76 00 65 00 e.s.s. .D.e.v.e.<br>0050 6c 00 6f 00 70 00 6d 00 
-	65 00 6e 00 74 00 20 00 l.o.p.m.e.n.t. .<br>0060 43 00 65 00 72 00 74 00 69 
-	00 66 00 69 00 63 00 C.e.r.t.i.f.i.c.<br>0070 61 00 74 00 65 00 20 00 43 00 
-	6f 00 6e 00 74 00 a.t.e. .C.o.n.t.<br>0080 61 00 69 00 6e 00 65 00 72 00 00 
-	00 4d 00 69 00 a.i.n.e.r...M.i.<br>0090 63 00 72 00 6f 00 73 00 6f 00 66 00 
-	74 00 20 00 c.r.o.s.o.f.t. .<br>00a0 52 00 53 00 41 00 20 00 53 00 43 00 68 
-	00 61 00 R.S.A. .S.C.h.a.<br>00b0 6e 00 6e 00 65 00 6c 00 20 00 43 00 72 00 
-	79 00 n.n.e.l. .C.r.y.<br>00c0 70 00 74 00 6f 00 67 00 72 00 61 00 70 00 68 
-	00 p.t.o.g.r.a.p.h.<br>00d0 69 00 63 00 20 00 50 00 72 00 6f 00 76 00 69 00 
-	i.c. .P.r.o.v.i.<br>00e0 64 00 65 00 72 00 00 00 d.e.r...<br>Friendly name<br>
-	0000 49 00 49 00 53 00 20 00 45 00 78 00 70 00 72 00 I.I.S. .E.x.p.r.<br>0010 
-	65 00 73 00 73 00 20 00 44 00 65 00 76 00 65 00 e.s.s. .D.e.v.e.<br>0020 6c 
-	00 6f 00 70 00 6d 00 65 00 6e 00 74 00 20 00 l.o.p.m.e.n.t. .<br>0030 43 00 
-	65 00 72 00 74 00 69 00 66 00 69 00 63 00 C.e.r.t.i.f.i.c.<br>0040 61 00 74 
-	00 65 00 00 00 a.t.e...<br>Key Identifier<br>0000 1d 88 f4 6b ea 1d 83 c7 2e 
-	f1 c8 57 67 3a 2b b6 ...k.......Wg:+.<br>0010 d7 4a e9 29 .J.)<br>Signature 
-	hash<br>0000 01 8a 86 9c 27 29 64 6b 5e 93 9b 7d 7e b1 e4 8f ....')dk^..}~...<br>
-	0010 e5 42 f4 e8 .B..<br>CNG Hash Algorithm<br>0000 52 00 53 00 41 00 2f 00 
-	53 00 48 00 41 00 31 00 R.S.A./.S.H.A.1.<br>0010 00 00 ..<br>Binding to localhost:443<br>
-	Listening<br>Waiting for client connection<br>Accepted client connection<br>
-	Performing SSL server handshake<br>Protocol: TLS 1.0<br>Cipher: AES<br>Cipher 
-	strength: 128<br>Hash: SHA<br>Hash strength: 160<br>Key exchange: RSA<br>Key 
-	exchange strength: 1024<br>Getting client request<br>Received request data:<br>
-	0000 47 45 54 20 2f 20 GET /<br>Client requested renegotiation<br>Received request 
-	data:<br>0000 48 54 54 50 2f 31 2e 30 0d 0a 0d 0a HTTP/1.0....<br>Sending client 
-	first part of response<br>Requesting client renegotiation<br>Sending client 
-	second part of response<br>Sending close notify<br>Closing client connection<br>
+	D:\Dev\My 
+	Code\SSLWrappers\Release&gt;sslwrappersdemo.exe 1 localhost 443<br>Server 
+	certificate properties<br>Subject string: CN=localhost<br>Version: 2<br>
+	Serial number: Length:16,<br>5b eb 9a 44 f7 af d4 4e a3 71 3c a6 af 84 0e 1d 
+	[..D...N.q&lt;.....<br>Crypt algorithm Identifier: 1.3.14.3.2.29<br>Crypt 
+	algorithm identifier parameters: Length:2,<br>05 00 ..<br>Issuer: Length:29,<br>
+	30 1b 31 19 30 17 06 03 55 04 03 13 10 52 6f 6f 0.1.0...U....Roo<br>74 43 61 
+	43 6c 69 65 6e 74 54 65 73 74 tCaClientTest<br>Not valid before: 2016-08-17 
+	17:43:34<br>Not valid after: 2039-12-31 23:59:59<br>Subject data: Length:22,<br>
+	30 14 31 12 30 10 06 03 55 04 03 13 09 6c 6f 63 0.1.0...U....loc<br>61 6c 68 
+	6f 73 74 alhost<br>Subject public key algorithm Identifier: 
+	1.2.840.113549.1.1.1<br>Subject public key: Length:270,<br>30 82 01 0a 02 82 
+	01 01 00 e7 88 c4 fb db b0 7d 0..............}<br>b8 5a 55 04 88 11 ff 1e 9e 
+	c4 f1 89 94 c5 75 b9 .ZU...........u.<br>54 04 56 d6 01 50 0f d4 be 94 fa 36 
+	9f 03 45 64 T.V..P.....6..Ed<br>5b dc 4c dd e8 dc 5a a4 fa 34 4d 13 c2 c8 2d 
+	3e [.L...Z..4M...-&gt;<br>8e 13 77 28 ae 80 8a a5 93 d7 44 0c 85 8b da 1e 
+	..w(......D.....<br>2e 2f 41 db 05 89 b1 aa e3 93 c2 f7 14 47 b4 66 
+	./A..........G.f<br>9d e6 51 b0 19 a2 f5 23 ab 60 e9 52 84 00 df 2c 
+	..Q....#.`.R...,<br>98 d5 54 99 18 a1 ef 53 f4 a5 dd 49 98 51 83 3d 
+	..T....S...I.Q.=<br>31 5f bc 8f 70 a6 fd 1b a2 4a 6c 5f 35 22 16 1a 
+	1_..p....Jl_5&quot;..<br>07 c5 fd c3 b5 8c d0 e0 3c a5 94 26 0c 5d 7c aa 
+	........&lt;..&amp;.]|.<br>40 86 9a f8 6d 1d 96 ee c4 a1 b8 9c 82 a9 de 04 
+	@...m...........<br>c8 e7 26 0e 3f ae 6f 5d 90 2a c7 aa c3 6a 78 0d 
+	..&amp;.?.o].*...jx.<br>80 84 ef 1e 32 27 a4 e4 71 ad a3 0c e7 56 2f e9 
+	....2'..q....V/.<br>be f3 80 26 5d 3c c8 cf 52 f3 49 d4 a0 17 76 2c 
+	...&amp;]&lt;..R.I...v,<br>12 30 4e a4 72 bf 88 4a 31 9a 45 b7 c5 90 43 a6 
+	.0N.r..J1.E...C.<br>fa 0d 49 af 32 7e c3 4a 2b ed 85 b0 cc 9f cf 49 
+	..I.2~.J+......I<br>19 7e 4e a5 8c 2e d4 b4 ef 02 03 01 00 01 .~N...........<br>
+	Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique id: Length:0,<br>
+	&lt;NULL&gt;<br>Extension: OID:2.5.29.1, Critical:0, Value:: Length:69,<br>30 43 
+	80 10 95 da 51 2f ce a0 10 14 e0 c6 cf 85 0C....Q/........<br>75 94 07 1b a1 
+	1d 30 1b 31 19 30 17 06 03 55 04 u.....0.1.0...U.<br>03 13 10 52 6f 6f 74 43 
+	61 43 6c 69 65 6e 74 54 ...RootCaClientT<br>65 73 74 82 10 b8 44 52 0d 02 c4 
+	1e 87 4e e5 c4 est...DR.....N..<br>04 c7 d5 d7 af .....<br>Issuer Public Key 
+	MD5 hash<br>Length:16,<br>7c 42 8e 1a 88 70 8d a0 6b 2d 96 f4 04 6c 24 5f 
+	|B...p..k-...l$_<br>MD5 hash<br>Length:16,<br>4f 50 9c 20 2c fd 89 cf a9 45 
+	94 13 5f 42 57 ac OP. ,....E.._BW.<br>Key Provider Info<br>Length:128,<br>cc 
+	df 15 01 e0 df 15 01 01 00 00 00 00 00 00 00 ................<br>00 00 00 00 
+	00 00 00 00 02 00 00 00 4d 00 79 00 ............M.y.<br>4b 00 65 00 79 00 4e 
+	00 61 00 6d 00 65 00 00 00 K.e.y.N.a.m.e...<br>4d 00 69 00 63 00 72 00 6f 00 
+	73 00 6f 00 66 00 M.i.c.r.o.s.o.f.<br>74 00 20 00 53 00 74 00 72 00 6f 00 6e 
+	00 67 00 t. .S.t.r.o.n.g.<br>20 00 43 00 72 00 79 00 70 00 74 00 6f 00 67 00 
+	.C.r.y.p.t.o.g.<br>72 00 61 00 70 00 68 00 69 00 63 00 20 00 50 00 
+	r.a.p.h.i.c. .P.<br>72 00 6f 00 76 00 69 00 64 00 65 00 72 00 00 00 
+	r.o.v.i.d.e.r...<br>SHA1 hash<br>Length:20,<br>7e 1e ec a5 0d d4 42 e7 6c 3e 
+	5c f6 86 91 e6 af ~.....B.l&gt;\.....<br>28 fd bf c2 (...<br>Key Identifier<br>
+	Length:20,<br>55 ee 88 9e 67 9c 62 5e 18 58 09 eb f1 da 13 83 
+	U...g.b^.X......<br>75 b7 80 0d u...<br>Signature hash<br>Length:20,<br>39 
+	da 7e 90 ac 61 01 93 14 7f 23 0b dd 6b 7d 21 9.~..a....#..k}!<br>d2 14 bd 4c 
+	...L<br>Subject Public Key Bit length<br>Length:4,<br>00 08 00 00 ....<br>
+	Subject Public Key MD5 hash<br>Length:16,<br>28 92 c7 fd a3 ab 1b 11 c9 b0 
+	a0 e9 9f e4 b6 dd (...............<br>Binding to localhost:443<br>Listening<br>
+	Waiting for client connection<br>Accepted client connection<br>Performing 
+	SSL server handshake<br>Protocol: TLS v1.2<br>Cipher: AES<br>Cipher 
+	strength: 256<br>Hash: SHA-384<br>Hash strength: 0<br>Key exchange: Eliptic 
+	curve Diffie Hellman Ephemeral<br>Key exchange strength: 256<br>Getting 
+	client request<br>Received request data:: Length:6,<br>47 45 54 20 2f 20 GET 
+	/<br>Client requested renegotiation<br>Received request data:: Length:12,<br>
+	48 54 54 50 2f 31 2e 30 0d 0a 0d 0a HTTP/1.0....<br>Sending client first 
+	part of response<br>Requesting client renegotiation<br>Sending client second 
+	part of response<br>Sending close notify<br>Closing client connection<br>
 	Waiting for client connection</blockquote>
 <ul>
 	<li>Here is a screen capture from the test app when it is run with a command 
@@ -347,218 +370,542 @@ a concrete SSL implementation over Windows sockets.</p>
 	handling renegotiation in midstream):</li>
 </ul>
 <blockquote>
-	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 0 localhost 443<br>
-	Connecting to localhost:443<br>Performing SSL client handshake<br>Protocol: 
-	TLS 1.0<br>Cipher: AES<br>Cipher strength: 128<br>Hash: SHA<br>Hash strength: 
-	160<br>Key exchange: RSA<br>Key exchange strength: 1024<br>Remote server certificate 
-	properties<br>Subject: CN=localhost<br>Sending server first part of request<br>
-	Requesting server renegotiation<br>Sending server second part of request<br>
-	Getting response<br>Received response data:<br>0000 48 54 54 50 2f 31 2e 30 
-	20 32 30 30 0d 0a 0d 0a HTTP/1.0 200....<br>Server requested renegotiation<br>
-	Received response data:<br>0000 3c 68 74 6d 6c 3e 3c 68 65 61 64 3e 3c 74 69 
-	74 &lt;html&gt;&lt;head&gt;&lt;tit<br>0010 6c 65 3e 53 53 4c 20 44 61 74 61 
-	3c 2f 74 69 74 le&gt;SSL Data&lt;/tit<br>0020 6c 65 3e 3c 2f 68 65 61 64 3e 
-	3c 62 6f 64 79 3e le&gt;&lt;/head&gt;&lt;body&gt;<br>0030 54 68 69 73 20 69 
-	73 20 74 68 65 20 62 6f 64 79 This is the body<br>0040 20 66 6f 6c 6c 6f 77 
-	69 6e 67 20 61 20 72 65 6e following a ren<br>0050 65 67 6f 74 69 61 74 69 6f 
-	6e 3c 2f 62 6f 64 79 egotiation&lt;/body<br>0060 3e 3c 2f 68 74 6d 6c 3e 0d 
-	0a &gt;&lt;/html&gt;..<br>Stopping receive of response because of SEC_I_CONTEXT_EXPIRED 
-	status value from<br>CSSL::GetEncryptedMessage<br>Sending close_notify message<br>
-	<br>D:\Dev\My Code\SSLWrappers\DebugU64&gt;</blockquote>
+	D:\Dev\My Code\SSLWrappers\Release&gt;SSLWrappersDemo.exe 0 localhost 443<br>
+	Connecting to localhost:443<br>Performing SSL client handshake<br>Protocol: TLS v1.2<br>
+	Cipher: AES<br>Cipher strength: 256<br>Hash: SHA-384<br>Hash strength: 0<br>
+	Key exchange: Eliptic curve Diffie Hellman Ephemeral<br>Key exchange 
+	strength: 256<br>Remote server certificate properties<br>Subject string: 
+	CN=localhost<br>Version: 2<br>Serial number: Length:16,<br>5b eb 9a 44 f7 af 
+	d4 4e a3 71 3c a6 af 84 0e 1d [..D...N.q&lt;.....<br>Crypt algorithm 
+	Identifier: 1.3.14.3.2.29<br>Crypt algorithm identifier parameters: 
+	Length:2,<br>05 00 ..<br>Issuer: Length:29,<br>30 1b 31 19 30 17 06 03 55 04 
+	03 13 10 52 6f 6f 0.1.0...U....Roo<br>74 43 61 43 6c 69 65 6e 74 54 65 73 74 
+	tCaClientTest<br>Not valid before: 2016-08-17 17:43:34<br>Not valid after: 
+	2039-12-31 23:59:59<br>Subject data: Length:22,<br>30 14 31 12 30 10 06 03 
+	55 04 03 13 09 6c 6f 63 0.1.0...U....loc<br>61 6c 68 6f 73 74 alhost<br>
+	Subject public key algorithm Identifier: 1.2.840.113549.1.1.1<br>Subject 
+	public key: Length:270,<br>30 82 01 0a 02 82 01 01 00 e7 88 c4 fb db b0 7d 
+	0..............}<br>b8 5a 55 04 88 11 ff 1e 9e c4 f1 89 94 c5 75 b9 
+	.ZU...........u.<br>54 04 56 d6 01 50 0f d4 be 94 fa 36 9f 03 45 64 
+	T.V..P.....6..Ed<br>5b dc 4c dd e8 dc 5a a4 fa 34 4d 13 c2 c8 2d 3e 
+	[.L...Z..4M...-&gt;<br>8e 13 77 28 ae 80 8a a5 93 d7 44 0c 85 8b da 1e 
+	..w(......D.....<br>2e 2f 41 db 05 89 b1 aa e3 93 c2 f7 14 47 b4 66 
+	./A..........G.f<br>9d e6 51 b0 19 a2 f5 23 ab 60 e9 52 84 00 df 2c 
+	..Q....#.`.R...,<br>98 d5 54 99 18 a1 ef 53 f4 a5 dd 49 98 51 83 3d 
+	..T....S...I.Q.=<br>31 5f bc 8f 70 a6 fd 1b a2 4a 6c 5f 35 22 16 1a 
+	1_..p....Jl_5&quot;..<br>07 c5 fd c3 b5 8c d0 e0 3c a5 94 26 0c 5d 7c aa 
+	........&lt;..&amp;.]|.<br>40 86 9a f8 6d 1d 96 ee c4 a1 b8 9c 82 a9 de 04 
+	@...m...........<br>c8 e7 26 0e 3f ae 6f 5d 90 2a c7 aa c3 6a 78 0d 
+	..&amp;.?.o].*...jx.<br>80 84 ef 1e 32 27 a4 e4 71 ad a3 0c e7 56 2f e9 
+	....2'..q....V/.<br>be f3 80 26 5d 3c c8 cf 52 f3 49 d4 a0 17 76 2c 
+	...&amp;]&lt;..R.I...v,<br>12 30 4e a4 72 bf 88 4a 31 9a 45 b7 c5 90 43 a6 
+	.0N.r..J1.E...C.<br>fa 0d 49 af 32 7e c3 4a 2b ed 85 b0 cc 9f cf 49 
+	..I.2~.J+......I<br>19 7e 4e a5 8c 2e d4 b4 ef 02 03 01 00 01 .~N...........<br>
+	Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique id: Length:0,<br>
+	&lt;NULL&gt;<br>Extension: OID:2.5.29.1, Critical:0, Value:: Length:69,<br>30 43 
+	80 10 95 da 51 2f ce a0 10 14 e0 c6 cf 85 0C....Q/........<br>75 94 07 1b a1 
+	1d 30 1b 31 19 30 17 06 03 55 04 u.....0.1.0...U.<br>03 13 10 52 6f 6f 74 43 
+	61 43 6c 69 65 6e 74 54 ...RootCaClientT<br>65 73 74 82 10 b8 44 52 0d 02 c4 
+	1e 87 4e e5 c4 est...DR.....N..<br>04 c7 d5 d7 af .....<br>Sending server 
+	first part of request<br>Requesting server renegotiation<br>Sending server 
+	second part of request<br>Getting response<br>Received response data:: 
+	Length:16,<br>48 54 54 50 2f 31 2e 30 20 32 30 30 0d 0a 0d 0a HTTP/1.0 
+	200....<br>Server requested renegotiation<br>Received response data:: 
+	Length:106,<br>3c 68 74 6d 6c 3e 3c 68 65 61 64 3e 3c 74 69 74 
+	&lt;html&gt;&lt;head&gt;&lt;tit<br>6c 65 3e 53 53 4c 20 44 61 74 61 3c 2f 74 69 74 le&gt;SSL 
+	Data&lt;/tit<br>6c 65 3e 3c 2f 68 65 61 64 3e 3c 62 6f 64 79 3e 
+	le&gt;&lt;/head&gt;&lt;body&gt;<br>54 68 69 73 20 69 73 20 74 68 65 20 62 6f 64 79 This is 
+	the body<br>20 66 6f 6c 6c 6f 77 69 6e 67 20 61 20 72 65 6e following a ren<br>
+	65 67 6f 74 69 61 74 69 6f 6e 3c 2f 62 6f 64 79 egotiation&lt;/body<br>3e 3c 2f 
+	68 74 6d 6c 3e 0d 0a &gt;&lt;/html&gt;..<br>Stopping receive of response because of 
+	SEC_I_CONTEXT_EXPIRED status value from CSSL::GetEncryptedMessage<br>Sending 
+	close_notify message</blockquote>
 <ul>
 	<li>Here is screen capture from the test app when connecting to https://www.microsoft.com 
 	(with the client performing handling renegotiation in midstream):</li>
 </ul>
 <blockquote>
-	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 0 www.microsoft.com 
-	443<br>Connecting to www.microsoft.com:443<br>Performing SSL client handshake<br>
-	Protocol: TLS 1.0<br>Cipher: RC4<br>Cipher strength: 128<br>Hash: MD5<br>Hash 
-	strength: 128<br>Key exchange: RSA<br>Key exchange strength: 2048<br>Remote 
-	server certificate properties<br>Subject: C=US, S=WA, L=Redmond, O=Microsoft 
-	Corporation, OU=MSCOM, CN=www.micros<br>oft.com<br>SHA1 hash<br>0000 ff 11 95 
-	88 3b 90 8f de ea 8d 2d d0 12 58 5c b9 ....;.....-..X\.<br>0010 09 3a b9 64 
-	.:.d<br>Next certificate in chain<br>Subject: DC=com, DC=microsoft, DC=corp, 
-	DC=redmond, CN=MSIT Machine Auth CA 2<br>SHA1 hash<br>0000 ef 86 b4 13 f0 fc 
-	25 ac 51 2b 8b e9 b6 ec 70 f6 ......%.Q+....p.<br>0010 da 34 16 55 .4.U<br>Next 
-	certificate in chain<br>Subject: CN=Microsoft Internet Authority<br>SHA1 hash<br>
-	0000 99 2a d4 4d 7d ce 29 8d e1 7e 6f 2f 56 a7 b9 ca .*.M}.)..~o/V...<br>0010 
-	a4 1d b9 3f ...?<br>Next certificate in chain<br>Subject: C=IE, O=Baltimore, 
-	OU=CyberTrust, CN=Baltimore CyberTrust Root<br>SHA1 hash<br>0000 d4 de 20 d0 
-	5e 66 fc 53 fe 1a 50 88 2c 78 db 28 .. .^f.S..P.,x.(<br>0010 52 ca e4 74 R..t<br>
-	Sending server first part of request<br>Requesting server renegotiation<br>Sending 
-	server second part of request<br>Getting response<br>Received response data:<br>
-	0000 48 H<br>Received response data:<br>0000 54 54 50 2f 31 2e 31 20 32 30 30 
-	20 4f 4b 0d 0a TTP/1.1 200 OK..<br>0010 43 61 63 68 65 2d 43 6f 6e 74 72 6f 
-	6c 3a 20 6e Cache-Control: n<br>0020 6f 2d 63 61 63 68 65 0d 0a 43 6f 6e 74 
-	65 6e 74 o-cache..Content<br>0030 2d 54 79 70 65 3a 20 74 65 78 74 2f 68 74 
-	6d 6c -Type: text/html<br>0040 0d 0a 4c 61 73 74 2d 4d 6f 64 69 66 69 65 64 
-	3a ..Last-Modified:<br>0050 20 4d 6f 6e 2c 20 31 36 20 4d 61 72 20 32 30 30 
-	Mon, 16 Mar 200<br>0060 39 20 32 30 3a 33 35 3a 32 36 20 47 4d 54 0d 0a 9 20:35:26 
-	GMT..<br>0070 41 63 63 65 70 74 2d 52 61 6e 67 65 73 3a 20 62 Accept-Ranges: 
-	b<br>0080 79 74 65 73 0d 0a 45 54 61 67 3a 20 22 36 37 39 ytes..ETag: &quot;679<br>
-	0090 39 31 66 62 64 37 36 61 36 63 39 31 3a 30 22 0d 91fbd76a6c91:0&quot;.<br>
-	00a0 0a 53 65 72 76 65 72 3a 20 4d 69 63 72 6f 73 6f .Server: Microso<br>00b0 
-	66 74 2d 49 49 53 2f 38 2e 30 0d 0a 58 2d 50 6f ft-IIS/8.0..X-Po<br>00c0 77 
-	65 72 65 64 2d 42 79 3a 20 41 53 50 2e 4e 45 wered-By: ASP.NE<br>00d0 54 0d 
-	0a 44 61 74 65 3a 20 57 65 64 2c 20 32 32 T..Date: Wed, 22<br>00e0 20 4f 63 
-	74 20 32 30 31 34 20 32 31 3a 31 34 3a Oct 2014 21:14:<br>00f0 32 39 20 47 4d 
-	54 0d 0a 43 6f 6e 6e 65 63 74 69 29 GMT..Connecti<br>0100 6f 6e 3a 20 63 6c 
-	6f 73 65 0d 0a 43 6f 6e 74 65 on: close..Conte<br>0110 6e 74 2d 4c 65 6e 67 
-	74 68 3a 20 31 30 32 30 0d nt-Length: 1020.<br>0120 0a 0d 0a 3c 68 74 6d 6c 
-	3e 3c 68 65 61 64 3e 3c ...&lt;html&gt;&lt;head&gt;&lt;<br>0130 74 69 74 6c 
-	65 3e 4d 69 63 72 6f 73 6f 66 74 20 title&gt;Microsoft<br>0140 43 6f 72 70 6f 
-	72 61 74 69 6f 6e 3c 2f 74 69 74 Corporation&lt;/tit<br>0150 6c 65 3e 3c 6d 
-	65 74 61 20 68 74 74 70 2d 65 71 le&gt;&lt;meta http-eq<br>0160 75 69 76 3d 
-	22 58 2d 55 41 2d 43 6f 6d 70 61 74 uiv=&quot;X-UA-Compat<br>0170 69 62 6c 65 
-	22 20 63 6f 6e 74 65 6e 74 3d 22 49 ible&quot; content=&quot;I<br>0180 45 3d 
-	45 6d 75 6c 61 74 65 49 45 37 22 3e 3c 2f E=EmulateIE7&quot;&gt;&lt;/<br>0190 
-	6d 65 74 61 3e 3c 6d 65 74 61 20 68 74 74 70 2d meta&gt;&lt;meta http-<br>01a0 
-	65 71 75 69 76 3d 22 43 6f 6e 74 65 6e 74 2d 54 equiv=&quot;Content-T<br>01b0 
-	79 70 65 22 20 63 6f 6e 74 65 6e 74 3d 22 74 65 ype&quot; content=&quot;te<br>
-	01c0 78 74 2f 68 74 6d 6c 3b 20 63 68 61 72 73 65 74 xt/html; charset<br>01d0 
-	3d 75 74 66 2d 38 22 3e 3c 2f 6d 65 74 61 3e 3c =utf-8&quot;&gt;&lt;/meta&gt;&lt;<br>
-	01e0 6d 65 74 61 20 6e 61 6d 65 3d 22 53 65 61 72 63 meta name=&quot;Searc<br>
-	01f0 68 54 69 74 6c 65 22 20 63 6f 6e 74 65 6e 74 3d hTitle&quot; content=<br>
-	0200 22 4d 69 63 72 6f 73 6f 66 74 2e 63 6f 6d 22 20 &quot;Microsoft.com&quot;<br>
-	0210 73 63 68 65 6d 65 3d 22 22 3e 3c 2f 6d 65 74 61 scheme=&quot;&quot;&gt;&lt;/meta<br>
-	0220 3e 3c 6d 65 74 61 20 6e 61 6d 65 3d 22 44 65 73 &gt;&lt;meta name=&quot;Des<br>
-	0230 63 72 69 70 74 69 6f 6e 22 20 63 6f 6e 74 65 6e cription&quot; conten<br>
-	0240 74 3d 22 47 65 74 20 70 72 6f 64 75 63 74 20 69 t=&quot;Get product i<br>
-	0250 6e 66 6f 72 6d 61 74 69 6f 6e 2c 20 73 75 70 70 nformation, supp<br>0260 
-	6f 72 74 2c 20 61 6e 64 20 6e 65 77 73 20 66 72 ort, and news fr<br>0270 6f 
-	6d 20 4d 69 63 72 6f 73 6f 66 74 2e 22 20 73 om Microsoft.&quot; s<br>0280 63 
-	68 65 6d 65 3d 22 22 3e 3c 2f 6d 65 74 61 3e cheme=&quot;&quot;&gt;&lt;/meta&gt;<br>
-	0290 3c 6d 65 74 61 20 6e 61 6d 65 3d 22 54 69 74 6c &lt;meta name=&quot;Titl<br>
-	02a0 65 22 20 63 6f 6e 74 65 6e 74 3d 22 4d 69 63 72 e&quot; content=&quot;Micr<br>
-	02b0 6f 73 6f 66 74 2e 63 6f 6d 20 48 6f 6d 65 20 50 osoft.com Home P<br>02c0 
-	61 67 65 22 20 73 63 68 65 6d 65 3d 22 22 3e 3c age&quot; scheme=&quot;&quot;&gt;&lt;<br>
-	02d0 2f 6d 65 74 61 3e 3c 6d 65 74 61 20 6e 61 6d 65 /meta&gt;&lt;meta name<br>
-	02e0 3d 22 4b 65 79 77 6f 72 64 73 22 20 63 6f 6e 74 =&quot;Keywords&quot; cont<br>
-	02f0 65 6e 74 3d 22 4d 69 63 72 6f 73 6f 66 74 2c 20 ent=&quot;Microsoft,<br>
-	0300 70 72 6f 64 75 63 74 2c 20 73 75 70 70 6f 72 74 product, support<br>0310 
-	2c 20 68 65 6c 70 2c 20 74 72 61 69 6e 69 6e 67 , help, training<br>0320 2c 
-	20 4f 66 66 69 63 65 2c 20 57 69 6e 64 6f 77 , Office, Window<br>0330 73 2c 
-	20 73 6f 66 74 77 61 72 65 2c 20 64 6f 77 s, software, dow<br>0340 6e 6c 6f 
-	61 64 2c 20 74 72 69 61 6c 2c 20 70 72 nload, trial, pr<br>0350 65 76 69 65 
-	77 2c 20 64 65 6d 6f 2c 20 20 62 75 eview, demo, bu<br>0360 73 69 6e 65 73 73 
-	2c 20 73 65 63 75 72 69 74 79 siness, security<br>0370 2c 20 75 70 64 61 74 
-	65 2c 20 66 72 65 65 2c 20 , update, free,<br>0380 63 6f 6d 70 75 74 65 72 2c 
-	20 50 43 2c 20 73 65 computer, PC, se<br>0390 72 76 65 72 2c 20 73 65 61 72 
-	63 68 2c 20 64 6f rver, search, do<br>03a0 77 6e 6c 6f 61 64 2c 20 69 6e 73 
-	74 61 6c 6c 2c wnload, install,<br>03b0 20 6e 65 77 73 22 20 73 63 68 65 6d 
-	65 3d 22 22 news&quot; scheme=&quot;&quot;<br>03c0 3e 3c 2f 6d 65 74 61 3e 3c 
-	6d 65 74 61 20 6e 61 &gt;&lt;/meta&gt;&lt;meta na<br>03d0 6d 65 3d 22 53 65 
-	61 72 63 68 44 65 73 63 72 69 me=&quot;SearchDescri<br>03e0 70 74 69 6f 6e 22 
-	20 63 6f 6e 74 65 6e 74 3d 22 ption&quot; content=&quot;<br>03f0 4d 69 63 72 
-	6f 73 6f 66 74 2e 63 6f 6d 20 48 6f Microsoft.com Ho<br>0400 6d 65 70 61 67 
-	65 22 20 73 63 68 65 6d 65 3d 22 mepage&quot; scheme=&quot;<br>0410 22 3e 3c 
-	2f 6d 65 74 61 3e 3c 2f 68 65 61 64 3e &quot;&gt;&lt;/meta&gt;&lt;/head&gt;<br>
-	0420 3c 62 6f 64 79 3e 3c 70 3e 59 6f 75 72 20 63 75 &lt;body&gt;&lt;p&gt;Your 
-	cu<br>0430 72 72 65 6e 74 20 55 73 65 72 2d 41 67 65 6e 74 rrent User-Agent<br>
-	0440 20 73 74 72 69 6e 67 20 61 70 70 65 61 72 73 20 string appears<br>0450 
-	74 6f 20 62 65 20 66 72 6f 6d 20 61 6e 20 61 75 to be from an au<br>0460 74 
-	6f 6d 61 74 65 64 20 70 72 6f 63 65 73 73 2c tomated process,<br>0470 20 69 
-	66 20 74 68 69 73 20 69 73 20 69 6e 63 6f if this is inco<br>0480 72 72 65 63 
-	74 2c 20 70 6c 65 61 73 65 20 63 6c rrect, please cl<br>0490 69 63 6b 20 74 
-	68 69 73 20 6c 69 6e 6b 3a 3c 61 ick this link:&lt;a<br>04a0 20 68 72 65 66 
-	3d 22 68 74 74 70 3a 2f 2f 77 77 href=&quot;http://ww<br>04b0 77 2e 6d 69 63 
-	72 6f 73 6f 66 74 2e 63 6f 6d 2f w.microsoft.com/<br>04c0 65 6e 2f 75 73 2f 
-	64 65 66 61 75 6c 74 2e 61 73 en/us/default.as<br>04d0 70 78 3f 72 65 64 69 
-	72 3d 74 72 75 65 22 3e 55 px?redir=true&quot;&gt;U<br>04e0 6e 69 74 65 64 20 
-	53 74 61 74 65 73 20 45 6e 67 nited States Eng<br>04f0 6c 69 73 68 20 4d 69 
-	63 72 6f 73 6f 66 74 20 48 lish Microsoft H<br>0500 6f 6d 65 70 61 67 65 3c 
-	2f 61 3e 3c 2f 70 3e 3c omepage&lt;/a&gt;&lt;/p&gt;&lt;<br>0510 2f 62 6f 64 
-	79 3e 3c 2f 68 74 6d 6c 3e 0d 0a /body&gt;&lt;/html&gt;..<br>Stopping receive 
-	of response because of SEC_I_CONTEXT_EXPIRED status value from<br>CSSL::GetEncryptedMessage<br>
-	Sending close_notify message<br><br>D:\Dev\My Code\SSLWrappers\DebugU64&gt;</blockquote>
+	D:\Dev\My Code\SSLWrappers\Release&gt;SSLWrappersDemo.exe 0 www.microsoft.com 
+	443<br>Connecting to www.microsoft.com:443<br>Performing SSL client 
+	handshake<br>Protocol: TLS v1.2<br>Cipher: AES<br>Cipher strength: 256<br>
+	Hash: SHA-384<br>Hash strength: 0<br>Key exchange: Eliptic curve Diffie 
+	Hellman Ephemeral<br>Key exchange strength: 256<br>Remote server certificate 
+	properties<br>Subject string: C=US, S=Washington, L=Redmond, O=Microsoft 
+	Corporation, CN=www.microsoft.com<br>Version: 2<br>Serial number: Length:16,<br>
+	a5 1e f4 ff a0 90 a3 53 97 90 4a d9 2b 62 8f 2b .......S..J.+b.+ <br>Crypt 
+	algorithm Identifier: 1.2.840.113549.1.1.11<br>Crypt algorithm identifier 
+	parameters: Length:2,<br>05 00 .. <br>Issuer: Length:128,<br>30 7e 31 0b 30 
+	09 06 03 55 04 06 13 02 55 53 31 0~1.0...U....US1 <br>1d 30 1b 06 03 55 04 
+	0a 13 14 53 79 6d 61 6e 74 .0...U....Symant <br>65 63 20 43 6f 72 70 6f 72 
+	61 74 69 6f 6e 31 1f ec Corporation1. <br>30 1d 06 03 55 04 0b 13 16 53 79 
+	6d 61 6e 74 65 0...U....Symante <br>63 20 54 72 75 73 74 20 4e 65 74 77 6f 
+	72 6b 31 c Trust Network1 <br>2f 30 2d 06 03 55 04 03 13 26 53 79 6d 61 6e 
+	74 /0-..U...&amp;Symant <br>65 63 20 43 6c 61 73 73 20 33 20 53 65 63 75 72 ec 
+	Class 3 Secur <br>65 20 53 65 72 76 65 72 20 43 41 20 2d 20 47 34 e Server 
+	CA - G4 <br>Not valid before: 2016-05-23 00:00:00<br>Not valid after: 
+	2017-05-23 23:59:59<br>Subject data: Length:114,<br>30 70 31 0b 30 09 06 03 
+	55 04 06 13 02 55 53 31 0p1.0...U....US1 <br>13 30 11 06 03 55 04 08 0c 0a 
+	57 61 73 68 69 6e .0...U....Washin <br>67 74 6f 6e 31 10 30 0e 06 03 55 04 
+	07 0c 07 52 gton1.0...U....R <br>65 64 6d 6f 6e 64 31 1e 30 1c 06 03 55 04 
+	0a 0c edmond1.0...U... <br>15 4d 69 63 72 6f 73 6f 66 74 20 43 6f 72 70 6f 
+	.Microsoft Corpo <br>72 61 74 69 6f 6e 31 1a 30 18 06 03 55 04 03 0c 
+	ration1.0...U... <br>11 77 77 77 2e 6d 69 63 72 6f 73 6f 66 74 2e 63 
+	.www.microsoft.c <br>6f 6d om <br>Subject public key algorithm Identifier: 
+	1.2.840.113549.1.1.1<br>Subject public key: Length:270,<br>30 82 01 0a 02 82 
+	01 01 00 9a e2 28 63 37 8b e5 0..........(c7.. <br>83 ee 04 24 b2 6e bc dd 
+	6a ef 4e fe a7 ed 91 9e ...$.n..j.N..... <br>03 84 5b d5 31 0f 9e a8 c2 22 
+	97 91 11 64 12 13 ..[.1....&quot;...d.. <br>d3 a6 a6 3b 01 f7 bf e9 8d d8 04 d4 
+	29 b0 93 85 ...;........)... <br>20 41 6d 24 1b 0e 04 c9 42 c7 2f c0 73 f8 
+	af 2d Am$....B./.s..- <br>7e a9 00 5d 4c bd 2d ac 12 77 e4 3f 23 6e ea 59 
+	~..]L.-..w.?#n.Y <br>c9 7f c9 e0 d6 8f 73 d2 67 00 3c 68 37 5d b1 ff 
+	......s.g.&lt;h7].. <br>2a c4 eb c7 cd 38 36 67 77 be 44 7b 05 29 de 41 
+	*....86gw.D{.).A <br>64 4d 9e aa 6b 4f 78 d9 09 ea a3 58 2e 2e 8d 22 
+	dM..kOx....X...&quot; <br>08 2a b1 cc ea f0 59 30 d0 03 2d 53 1e 0b a8 9a 
+	.*....Y0..-S.... <br>25 53 29 1e a9 15 b2 b9 c3 10 90 f6 bb c6 40 97 
+	%S)...........@. <br>79 67 5e d1 74 63 fa 09 78 e8 d5 3c 40 8f 41 10 
+	yg^.tc..x..&lt;@.A. <br>0b 4c 8f 54 f1 b6 7e 3f b4 e6 9d 3c fe 03 3a a7 
+	.L.T..~?...&lt;..:. <br>c9 a2 7f 47 09 6a 9a e5 9b db aa 0c c7 b0 74 40 
+	...G.j........t@ <br>48 46 de 58 fe fb 39 12 c6 d4 9d 51 d3 ae bd 68 
+	HF.X..9....Q...h <br>29 46 3b 99 71 31 a0 eb b8 8e ac 5f 94 52 20 4a 
+	)F;.q1....._.R J <br>4c be a7 e9 5f b1 ce 92 9b 02 03 01 00 01 
+	L..._......... <br>Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique 
+	id: Length:0,<br>&lt;NULL&gt;<br>Extension: OID:2.5.29.17, Critical:0, Value:: 
+	Length:80,<br>30 4e 82 15 70 72 69 76 61 63 79 2e 6d 69 63 72 
+	0N..privacy.micr <br>6f 73 6f 66 74 2e 63 6f 6d 82 13 77 77 77 71 61 
+	osoft.com..wwwqa <br>2e 6d 69 63 72 6f 73 6f 66 74 2e 63 6f 6d 82 11 
+	.microsoft.com.. <br>77 77 77 2e 6d 69 63 72 6f 73 6f 66 74 2e 63 6f 
+	www.microsoft.co <br>6d 82 0d 6d 69 63 72 6f 73 6f 66 74 2e 63 6f 6d 
+	m..microsoft.com <br>Extension: OID:2.5.29.19, Critical:0, Value:: Length:2,<br>
+	30 00 0. <br>Extension: OID:2.5.29.15, Critical:1, Value:: Length:4,<br>03 
+	02 05 a0 .... <br>Extension: OID:2.5.29.32, Critical:0, Value:: Length:90,<br>
+	30 58 30 56 06 06 67 81 0c 01 02 02 30 4c 30 23 0X0V..g.....0L0# <br>06 08 
+	2b 06 01 05 05 07 02 01 16 17 68 74 74 70 ..+.........http <br>73 3a 2f 2f 
+	64 2e 73 79 6d 63 62 2e 63 6f 6d 2f s://d.symcb.com/ <br>63 70 73 30 25 06 
+	08 2b 06 01 05 05 07 02 02 30 cps0%..+.......0 <br>19 0c 17 68 74 74 70 73 
+	3a 2f 2f 64 2e 73 79 6d ...https://d.sym <br>63 62 2e 63 6f 6d 2f 72 70 61 
+	cb.com/rpa <br>Extension: OID:2.5.29.31, Critical:0, Value:: Length:36,<br>
+	30 22 30 20 a0 1e a0 1c 86 1a 68 74 74 70 3a 2f 0&quot;0 ......http:/ <br>2f 73 
+	73 2e 73 79 6d 63 62 2e 63 6f 6d 2f 73 73 /ss.symcb.com/ss <br>2e 63 72 6c 
+	.crl <br>Extension: OID:2.5.29.37, Critical:0, Value:: Length:22,<br>30 14 
+	06 08 2b 06 01 05 05 07 03 01 06 08 2b 06 0...+.........+. <br>01 05 05 07 
+	03 02 ...... <br>Extension: OID:2.5.29.35, Critical:0, Value:: Length:24,<br>
+	30 16 80 14 5f 60 cf 61 90 55 df 84 43 14 8a 60 0..._`.a.U..C..` <br>2a b2 
+	f5 7a f4 43 18 ef *..z.C.. <br>Extension: OID:1.3.6.1.5.5.7.1.1, Critical:0, 
+	Value:: Length:75,<br>30 49 30 1f 06 08 2b 06 01 05 05 07 30 01 86 13 
+	0I0...+.....0... <br>68 74 74 70 3a 2f 2f 73 73 2e 73 79 6d 63 64 2e 
+	http://ss.symcd. <br>63 6f 6d 30 26 06 08 2b 06 01 05 05 07 30 02 86 
+	com0&amp;..+.....0.. <br>1a 68 74 74 70 3a 2f 2f 73 73 2e 73 79 6d 63 62 
+	.http://ss.symcb <br>2e 63 6f 6d 2f 73 73 2e 63 72 74 .com/ss.crt <br>
+	Extension: OID:1.3.6.1.4.1.11129.2.4.2, Critical:0, Value:: Length:245,<br>
+	04 81 f2 00 f0 00 75 00 dd eb 1d 2b 7a 0d 4f a6 ......u....+z.O. <br>20 8b 
+	81 ad 81 68 70 7e 2e 8e 9d 01 d5 5c 88 8d ....hp~.....\.. <br>3d 11 c4 cd b6 
+	ec be cc 00 00 01 54 df 0f 49 68 =..........T..Ih <br>00 00 04 03 00 46 30 
+	44 02 20 28 0f 62 d7 13 bb .....F0D. (.b... <br>3b 10 c4 e4 f6 bf c6 f5 47 
+	ab 6f 96 7a f8 13 c0 ;.......G.o.z... <br>28 74 eb cf 03 32 a5 42 54 f3 02 
+	20 03 96 7d 09 (t...2.BT.. ..}. <br>17 7a 78 cd 21 fb 0f 24 af 6f 67 29 5f 
+	fc 3c 09 .zx.!..$.og)_.&lt;. <br>6a 98 da 87 f6 ee c5 4f 88 72 7b 94 00 77 00 
+	a4 j......O.r{..w.. <br>b9 09 90 b4 18 58 14 87 bb 13 a2 cc 67 70 0a 3c 
+	.....X......gp.&lt; <br>35 98 04 f9 1b df b8 e3 77 cd 0e c8 0d dc 10 00 
+	5.......w....... <br>00 01 54 df 0f 49 9d 00 00 04 03 00 48 30 46 02 
+	..T..I......H0F. <br>21 00 c1 fc 00 d9 de ca 11 43 29 11 86 9c 84 e4 
+	!........C)..... <br>81 86 a1 f1 08 58 fc 0b 01 b7 24 05 c7 e9 1f 2d 
+	.....X....$....- <br>27 90 02 21 00 f1 fb 42 30 0b 9c da 3a c7 76 6c 
+	'..!...B0...:.vl <br>bf e6 83 69 c1 8f a1 e7 89 21 be e7 e7 f4 8a 4a 
+	...i.....!.....J <br>f5 67 41 54 01 .gAT. <br>Property Identifier: 119<br>
+	Length:489, <br>43 53 43 43 e9 01 00 00 a0 00 00 00 38 00 00 00 
+	CSCC........8... <br>03 00 00 00 07 00 00 00 64 01 00 00 85 00 00 00 
+	........d....... <br>00 00 00 00 00 01 00 00 00 80 92 0c 86 b4 d1 01 
+	................ <br>80 69 2a af 20 d4 d2 01 92 00 00 00 00 00 00 00 .i*. 
+	........... <br>01 00 00 00 06 00 00 00 73 b1 e5 33 00 00 00 00 
+	........s..3.... <br>d9 b1 2a 63 be 2c d2 01 9b db b2 01 b6 2c d2 01 
+	..*c.,.......,.. <br>9b ab 3b c5 c6 2c d2 01 00 00 00 00 00 00 00 00 
+	..;..,.......... <br>00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	................ <br>80 0c ce 7b de 6a 3e 8a ce bc 80 8c e8 d4 a5 a2 
+	...{.j&gt;......... <br>e8 a1 6e 1d e0 3d 31 a8 c9 c9 da b3 3a 34 f5 10 
+	..n..=1.....:4.. <br>38 00 00 00 00 00 00 00 00 00 00 00 02 01 00 00 
+	8............... <br>00 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 
+	................ <br>5f 0b 37 e6 33 84 0c a0 24 68 55 2e a3 b1 19 7e 
+	_.7.3...$hU....~ <br>5e 11 8f 7b 00 00 00 00 38 00 00 00 00 00 00 00 
+	^..{....8....... <br>00 00 00 00 02 01 00 00 01 00 00 00 02 00 00 00 
+	................ <br>ff ff ff ff 00 00 00 00 ff 67 36 7c 5c d4 de 4a 
+	.........g6|\..J <br>e1 8b cc e1 d7 0f da bd 7c 86 61 35 00 00 00 00 
+	........|.a5.... <br>38 00 00 00 00 00 00 00 00 00 00 00 0c 01 00 00 
+	8............... <br>ff ff ff ff 00 00 00 00 04 00 00 00 03 00 00 00 
+	................ <br>4e b6 d5 78 49 9b 1c cf 5f 58 1e ad 56 be 3d 9b 
+	N..xI..._X..V.=. <br>67 44 a5 e5 00 00 00 00 00 00 00 00 12 00 00 00 
+	gD.............. <br>24 00 00 00 3d 00 00 00 4f 00 00 00 61 00 00 00 
+	$...=...O...a... <br>73 00 00 00 31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 
+	s...1.3.6.1.5.5. <br>37 2e 33 2e 31 00 31 2e 33 2e 36 2e 31 2e 35 2e 
+	7.3.1.1.3.6.1.5. <br>35 2e 37 2e 33 2e 32 00 32 2e 31 36 2e 38 34 30 
+	5.7.3.2.2.16.840 <br>2e 31 2e 31 31 33 37 33 33 2e 31 2e 37 2e 35 34 
+	.1.113733.1.7.54 <br>00 31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 37 2e 33 
+	.1.3.6.1.5.5.7.3 <br>2e 31 00 31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 37 
+	.1.1.3.6.1.5.5.7 <br>2e 33 2e 32 00 31 2e 33 2e 36 2e 31 2e 35 2e 35 
+	.3.2.1.3.6.1.5.5 <br>2e 37 2e 33 2e 34 00 31 2e 33 2e 36 2e 31 2e 35 
+	.7.3.4.1.3.6.1.5 <br>2e 35 2e 37 2e 33 2e 33 00 .5.7.3.3. <br>SHA1 hash<br>
+	Length:20, <br>5f 0b 37 e6 33 84 0c a0 24 68 55 2e a3 b1 19 7e 
+	_.7.3...$hU....~ <br>5e 11 8f 7b ^..{ <br>Next certificate in chain<br>
+	Subject string: C=US, O=Symantec Corporation, OU=Symantec Trust Network, 
+	CN=Symantec Class 3 Secure Server CA - G4<br>Version: 2<br>Serial number: 
+	Length:16,<br>ff 99 06 93 30 8d 41 40 34 b7 70 38 74 b9 3f 51 
+	....0.A@4.p8t.?Q <br>Crypt algorithm Identifier: 1.2.840.113549.1.1.11<br>
+	Crypt algorithm identifier parameters: Length:2,<br>05 00 .. <br>Issuer: 
+	Length:205,<br>30 81 ca 31 0b 30 09 06 03 55 04 06 13 02 55 53 
+	0..1.0...U....US <br>31 17 30 15 06 03 55 04 0a 13 0e 56 65 72 69 53 
+	1.0...U....VeriS <br>69 67 6e 2c 20 49 6e 63 2e 31 1f 30 1d 06 03 55 ign, 
+	Inc.1.0...U <br>04 0b 13 16 56 65 72 69 53 69 67 6e 20 54 72 75 ....VeriSign 
+	Tru <br>73 74 20 4e 65 74 77 6f 72 6b 31 3a 30 38 06 03 st Network1:08.. <br>
+	55 04 0b 13 31 28 63 29 20 32 30 30 36 20 56 65 U...1(c) 2006 Ve <br>72 69 
+	53 69 67 6e 2c 20 49 6e 63 2e 20 2d 20 46 riSign, Inc. - F <br>6f 72 20 61 
+	75 74 68 6f 72 69 7a 65 64 20 75 73 or authorized us <br>65 20 6f 6e 6c 79 
+	31 45 30 43 06 03 55 04 03 13 e only1E0C..U... <br>3c 56 65 72 69 53 69 67 
+	6e 20 43 6c 61 73 73 20 &lt;VeriSign Class <br>33 20 50 75 62 6c 69 63 20 50 72 
+	69 6d 61 72 79 3 Public Primary <br>20 43 65 72 74 69 66 69 63 61 74 69 6f 
+	6e 20 41 Certification A <br>75 74 68 6f 72 69 74 79 20 2d 20 47 35 uthority 
+	- G5 <br>Not valid before: 2013-10-31 00:00:00<br>Not valid after: 
+	2023-10-30 23:59:59<br>Subject data: Length:128,<br>30 7e 31 0b 30 09 06 03 
+	55 04 06 13 02 55 53 31 0~1.0...U....US1 <br>1d 30 1b 06 03 55 04 0a 13 14 
+	53 79 6d 61 6e 74 .0...U....Symant <br>65 63 20 43 6f 72 70 6f 72 61 74 69 
+	6f 6e 31 1f ec Corporation1. <br>30 1d 06 03 55 04 0b 13 16 53 79 6d 61 6e 
+	74 65 0...U....Symante <br>63 20 54 72 75 73 74 20 4e 65 74 77 6f 72 6b 31 c 
+	Trust Network1 <br>2f 30 2d 06 03 55 04 03 13 26 53 79 6d 61 6e 74 
+	/0-..U...&amp;Symant <br>65 63 20 43 6c 61 73 73 20 33 20 53 65 63 75 72 ec 
+	Class 3 Secur <br>65 20 53 65 72 76 65 72 20 43 41 20 2d 20 47 34 e Server 
+	CA - G4 <br>Subject public key algorithm Identifier: 1.2.840.113549.1.1.1<br>
+	Subject public key: Length:270,<br>30 82 01 0a 02 82 01 01 00 b2 d8 05 ca 1c 
+	74 2d 0.............t- <br>b5 17 56 39 c5 4a 52 09 96 e8 4b d8 0c f1 68 9f 
+	..V9.JR...K...h. <br>9a 42 28 62 c3 a5 30 53 7e 55 11 82 5b 03 7a 0d 
+	.B(b..0S~U..[.z. <br>2f e1 79 04 c9 b4 96 77 19 81 01 94 59 f9 bc f7 
+	/.y....w....Y... <br>7a 99 27 82 2d b7 83 dd 5a 27 7f b2 03 7a 9c 53 
+	z.'.-...Z'...z.S <br>25 e9 48 1f 46 4f c8 9d 29 f8 be 79 56 f6 f7 fd 
+	%.H.FO..)..yV... <br>d9 3a 68 da 8b 4b 82 33 41 12 c3 c8 3c cc d6 96 
+	.:h..K.3A...&lt;... <br>7a 84 21 1a 22 04 03 27 17 8b 1c 68 61 93 0f 0e 
+	z.!.&quot;..'...ha... <br>51 80 33 1d b4 b5 ce eb 7e d0 62 ac ee b3 7b 01 
+	Q.3.....~.b...{. <br>74 ef 69 35 eb ca d5 3d a9 ee 97 98 ca 8d aa 44 
+	t.i5...=.......D <br>0e 25 99 4a 15 96 a4 ce 6d 02 54 1f 2a 6a 26 e2 
+	.%.J....m.T.*j&amp;. <br>06 3a 63 48 ac b4 4c d1 75 93 50 ff 13 2f d6 da 
+	.:cH..L.u.P../.. <br>e1 c6 18 f5 9f c9 25 5d f3 00 3a de 26 4d b4 29 
+	......%]..:.&amp;M.) <br>09 cd 0f 3d 23 6f 16 4a 81 16 fb f2 83 10 c3 b8 
+	...=#o.J........ <br>d6 d8 55 32 3d f1 bd 0f bd 8c 52 95 4a 16 97 7a 
+	..U2=.....R.J..z <br>52 21 63 75 2f 16 f9 c4 66 be f5 b5 09 d8 ff 27 
+	R!cu/...f......' <br>00 cd 44 7c 6f 4b 3f b0 f7 02 03 01 00 01 
+	..D|oK?....... <br>Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique 
+	id: Length:0,<br>&lt;NULL&gt;<br>Extension: OID:2.5.29.19, Critical:1, Value:: 
+	Length:8,<br>30 06 01 01 ff 02 01 00 0....... <br>Extension: OID:2.5.29.31, 
+	Critical:0, Value:: Length:41,<br>30 27 30 25 a0 23 a0 21 86 1f 68 74 74 70 
+	3a 2f 0'0%.#.!..http:/ <br>2f 73 31 2e 73 79 6d 63 62 2e 63 6f 6d 2f 70 63 
+	/s1.symcb.com/pc <br>61 33 2d 67 35 2e 63 72 6c a3-g5.crl <br>Extension: 
+	OID:2.5.29.15, Critical:1, Value:: Length:4,<br>03 02 01 06 .... <br>
+	Extension: OID:1.3.6.1.5.5.7.1.1, Critical:0, Value:: Length:35,<br>30 21 30 
+	1f 06 08 2b 06 01 05 05 07 30 01 86 13 0!0...+.....0... <br>68 74 74 70 3a 
+	2f 2f 73 32 2e 73 79 6d 63 62 2e http://s2.symcb. <br>63 6f 6d com <br>
+	Extension: OID:2.5.29.32, Critical:0, Value:: Length:100,<br>30 62 30 60 06 
+	0a 60 86 48 01 86 f8 45 01 07 36 0b0`..`.H...E..6 <br>30 52 30 26 06 08 2b 
+	06 01 05 05 07 02 01 16 1a 0R0&amp;..+......... <br>68 74 74 70 3a 2f 2f 77 77 
+	77 2e 73 79 6d 61 75 http://www.symau <br>74 68 2e 63 6f 6d 2f 63 70 73 30 
+	28 06 08 2b 06 th.com/cps0(..+. <br>01 05 05 07 02 02 30 1c 1a 1a 68 74 74 
+	70 3a 2f ......0...http:/ <br>2f 77 77 77 2e 73 79 6d 61 75 74 68 2e 63 6f 
+	6d /www.symauth.com <br>2f 72 70 61 /rpa <br>Extension: OID:2.5.29.17, 
+	Critical:0, Value:: Length:34,<br>30 20 a4 1e 30 1c 31 1a 30 18 06 03 55 04 
+	03 13 0 ..0.1.0...U... <br>11 53 79 6d 61 6e 74 65 63 50 4b 49 2d 31 2d 35 
+	.SymantecPKI-1-5 <br>33 34 34 <br>Extension: OID:2.5.29.14, Critical:0, 
+	Value:: Length:22,<br>04 14 5f 60 cf 61 90 55 df 84 43 14 8a 60 2a b2 
+	.._`.a.U..C..`*. <br>f5 7a f4 43 18 ef .z.C.. <br>Extension: OID:2.5.29.35, 
+	Critical:0, Value:: Length:24,<br>30 16 80 14 7f d3 65 a7 c2 dd ec bb f0 30 
+	09 f3 0.....e......0.. <br>43 39 fa 02 af 33 31 33 C9...313 <br>SHA1 hash<br>
+	Length:20, <br>ff 67 36 7c 5c d4 de 4a e1 8b cc e1 d7 0f da bd 
+	.g6|\..J........ <br>7c 86 61 35 |.a5 <br>Sending server first part of 
+	request<br>Requesting server renegotiation<br>Sending server second part of 
+	request<br>Getting response<br>Received response data:: Length:419,<br>48 54 
+	54 50 2f 31 2e 30 20 34 30 30 20 42 61 64 HTTP/1.0 400 Bad <br>20 52 65 71 
+	75 65 73 74 0d 0a 53 65 72 76 65 72 Request..Server <br>3a 20 41 6b 61 6d 61 
+	69 47 48 6f 73 74 0d 0a 4d : AkamaiGHost..M <br>69 6d 65 2d 56 65 72 73 69 
+	6f 6e 3a 20 31 2e 30 ime-Version: 1.0 <br>0d 0a 43 6f 6e 74 65 6e 74 2d 54 
+	79 70 65 3a 20 ..Content-Type: <br>74 65 78 74 2f 68 74 6d 6c 0d 0a 43 6f 6e 
+	74 65 text/html..Conte <br>6e 74 2d 4c 65 6e 67 74 68 3a 20 32 30 39 0d 0a 
+	nt-Length: 209.. <br>45 78 70 69 72 65 73 3a 20 53 61 74 2c 20 32 32 
+	Expires: Sat, 22 <br>20 4f 63 74 20 32 30 31 36 20 32 33 3a 34 35 3a Oct 
+	2016 23:45: <br>33 37 20 47 4d 54 0d 0a 44 61 74 65 3a 20 53 61 37 
+	GMT..Date: Sa <br>74 2c 20 32 32 20 4f 63 74 20 32 30 31 36 20 32 t, 22 Oct 
+	2016 2 <br>33 3a 34 35 3a 33 37 20 47 4d 54 0d 0a 43 6f 6e 3:45:37 GMT..Con
+	<br>6e 65 63 74 69 6f 6e 3a 20 63 6c 6f 73 65 0d 0a nection: close.. <br>0d 
+	0a 3c 48 54 4d 4c 3e 3c 48 45 41 44 3e 0a 3c ..&lt;HTML&gt;&lt;HEAD&gt;.&lt; <br>54 49 54 
+	4c 45 3e 49 6e 76 61 6c 69 64 20 55 52 TITLE&gt;Invalid UR <br>4c 3c 2f 54 49 
+	54 4c 45 3e 0a 3c 2f 48 45 41 44 L&lt;/TITLE&gt;.&lt;/HEAD <br>3e 3c 42 4f 44 59 3e 
+	0a 3c 48 31 3e 49 6e 76 61 &gt;&lt;BODY&gt;.&lt;H1&gt;Inva <br>6c 69 64 20 55 52 4c 3c 2f 
+	48 31 3e 0a 54 68 65 lid URL&lt;/H1&gt;.The <br>20 72 65 71 75 65 73 74 65 64 20 
+	55 52 4c 20 22 requested URL &quot; <br>26 23 39 31 3b 6e 6f 26 23 33 32 3b 55 52 
+	4c 26 &amp;#91;no&amp;#32;URL&amp; <br>23 39 33 3b 22 2c 20 69 73 20 69 6e 76 61 6c 69 
+	#93;&quot;, is invali <br>64 2e 3c 70 3e 0a 52 65 66 65 72 65 6e 63 65 26 
+	d.&lt;p&gt;.Reference&amp; <br>23 33 32 3b 26 23 33 35 3b 39 26 23 34 36 3b 34 
+	#32;&amp;#35;9&amp;#46;4 <br>64 64 36 31 32 30 32 26 23 34 36 3b 31 34 37 37 
+	dd61202&amp;#46;1477 <br>31 37 39 39 33 37 26 23 34 36 3b 31 37 37 31 31 
+	179937&amp;#46;17711 <br>36 32 31 0a 3c 2f 42 4f 44 59 3e 3c 2f 48 54 4d 
+	621.&lt;/BODY&gt;&lt;/HTM <br>4c 3e 0a L&gt;. <br>Stopping receive of response because 
+	of SEC_I_CONTEXT_EXPIRED status value from CSSL::GetEncryptedMessage<br>
+	Sending close_notify message</blockquote>
 <ul>
 	<li>And finally here is the screen capture from the test app when connecting 
 	to https://www.google.com (with the client not performing any client renegotiation 
 	in midstream as Google seem to reject that):</li>
 </ul>
 <blockquote>
-	D:\Dev\My Code\SSLWrappers\DebugU64&gt;SSLWrappersDemo.exe 0 www.google.com 
+	D:\Dev\My Code\SSLWrappers\Release&gt;SSLWrappersDemo.exe 0 www.google.com 
 	443<br>Connecting to www.google.com:443<br>Performing SSL client handshake<br>
-	Protocol: TLS 1.0<br>Cipher: AES<br>Cipher strength: 128<br>Hash: SHA<br>Hash 
-	strength: 160<br>Key exchange algorithm identifier: 0xae06, Class:40960, Type:3584, 
-	SID:6<br>Key exchange strength: 256<br>Remote server certificate properties<br>
-	Subject: C=US, S=California, L=Mountain View, O=Google Inc, CN=www.google.com<br>
-	SHA1 hash<br>0000 93 12 5b b9 7d 02 aa 45 36 b4 ec 9a 7c a0 1a d8 ..[.}..E6...|...<br>
-	0010 92 73 14 db .s..<br>Next certificate in chain<br>Subject: C=US, O=Google 
-	Inc, CN=Google Internet Authority G2<br>SHA1 hash<br>0000 bb dc e1 3e 9d 53 
-	7a 52 29 91 5c b1 23 c7 aa b0 ...&gt;.SzR).\.#...<br>0010 a8 55 e7 98 .U..<br>
-	Next certificate in chain<br>Subject: C=US, O=GeoTrust Inc., CN=GeoTrust Global 
-	CA<br>SHA1 hash<br>0000 73 59 75 5c 6d f9 a0 ab c3 06 0b ce 36 95 64 c8 sYu\m.......6.d.<br>
-	0010 ec 45 42 a3 .EB.<br>Sending request<br>Getting response<br>Received response 
-	data:<br>0000 48 54 54 50 2f 31 2e 30 20 33 30 32 20 46 6f 75 HTTP/1.0 302 Fou<br>
-	0010 6e 64 0d 0a 4c 6f 63 61 74 69 6f 6e 3a 20 68 74 nd..Location: ht<br>0020 
-	74 70 73 3a 2f 2f 77 77 77 2e 67 6f 6f 67 6c 65 tps://www.google<br>0030 2e 
-	69 65 2f 3f 67 77 73 5f 72 64 3d 63 72 26 65 .ie/?gws_rd=cr&amp;e<br>0040 69 
-	3d 57 78 39 49 56 4b 48 53 41 59 66 44 37 67 i=Wx9IVKHSAYfD7g<br>0050 62 48 
-	34 59 48 6f 42 51 0d 0a 43 61 63 68 65 2d bH4YHoBQ..Cache-<br>0060 43 6f 6e 
-	74 72 6f 6c 3a 20 70 72 69 76 61 74 65 Control: private<br>0070 0d 0a 43 6f 
-	6e 74 65 6e 74 2d 54 79 70 65 3a 20 ..Content-Type:<br>0080 74 65 78 74 2f 68 
-	74 6d 6c 3b 20 63 68 61 72 73 text/html; chars<br>0090 65 74 3d 55 54 46 2d 
-	38 0d 0a 53 65 74 2d 43 6f et=UTF-8..Set-Co<br>00a0 6f 6b 69 65 3a 20 50 52 
-	45 46 3d 49 44 3d 63 31 okie: PREF=ID=c1<br>00b0 35 62 31 65 39 63 33 37 65 
-	30 33 64 64 34 3a 46 5b1e9c37e03dd4:F<br>00c0 46 3d 30 3a 54 4d 3d 31 34 31 
-	34 30 31 32 37 36 F=0:TM=141401276<br>00d0 33 3a 4c 4d 3d 31 34 31 34 30 31 
-	32 37 36 33 3a 3:LM=1414012763:<br>00e0 53 3d 59 5f 70 6e 4b 33 6a 63 45 4b 
-	54 77 66 33 S=Y_pnK3jcEKTwf3<br>00f0 79 4a 3b 20 65 78 70 69 72 65 73 3d 46 
-	72 69 2c yJ; expires=Fri,<br>0100 20 32 31 2d 4f 63 74 2d 32 30 31 36 20 32 
-	31 3a 21-Oct-2016 21:<br>0110 31 39 3a 32 33 20 47 4d 54 3b 20 70 61 74 68 3d 
-	19:23 GMT; path=<br>0120 2f 3b 20 64 6f 6d 61 69 6e 3d 2e 67 6f 6f 67 6c /; 
-	domain=.googl<br>0130 65 2e 63 6f 6d 0d 0a 53 65 74 2d 43 6f 6f 6b 69 e.com..Set-Cooki<br>
-	0140 65 3a 20 4e 49 44 3d 36 37 3d 4c 43 47 45 39 47 e: NID=67=LCGE9G<br>0150 
-	47 32 2d 64 4e 54 6a 53 64 2d 30 75 54 59 52 32 G2-dNTjSd-0uTYR2<br>0160 47 
-	46 4e 48 61 53 53 64 67 34 77 6f 33 76 66 66 GFNHaSSdg4wo3vff<br>0170 72 58 
-	76 67 68 6c 55 43 4c 7a 62 4e 79 4c 53 43 rXvghlUCLzbNyLSC<br>0180 69 70 48 
-	38 4f 72 58 39 47 71 58 55 64 47 38 51 ipH8OrX9GqXUdG8Q<br>0190 49 31 5a 58 
-	33 56 62 66 63 44 41 4e 75 4a 68 43 I1ZX3VbfcDANuJhC<br>01a0 77 5f 47 55 59 
-	58 49 6c 43 47 70 6e 56 43 35 62 w_GUYXIlCGpnVC5b<br>01b0 62 6c 55 66 79 38 
-	32 6a 6c 41 55 73 6a 71 41 66 blUfy82jlAUsjqAf<br>01c0 76 37 42 77 75 77 2d 
-	44 33 68 3b 20 65 78 70 69 v7Bwuw-D3h; expi<br>01d0 72 65 73 3d 54 68 75 2c 
-	20 32 33 2d 41 70 72 2d res=Thu, 23-Apr-<br>01e0 32 30 31 35 20 32 31 3a 31 
-	39 3a 32 33 20 47 4d 2015 21:19:23 GM<br>01f0 54 3b 20 70 61 74 68 3d 2f 3b 
-	20 64 6f 6d 61 69 T; path=/; domai<br>0200 6e 3d 2e 67 6f 6f 67 6c 65 2e 63 
-	6f 6d 3b 20 48 n=.google.com; H<br>0210 74 74 70 4f 6e 6c 79 0d 0a 50 33 50 
-	3a 20 43 50 ttpOnly..P3P: CP<br>0220 3d 22 54 68 69 73 20 69 73 20 6e 6f 74 
-	20 61 20 =&quot;This is not a<br>0230 50 33 50 20 70 6f 6c 69 63 79 21 20 53 
-	65 65 20 P3P policy! See<br>0240 68 74 74 70 3a 2f 2f 77 77 77 2e 67 6f 6f 67 
-	6c http://www.googl<br>0250 65 2e 63 6f 6d 2f 73 75 70 70 6f 72 74 2f 61 63 
-	e.com/support/ac<br>0260 63 6f 75 6e 74 73 2f 62 69 6e 2f 61 6e 73 77 65 counts/bin/answe<br>
-	0270 72 2e 70 79 3f 68 6c 3d 65 6e 26 61 6e 73 77 65 r.py?hl=en&amp;answe<br>
-	0280 72 3d 31 35 31 36 35 37 20 66 6f 72 20 6d 6f 72 r=151657 for mor<br>0290 
-	65 20 69 6e 66 6f 2e 22 0d 0a 44 61 74 65 3a 20 e info.&quot;..Date:<br>02a0 
-	57 65 64 2c 20 32 32 20 4f 63 74 20 32 30 31 34 Wed, 22 Oct 2014<br>02b0 20 
-	32 31 3a 31 39 3a 32 33 20 47 4d 54 0d 0a 53 21:19:23 GMT..S<br>02c0 65 72 76 
-	65 72 3a 20 67 77 73 0d 0a 43 6f 6e 74 erver: gws..Cont<br>02d0 65 6e 74 2d 
-	4c 65 6e 67 74 68 3a 20 32 35 39 0d ent-Length: 259.<br>02e0 0a 58 2d 58 53 
-	53 2d 50 72 6f 74 65 63 74 69 6f .X-XSS-Protectio<br>02f0 6e 3a 20 31 3b 20 
-	6d 6f 64 65 3d 62 6c 6f 63 6b n: 1; mode=block<br>0300 0d 0a 58 2d 46 72 61 
-	6d 65 2d 4f 70 74 69 6f 6e ..X-Frame-Option<br>0310 73 3a 20 53 41 4d 45 4f 
-	52 49 47 49 4e 0d 0a 41 s: SAMEORIGIN..A<br>0320 6c 74 65 72 6e 61 74 65 2d 
-	50 72 6f 74 6f 63 6f lternate-Protoco<br>0330 6c 3a 20 34 34 33 3a 71 75 69 
-	63 2c 70 3d 30 2e l: 443:quic,p=0.<br>0340 30 31 0d 0a 0d 0a 3c 48 54 4d 4c 
-	3e 3c 48 45 41 01....&lt;HTML&gt;&lt;HEA<br>0350 44 3e 3c 6d 65 74 61 20 68 
-	74 74 70 2d 65 71 75 D&gt;&lt;meta http-equ<br>0360 69 76 3d 22 63 6f 6e 74 
-	65 6e 74 2d 74 79 70 65 iv=&quot;content-type<br>0370 22 20 63 6f 6e 74 65 6e 
-	74 3d 22 74 65 78 74 2f &quot; content=&quot;text/<br>0380 68 74 6d 6c 3b 63 
-	68 61 72 73 65 74 3d 75 74 66 html;charset=utf<br>0390 2d 38 22 3e 0a 3c 54 
-	49 54 4c 45 3e 33 30 32 20 -8&quot;&gt;.&lt;TITLE&gt;302<br>03a0 4d 6f 76 65 
-	64 3c 2f 54 49 54 4c 45 3e 3c 2f 48 Moved&lt;/TITLE&gt;&lt;/H<br>03b0 45 41 
-	44 3e 3c 42 4f 44 59 3e 0a 3c 48 31 3e 33 EAD&gt;&lt;BODY&gt;.&lt;H1&gt;3<br>
-	03c0 30 32 20 4d 6f 76 65 64 3c 2f 48 31 3e 0a 54 68 02 Moved&lt;/H1&gt;.Th<br>
-	03d0 65 20 64 6f 63 75 6d 65 6e 74 20 68 61 73 20 6d e document has m<br>03e0 
-	6f 76 65 64 0a 3c 41 20 48 52 45 46 3d 22 68 74 oved.&lt;A HREF=&quot;ht<br>
-	03f0 74 70 73 3a 2f 2f 77 77 77 2e 67 6f 6f 67 6c 65 tps://www.google<br>0400 
-	2e 69 65 2f 3f 67 77 73 5f 72 64 3d 63 72 26 61 .ie/?gws_rd=cr&amp;a<br>0410 
-	6d 70 3b 65 69 3d 57 78 39 49 56 4b 48 53 41 59 mp;ei=Wx9IVKHSAY<br>0420 66 
-	44 37 67 62 48 34 59 48 6f 42 51 22 3e 68 65 fD7gbH4YHoBQ&quot;&gt;he<br>0430 
-	72 65 3c 2f 41 3e 2e 0d 0a 3c 2f 42 4f 44 59 3e re&lt;/A&gt;...&lt;/BODY&gt;<br>
-	0440 3c 2f 48 54 4d 4c 3e 0d 0a &lt;/HTML&gt;..<br>Stopping receive of response 
-	because of graceful disconnect status value from CS<br>SL::GetEncryptedMessage<br>
-	<br>D:\Dev\My Code\SSLWrappers\DebugU64&gt;</blockquote>
+	Protocol: TLS v1.2<br>Cipher: AES<br>Cipher strength: 128<br>Hash: SHA-256<br>
+	Hash strength: 0<br>Key exchange: Eliptic curve Diffie Hellman Ephemeral<br>
+	Key exchange strength: 256<br>Remote server certificate properties<br>
+	Subject string: C=US, S=California, L=Mountain View, O=Google Inc, 
+	CN=www.google.com<br>Version: 2<br>Serial number: Length:8,<br>5e 30 9a 49 
+	f1 28 f9 29 ^0.I.(.) <br>Crypt algorithm Identifier: 1.2.840.113549.1.1.11<br>
+	Crypt algorithm identifier parameters: Length:2,<br>05 00 .. <br>Issuer: 
+	Length:75,<br>30 49 31 0b 30 09 06 03 55 04 06 13 02 55 53 31 
+	0I1.0...U....US1 <br>13 30 11 06 03 55 04 0a 13 0a 47 6f 6f 67 6c 65 
+	.0...U....Google <br>20 49 6e 63 31 25 30 23 06 03 55 04 03 13 1c 47 
+	Inc1%0#..U....G <br>6f 6f 67 6c 65 20 49 6e 74 65 72 6e 65 74 20 41 oogle 
+	Internet A <br>75 74 68 6f 72 69 74 79 20 47 32 uthority G2 <br>Not valid 
+	before: 2016-10-06 13:02:45<br>Not valid after: 2016-12-29 12:28:00<br>
+	Subject data: Length:106,<br>30 68 31 0b 30 09 06 03 55 04 06 13 02 55 53 31 
+	0h1.0...U....US1 <br>13 30 11 06 03 55 04 08 0c 0a 43 61 6c 69 66 6f 
+	.0...U....Califo <br>72 6e 69 61 31 16 30 14 06 03 55 04 07 0c 0d 4d 
+	rnia1.0...U....M <br>6f 75 6e 74 61 69 6e 20 56 69 65 77 31 13 30 11 ountain 
+	View1.0. <br>06 03 55 04 0a 0c 0a 47 6f 6f 67 6c 65 20 49 6e ..U....Google 
+	In <br>63 31 17 30 15 06 03 55 04 03 0c 0e 77 77 77 2e c1.0...U....www. <br>
+	67 6f 6f 67 6c 65 2e 63 6f 6d google.com <br>Subject public key algorithm 
+	Identifier: 1.2.840.113549.1.1.1<br>Subject public key: Length:270,<br>30 82 
+	01 0a 02 82 01 01 00 ca 53 57 9a 4f 36 8c 0.........SW.O6. <br>89 d1 d5 61 
+	3a 37 2b 65 0a 3a 72 31 79 78 a7 3c ...a:7+e.:r1yx.&lt; <br>00 4b 49 b0 bf 6d 
+	e8 27 03 c6 e8 7e 29 ab a2 9d .KI..m.'...~)... <br>88 1e 81 0b dc 23 19 29 
+	a3 a1 1a a3 be 01 0a 4f .....#.).......O <br>62 d6 ee 0f 5a 15 51 c9 08 d6 
+	a9 50 8c c6 a6 c2 b...Z.Q....P.... <br>f1 e1 fe 22 45 80 36 8d 73 ca 5c 4d 
+	30 c7 36 0a ...&quot;E.6.s.\M0.6. <br>9b b3 26 77 87 7e 1b 5c 18 91 61 41 b4 d6 
+	51 07 ..&amp;w.~.\..aA..Q. <br>50 69 f6 19 84 b2 b1 a3 b5 62 3b c3 a8 ac f0 05 
+	Pi.......b;..... <br>b9 dd c3 c0 c4 28 de eb 92 20 1b 9f 8a 88 b4 0a 
+	.....(... ...... <br>b6 b6 76 da df cf 5f 90 6b 85 81 48 5b 4b 1e 7f 
+	..v..._.k..H[K.. <br>cc bd 1e 7a ba e3 be ff 39 e7 90 c9 cc 01 2a ca 
+	...z....9.....*. <br>13 c7 95 3e 46 0d ad e6 ea 0b e6 2a 5e 63 3d 20 
+	...&gt;F......*^c= <br>93 d7 6a 2e d8 3e 9c 41 a1 f8 8c b3 ce 07 39 02 
+	..j..&gt;.A......9. <br>71 48 68 a7 83 d6 47 24 60 31 ea b6 6d 51 cb 3f 
+	qHh...G$`1..mQ.? <br>75 80 e4 d7 f6 d2 c9 99 bd 18 5f 82 6f fe ea 52 
+	u........._.o..R <br>3f 30 64 4a 5c f6 8d 6c 7b 7d 65 20 d5 1d 2a 7f 
+	?0dJ\..l{}e ..*. <br>97 8a 3d bf 25 49 11 6a 65 02 03 01 00 01 
+	..=.%I.je..... <br>Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique 
+	id: Length:0,<br>&lt;NULL&gt;<br>Extension: OID:2.5.29.37, Critical:0, Value:: 
+	Length:22,<br>30 14 06 08 2b 06 01 05 05 07 03 01 06 08 2b 06 
+	0...+.........+. <br>01 05 05 07 03 02 ...... <br>Extension: OID:2.5.29.17, 
+	Critical:0, Value:: Length:18,<br>30 10 82 0e 77 77 77 2e 67 6f 6f 67 6c 65 
+	2e 63 0...www.google.c <br>6f 6d om <br>Extension: OID:1.3.6.1.5.5.7.1.1, 
+	Critical:0, Value:: Length:92,<br>30 5a 30 2b 06 08 2b 06 01 05 05 07 30 02 
+	86 1f 0Z0+..+.....0... <br>68 74 74 70 3a 2f 2f 70 6b 69 2e 67 6f 6f 67 6c 
+	http://pki.googl <br>65 2e 63 6f 6d 2f 47 49 41 47 32 2e 63 72 74 30 
+	e.com/GIAG2.crt0 <br>2b 06 08 2b 06 01 05 05 07 30 01 86 1f 68 74 74 
+	+..+.....0...htt <br>70 3a 2f 2f 63 6c 69 65 6e 74 73 31 2e 67 6f 6f 
+	p://clients1.goo <br>67 6c 65 2e 63 6f 6d 2f 6f 63 73 70 gle.com/ocsp <br>
+	Extension: OID:2.5.29.14, Critical:0, Value:: Length:22,<br>04 14 5b 5c 5d 
+	7c e5 50 4a 84 99 8f 4d 8e 5e 6a ..[\]|.PJ...M.^j <br>cb fd 17 4c 44 a2 
+	...LD. <br>Extension: OID:2.5.29.19, Critical:1, Value:: Length:2,<br>30 00 
+	0. <br>Extension: OID:2.5.29.35, Critical:0, Value:: Length:24,<br>30 16 80 
+	14 4a dd 06 16 1b bc f6 68 b5 76 f5 81 0...J......h.v.. <br>b6 bb 62 1a ba 
+	5a 81 2f ..b..Z./ <br>Extension: OID:2.5.29.32, Critical:0, Value:: 
+	Length:26,<br>30 18 30 0c 06 0a 2b 06 01 04 01 d6 79 02 05 01 
+	0.0...+.....y... <br>30 08 06 06 67 81 0c 01 02 02 0...g..... <br>Extension: 
+	OID:2.5.29.31, Critical:0, Value:: Length:41,<br>30 27 30 25 a0 23 a0 21 86 
+	1f 68 74 74 70 3a 2f 0'0%.#.!..http:/ <br>2f 70 6b 69 2e 67 6f 6f 67 6c 65 
+	2e 63 6f 6d 2f /pki.google.com/ <br>47 49 41 47 32 2e 63 72 6c GIAG2.crl <br>
+	Property Identifier: 119<br>Length:538, <br>43 53 43 43 1a 02 00 00 a0 00 00 
+	00 38 00 00 00 CSCC........8... <br>03 00 00 00 09 00 00 00 6c 01 00 00 ae 
+	00 00 00 ........l....... <br>00 00 00 00 00 01 00 00 80 c8 12 ee d1 1f d2 
+	01 ................ <br>00 08 04 fe ce 61 d2 01 61 00 00 00 00 00 00 00 
+	.....a..a....... <br>01 00 00 00 02 00 00 00 45 6e da 33 00 00 00 00 
+	........En.3.... <br>48 5d 3a ab bc 2c d2 01 ac 82 82 49 b4 2c d2 01 
+	H]:..,.....I.,.. <br>ac 52 0b 0d c5 2c d2 01 00 00 00 00 00 00 00 00 
+	.R...,.......... <br>00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+	................ <br>89 91 31 a1 ee 5e f8 d8 15 46 49 bb a1 1c c7 6e 
+	..1..^...FI....n <br>27 b7 1b 0f 8d f0 5d 8e 74 30 de 89 7c 60 b9 58 
+	'.....].t0..|`.X <br>38 00 00 00 00 00 00 00 00 00 00 00 02 01 00 00 
+	8............... <br>01 00 00 00 00 00 00 00 02 00 00 00 01 00 00 00 
+	................ <br>15 e6 b9 9d 87 ce 30 ac 89 b0 2d 68 bb 9b ab dd 
+	......0...-h.... <br>9b d1 e4 85 00 00 00 00 38 00 00 00 00 00 00 00 
+	........8....... <br>00 00 00 00 02 01 00 00 01 00 00 00 03 00 00 00 
+	................ <br>ff ff ff ff 00 00 00 00 d6 ad 07 c6 67 56 30 f5 
+	............gV0. <br>7b 92 7f 66 be 8c e1 f7 68 f8 79 48 00 00 00 00 
+	{..f....h.yH.... <br>38 00 00 00 00 00 00 00 00 00 00 00 0a 01 00 00 
+	8............... <br>ff ff ff ff 00 00 00 00 05 00 00 00 04 00 00 00 
+	................ <br>de 28 f4 a4 ff e5 b9 2f a3 c5 03 d1 a3 49 a7 f9 
+	.(...../.....I.. <br>96 2a 82 12 00 00 00 00 00 00 00 00 18 00 00 00 
+	.*.............. <br>2a 00 00 00 3c 00 00 00 54 00 00 00 66 00 00 00 
+	*...&lt;...T...f... <br>78 00 00 00 8a 00 00 00 9c 00 00 00 31 2e 33 2e 
+	x...........1.3. <br>36 2e 31 2e 34 2e 31 2e 31 31 31 32 39 2e 32 2e 
+	6.1.4.1.11129.2. <br>35 2e 31 00 31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 
+	5.1.1.3.6.1.5.5. <br>37 2e 33 2e 31 00 31 2e 33 2e 36 2e 31 2e 35 2e 
+	7.3.1.1.3.6.1.5. <br>35 2e 37 2e 33 2e 32 00 31 2e 33 2e 36 2e 31 2e 
+	5.7.3.2.1.3.6.1. <br>34 2e 31 2e 31 31 31 32 39 2e 32 2e 35 2e 31 00 
+	4.1.11129.2.5.1. <br>31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 37 2e 33 2e 
+	1.3.6.1.5.5.7.3. <br>31 00 31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 37 2e 
+	1.1.3.6.1.5.5.7. <br>33 2e 32 00 31 2e 33 2e 36 2e 31 2e 35 2e 35 2e 
+	3.2.1.3.6.1.5.5. <br>37 2e 33 2e 34 00 31 2e 33 2e 36 2e 31 2e 35 2e 
+	7.3.4.1.3.6.1.5. <br>35 2e 37 2e 33 2e 33 00 31 2e 33 2e 36 2e 31 2e 
+	5.7.3.3.1.3.6.1. <br>35 2e 35 2e 37 2e 33 2e 38 00 5.5.7.3.8. <br>SHA1 hash<br>
+	Length:20, <br>15 e6 b9 9d 87 ce 30 ac 89 b0 2d 68 bb 9b ab dd 
+	......0...-h.... <br>9b d1 e4 85 .... <br>Next certificate in chain<br>
+	Subject string: C=US, O=Google Inc, CN=Google Internet Authority G2<br>
+	Version: 2<br>Serial number: Length:3,<br>92 3a 02 .:. <br>Crypt algorithm 
+	Identifier: 1.2.840.113549.1.1.11<br>Crypt algorithm identifier parameters: 
+	Length:2,<br>05 00 .. <br>Issuer: Length:68,<br>30 42 31 0b 30 09 06 03 55 
+	04 06 13 02 55 53 31 0B1.0...U....US1 <br>16 30 14 06 03 55 04 0a 13 0d 47 
+	65 6f 54 72 75 .0...U....GeoTru <br>73 74 20 49 6e 63 2e 31 1b 30 19 06 03 
+	55 04 03 st Inc.1.0...U.. <br>13 12 47 65 6f 54 72 75 73 74 20 47 6c 6f 62 
+	61 ..GeoTrust Globa <br>6c 20 43 41 l CA <br>Not valid before: 2015-04-01 
+	00:00:00<br>Not valid after: 2017-12-31 23:59:59<br>Subject data: Length:75,<br>
+	30 49 31 0b 30 09 06 03 55 04 06 13 02 55 53 31 0I1.0...U....US1 <br>13 30 
+	11 06 03 55 04 0a 13 0a 47 6f 6f 67 6c 65 .0...U....Google <br>20 49 6e 63 
+	31 25 30 23 06 03 55 04 03 13 1c 47 Inc1%0#..U....G <br>6f 6f 67 6c 65 20 49 
+	6e 74 65 72 6e 65 74 20 41 oogle Internet A <br>75 74 68 6f 72 69 74 79 20 
+	47 32 uthority G2 <br>Subject public key algorithm Identifier: 
+	1.2.840.113549.1.1.1<br>Subject public key: Length:270,<br>30 82 01 0a 02 82 
+	01 01 00 9c 2a 04 77 5c d8 50 0.........*.w\.P <br>91 3a 06 a3 82 e0 d8 50 
+	48 bc 89 3f f1 19 70 1a .:.....PH..?..p. <br>88 46 7e e0 8f c5 f1 89 ce 21 
+	ee 5a fe 61 0d b7 .F~......!.Z.a.. <br>32 44 89 a0 74 0b 53 4f 55 a4 ce 82 
+	62 95 ee eb 2D..t.SOU...b... <br>59 5f c6 e1 05 80 12 c4 5e 94 3f bc 5b 48 
+	38 f4 Y_......^.?.[H8. <br>53 f7 24 e6 fb 91 e9 15 c4 cf f4 53 0d f4 4a fc 
+	S.$........S..J. <br>9f 54 de 7d be a0 6b 6f 87 c0 d0 50 1f 28 30 03 
+	.T.}..ko...P.(0. <br>40 da 08 73 51 6c 7f ff 3a 3c a7 37 06 8e bd 4b 
+	@..sQl..:&lt;.7...K <br>11 04 eb 7d 24 de e6 f9 fc 31 71 fb 94 d5 60 f3 
+	...}$....1q...`. <br>2e 4a af 42 d2 cb ea c4 6a 1a b2 cc 53 dd 15 4b 
+	.J.B....j...S..K <br>8b 1f c8 19 61 1f cd 9d a8 3e 63 2b 84 35 69 65 
+	....a....&gt;c+.5ie <br>84 c8 19 c5 46 22 f8 53 95 be e3 80 4a 10 c6 2a 
+	....F&quot;.S....J..* <br>ec ba 97 20 11 c7 39 99 10 04 a0 f0 61 7a 95 25 ... 
+	..9.....az.% <br>8c 4e 52 75 e2 b6 ed 08 ca 14 fc ce 22 6a b3 4e 
+	.NRu........&quot;j.N <br>cf 46 03 97 97 03 7e c0 b1 de 7b af 45 33 cf ba 
+	.F....~...{.E3.. <br>3e 71 b7 de f4 25 25 c2 0d 35 89 9d 9d fb 0e 11 
+	&gt;q...%%..5...... <br>79 89 1e 37 c5 af 8e 72 69 02 03 01 00 01 
+	y..7...ri..... <br>Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique 
+	id: Length:0,<br>&lt;NULL&gt;<br>Extension: OID:2.5.29.35, Critical:0, Value:: 
+	Length:24,<br>30 16 80 14 c0 7a 98 68 8d 89 fb ab 05 64 0c 11 
+	0....z.h.....d.. <br>7d aa 7d 65 b8 ca cc 4e }.}e...N <br>Extension: 
+	OID:2.5.29.14, Critical:0, Value:: Length:22,<br>04 14 4a dd 06 16 1b bc f6 
+	68 b5 76 f5 81 b6 bb ..J......h.v.... <br>62 1a ba 5a 81 2f b..Z./ <br>
+	Extension: OID:2.5.29.15, Critical:1, Value:: Length:4,<br>03 02 01 06 ....
+	<br>Extension: OID:1.3.6.1.5.5.7.1.1, Critical:0, Value:: Length:34,<br>30 
+	20 30 1e 06 08 2b 06 01 05 05 07 30 01 86 12 0 0...+.....0... <br>68 74 74 
+	70 3a 2f 2f 67 2e 73 79 6d 63 64 2e 63 http://g.symcd.c <br>6f 6d om <br>
+	Extension: OID:2.5.29.19, Critical:1, Value:: Length:8,<br>30 06 01 01 ff 02 
+	01 00 0....... <br>Extension: OID:2.5.29.31, Critical:0, Value:: Length:46,<br>
+	30 2c 30 2a a0 28 a0 26 86 24 68 74 74 70 3a 2f 0,0*.(.&amp;.$http:/ <br>2f 67 
+	2e 73 79 6d 63 62 2e 63 6f 6d 2f 63 72 6c /g.symcb.com/crl <br>73 2f 67 74 
+	67 6c 6f 62 61 6c 2e 63 72 6c s/gtglobal.crl <br>Extension: OID:2.5.29.32, 
+	Critical:0, Value:: Length:16,<br>30 0e 30 0c 06 0a 2b 06 01 04 01 d6 79 02 
+	05 01 0.0...+.....y... <br>SHA1 hash<br>Length:20, <br>d6 ad 07 c6 67 56 30 
+	f5 7b 92 7f 66 be 8c e1 f7 ....gV0.{..f.... <br>68 f8 79 48 h.yH <br>Next 
+	certificate in chain<br>Subject string: C=US, O=GeoTrust Inc., CN=GeoTrust 
+	Global CA<br>Version: 2<br>Serial number: Length:3,<br>e6 bb 12 ... <br>
+	Crypt algorithm Identifier: 1.2.840.113549.1.1.5<br>Crypt algorithm 
+	identifier parameters: Length:2,<br>05 00 .. <br>Issuer: Length:80,<br>30 4e 
+	31 0b 30 09 06 03 55 04 06 13 02 55 53 31 0N1.0...U....US1 <br>10 30 0e 06 
+	03 55 04 0a 13 07 45 71 75 69 66 61 .0...U....Equifa <br>78 31 2d 30 2b 06 
+	03 55 04 0b 13 24 45 71 75 69 x1-0+..U...$Equi <br>66 61 78 20 53 65 63 75 
+	72 65 20 43 65 72 74 69 fax Secure Certi <br>66 69 63 61 74 65 20 41 75 74 
+	68 6f 72 69 74 79 ficate Authority <br>Not valid before: 2002-05-21 04:00:00<br>
+	Not valid after: 2018-08-21 04:00:00<br>Subject data: Length:68,<br>30 42 31 
+	0b 30 09 06 03 55 04 06 13 02 55 53 31 0B1.0...U....US1 <br>16 30 14 06 03 
+	55 04 0a 13 0d 47 65 6f 54 72 75 .0...U....GeoTru <br>73 74 20 49 6e 63 2e 
+	31 1b 30 19 06 03 55 04 03 st Inc.1.0...U.. <br>13 12 47 65 6f 54 72 75 73 
+	74 20 47 6c 6f 62 61 ..GeoTrust Globa <br>6c 20 43 41 l CA <br>Subject 
+	public key algorithm Identifier: 1.2.840.113549.1.1.1<br>Subject public key: 
+	Length:270,<br>30 82 01 0a 02 82 01 01 00 da cc 18 63 30 fd f4 
+	0...........c0.. <br>17 23 1a 56 7e 5b df 3c 6c 38 e4 71 b7 78 91 d4 
+	.#.V~[.&lt;l8.q.x.. <br>bc a1 d8 4c f8 a8 43 b6 03 e9 4d 21 07 08 88 da 
+	...L..C...M!.... <br>58 2f 66 39 29 bd 05 78 8b 9d 38 e8 05 b7 6a 7e 
+	X/f9)..x..8...j~ <br>71 a4 e6 c4 60 a6 b0 ef 80 e4 89 28 0f 9e 25 d6 
+	q...`......(..%. <br>ed 83 f3 ad a6 91 c7 98 c9 42 18 35 14 9d ad 98 
+	.........B.5.... <br>46 92 2e 4f ca f1 87 43 c1 16 95 57 2d 50 ef 89 
+	F..O...C...W-P.. <br>2d 80 7a 57 ad f2 ee 5f 6b d2 00 8d b9 14 f8 14 
+	-.zW..._k....... <br>15 35 d9 c0 46 a3 7b 72 c8 91 bf c9 55 2b cd d0 
+	.5..F.{r....U+.. <br>97 3e 9c 26 64 cc df ce 83 19 71 ca 4e e6 d4 d5 
+	.&gt;.&amp;d.....q.N... <br>7b a9 19 cd 55 de c8 ec d2 5e 38 53 e5 5c 4f 8c 
+	{...U....^8S.\O. <br>2d fe 50 23 36 fc 66 e6 cb 8e a4 39 19 00 b7 95 
+	-.P#6.f....9.... <br>02 39 91 0b 0e fe 38 2e d1 1d 05 9a f6 4d 3e 6f 
+	.9....8......M&gt;o <br>0f 07 1d af 2c 1e 8f 60 39 e2 fa 36 53 13 39 d4 
+	....,..`9..6S.9. <br>5e 26 2b db 3d a8 14 bd 32 eb 18 03 28 52 04 71 
+	^&amp;+.=...2...(R.q <br>e5 ab 33 3d e1 38 bb 07 36 84 62 9c 79 ea 16 30 
+	..3=.8..6.b.y..0 <br>f4 5f c0 2b e8 71 6b e4 f9 02 03 01 00 01 
+	._.+.qk....... <br>Issuer unique id: Length:0,<br>&lt;NULL&gt;<br>Subject unique 
+	id: Length:0,<br>&lt;NULL&gt;<br>Extension: OID:2.5.29.35, Critical:0, Value:: 
+	Length:24,<br>30 16 80 14 48 e6 68 f9 2b d2 b2 95 d7 47 d8 23 
+	0...H.h.+....G.# <br>20 10 4f 33 98 90 9f d4 .O3.... <br>Extension: 
+	OID:2.5.29.14, Critical:0, Value:: Length:22,<br>04 14 c0 7a 98 68 8d 89 fb 
+	ab 05 64 0c 11 7d aa ...z.h.....d..}. <br>7d 65 b8 ca cc 4e }e...N <br>
+	Extension: OID:2.5.29.19, Critical:1, Value:: Length:5,<br>30 03 01 01 ff 
+	0.... <br>Extension: OID:2.5.29.15, Critical:1, Value:: Length:4,<br>03 02 
+	01 06 .... <br>Extension: OID:2.5.29.31, Critical:0, Value:: Length:51,<br>
+	30 31 30 2f a0 2d a0 2b 86 29 68 74 74 70 3a 2f 010/.-.+.)http:/ <br>2f 63 
+	72 6c 2e 67 65 6f 74 72 75 73 74 2e 63 6f /crl.geotrust.co <br>6d 2f 63 72 
+	6c 73 2f 73 65 63 75 72 65 63 61 2e m/crls/secureca. <br>63 72 6c crl <br>
+	Extension: OID:2.5.29.32, Critical:0, Value:: Length:71,<br>30 45 30 43 06 
+	04 55 1d 20 00 30 3b 30 39 06 08 0E0C..U. .0;09.. <br>2b 06 01 05 05 07 02 
+	01 16 2d 68 74 74 70 73 3a +........-https: <br>2f 2f 77 77 77 2e 67 65 6f 
+	74 72 75 73 74 2e 63 //www.geotrust.c <br>6f 6d 2f 72 65 73 6f 75 72 63 65 
+	73 2f 72 65 70 om/resources/rep <br>6f 73 69 74 6f 72 79 ository <br>SHA1 
+	hash<br>Length:20, <br>73 59 75 5c 6d f9 a0 ab c3 06 0b ce 36 95 64 c8 
+	sYu\m.......6.d. <br>ec 45 42 a3 .EB. <br>Sending request<br>Getting 
+	response<br>Received response data:: Length:944,<br>48 54 54 50 2f 31 2e 30 
+	20 33 30 32 20 46 6f 75 HTTP/1.0 302 Fou <br>6e 64 0d 0a 4c 6f 63 61 74 69 
+	6f 6e 3a 20 68 74 nd..Location: ht <br>74 70 73 3a 2f 2f 77 77 77 2e 67 6f 
+	6f 67 6c 65 tps://www.google <br>2e 69 65 2f 3f 67 77 73 5f 72 64 3d 63 72 
+	26 65 .ie/?gws_rd=cr&amp;e <br>69 3d 50 5f 63 4c 57 4c 58 47 49 71 7a 55 67 41 
+	i=P_cLWLXGIqzUgA <br>61 34 31 49 47 41 42 51 0d 0a 43 61 63 68 65 2d 
+	a41IGABQ..Cache- <br>43 6f 6e 74 72 6f 6c 3a 20 70 72 69 76 61 74 65 
+	Control: private <br>0d 0a 43 6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 
+	..Content-Type: <br>74 65 78 74 2f 68 74 6d 6c 3b 20 63 68 61 72 73 
+	text/html; chars <br>65 74 3d 55 54 46 2d 38 0d 0a 50 33 50 3a 20 43 
+	et=UTF-8..P3P: C <br>50 3d 22 54 68 69 73 20 69 73 20 6e 6f 74 20 61 P=&quot;This 
+	is not a <br>20 50 33 50 20 70 6f 6c 69 63 79 21 20 53 65 65 P3P policy! See
+	<br>20 68 74 74 70 73 3a 2f 2f 77 77 77 2e 67 6f 6f https://www.goo <br>67 
+	6c 65 2e 63 6f 6d 2f 73 75 70 70 6f 72 74 2f gle.com/support/ <br>61 63 63 
+	6f 75 6e 74 73 2f 61 6e 73 77 65 72 2f accounts/answer/ <br>31 35 31 36 35 
+	37 3f 68 6c 3d 65 6e 20 66 6f 72 151657?hl=en for <br>20 6d 6f 72 65 20 69 
+	6e 66 6f 2e 22 0d 0a 44 61 more info.&quot;..Da <br>74 65 3a 20 53 61 74 2c 20 32 
+	32 20 4f 63 74 20 te: Sat, 22 Oct <br>32 30 31 36 20 32 33 3a 33 33 3a 31 39 
+	20 47 4d 2016 23:33:19 GM <br>54 0d 0a 53 65 72 76 65 72 3a 20 67 77 73 0d 
+	0a T..Server: gws.. <br>43 6f 6e 74 65 6e 74 2d 4c 65 6e 67 74 68 3a 20 
+	Content-Length: <br>32 35 39 0d 0a 58 2d 58 53 53 2d 50 72 6f 74 65 
+	259..X-XSS-Prote <br>63 74 69 6f 6e 3a 20 31 3b 20 6d 6f 64 65 3d 62 ction: 
+	1; mode=b <br>6c 6f 63 6b 0d 0a 58 2d 46 72 61 6d 65 2d 4f 70 
+	lock..X-Frame-Op <br>74 69 6f 6e 73 3a 20 53 41 4d 45 4f 52 49 47 49 tions: 
+	SAMEORIGI <br>4e 0d 0a 53 65 74 2d 43 6f 6f 6b 69 65 3a 20 4e N..Set-Cookie: 
+	N <br>49 44 3d 38 39 3d 74 72 37 62 4a 37 6b 43 61 74 ID=89=tr7bJ7kCat <br>
+	32 54 69 4b 4c 4d 55 65 41 64 4e 43 58 58 58 67 2TiKLMUeAdNCXXXg <br>53 51 
+	31 62 53 6d 54 42 58 38 4f 62 74 79 70 74 SQ1bSmTBX8Obtypt <br>39 54 73 6e 
+	65 4f 57 51 79 32 47 79 37 44 48 51 9TsneOWQy2Gy7DHQ <br>64 74 61 5f 79 50 
+	66 76 65 42 65 55 72 6c 64 44 dta_yPfveBeUrldD <br>4b 56 30 5a 75 6e 6d 36 
+	33 63 36 43 33 61 66 62 KV0Zunm63c6C3afb <br>70 5f 41 42 39 4e 39 77 37 50 
+	62 32 30 31 45 57 p_AB9N9w7Pb201EW <br>56 64 71 39 79 72 68 78 62 76 6d 76 
+	75 7a 79 39 Vdq9yrhxbvmvuzy9 <br>55 41 34 68 6c 53 3b 20 65 78 70 69 72 65 
+	73 3d UA4hlS; expires= <br>53 75 6e 2c 20 32 33 2d 41 70 72 2d 32 30 31 37 
+	Sun, 23-Apr-2017 <br>20 32 33 3a 33 33 3a 31 39 20 47 4d 54 3b 20 70 
+	23:33:19 GMT; p <br>61 74 68 3d 2f 3b 20 64 6f 6d 61 69 6e 3d 2e 67 ath=/; 
+	domain=.g <br>6f 6f 67 6c 65 2e 63 6f 6d 3b 20 48 74 74 70 4f oogle.com; 
+	HttpO <br>6e 6c 79 0d 0a 41 6c 74 2d 53 76 63 3a 20 71 75 nly..Alt-Svc: qu
+	<br>69 63 3d 22 3a 34 34 33 22 3b 20 6d 61 3d 32 35 ic=&quot;:443&quot;; ma=25 <br>39 
+	32 30 30 30 3b 20 76 3d 22 33 36 2c 33 35 2c 92000; v=&quot;36,35, <br>33 34 2c 
+	33 33 2c 33 32 22 0d 0a 0d 0a 3c 48 54 34,33,32&quot;....&lt;HT <br>4d 4c 3e 3c 48 
+	45 41 44 3e 3c 6d 65 74 61 20 68 ML&gt;&lt;HEAD&gt;&lt;meta h <br>74 74 70 2d 65 71 75 
+	69 76 3d 22 63 6f 6e 74 65 ttp-equiv=&quot;conte <br>6e 74 2d 74 79 70 65 22 20 
+	63 6f 6e 74 65 6e 74 nt-type&quot; content <br>3d 22 74 65 78 74 2f 68 74 6d 6c 
+	3b 63 68 61 72 =&quot;text/html;char <br>73 65 74 3d 75 74 66 2d 38 22 3e 0a 3c 
+	54 49 54 set=utf-8&quot;&gt;.&lt;TIT <br>4c 45 3e 33 30 32 20 4d 6f 76 65 64 3c 2f 54 
+	49 LE&gt;302 Moved&lt;/TI <br>54 4c 45 3e 3c 2f 48 45 41 44 3e 3c 42 4f 44 59 
+	TLE&gt;&lt;/HEAD&gt;&lt;BODY <br>3e 0a 3c 48 31 3e 33 30 32 20 4d 6f 76 65 64 3c 
+	&gt;.&lt;H1&gt;302 Moved&lt; <br>2f 48 31 3e 0a 54 68 65 20 64 6f 63 75 6d 65 6e 
+	/H1&gt;.The documen <br>74 20 68 61 73 20 6d 6f 76 65 64 0a 3c 41 20 48 t has 
+	moved.&lt;A H <br>52 45 46 3d 22 68 74 74 70 73 3a 2f 2f 77 77 77 
+	REF=&quot;https://www <br>2e 67 6f 6f 67 6c 65 2e 69 65 2f 3f 67 77 73 5f 
+	.google.ie/?gws_ <br>72 64 3d 63 72 26 61 6d 70 3b 65 69 3d 50 5f 63 
+	rd=cr&amp;amp;ei=P_c <br>4c 57 4c 58 47 49 71 7a 55 67 41 61 34 31 49 47 
+	LWLXGIqzUgAa41IG <br>41 42 51 22 3e 68 65 72 65 3c 2f 41 3e 2e 0d 0a 
+	ABQ&quot;&gt;here&lt;/A&gt;... <br>3c 2f 42 4f 44 59 3e 3c 2f 48 54 4d 4c 3e 0d 0a 
+	&lt;/BODY&gt;&lt;/HTML&gt;.. <br>Stopping receive of response because of graceful 
+	disconnect status value from CSSL::GetEncryptedMessage</blockquote>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -610,6 +957,27 @@ a concrete SSL implementation over Windows sockets.</p>
 	the size of the buffer to pass to CertNameToStr API. </li>
 	<li>Reworked various places which allocates heap memory to use ATL::CHeapPtr 
 	instead of raw calls to HeapAlloc. </li>
+</ul>
+<p><b>V1.06 (16 October 2016)</b></p>
+<ul>
+	<li>Updated copyright details. </li>
+	<li>Updated the sample app to compile using the latest version of the 
+	author's CWSocket class. </li>
+	<li>Binaries of the demo app are now included in the SSLWrappers zip file 
+	download. </li>
+</ul>
+<p><b>V1.07 (23 October 2016)</b></p>
+<ul>
+	<li>Updated the sample app to do better logging of the certificate &amp; 
+	connection details. The sample app now logs details if the cipher used is 
+	CALG_ECDH_EPHEM. </li>
+	<li>Fixed up the audit text in some of the code when allocating heap 
+	memory. </li>
+	<li>Updated the captures of the data which the client app produces in this 
+	html documentation when run as client for localhost,
+	<a href="http://www.microsoft.com">www.microsoft.com</a>,
+	<a href="http://www.google.com">www.google.com</a> and as server for 
+	localhost.</li>
 </ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1751,8 +2119,8 @@ parameter is specified in milliseconds.</p>
 <p>&nbsp;</p>
 <h2><a name="Contact"></a>Contacting the Author</h2>
 <p>PJ Naughter<br>Email: <a href="mailto:pjna@naughter.com">pjna@naughter.com</a><br>
-Web: <a href="http://www.naughter.com">http://www.naughter.com</a><br>4 November 
-2015</p>
+Web: <a href="http://www.naughter.com">http://www.naughter.com</a><br>23 October 
+2016</p>
 
 </body>
 
