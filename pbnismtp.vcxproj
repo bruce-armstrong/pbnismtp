@@ -85,14 +85,14 @@
     <OutDir>.\Debug_2017\</OutDir>
     <IntDir>.\Debug_2017\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>$(ProjectName)2017</TargetName>
+    <TargetName>$(ProjectName)2017d</TargetName>
     <TargetExt>.pbx</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Debug|Win32'">
     <OutDir>.\Debug_126\</OutDir>
     <IntDir>.\Debug_126\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)126</TargetName>
+    <TargetName>$(ProjectName)126d</TargetName>
     <TargetExt>.pbx</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unicode Release|Win32'">
