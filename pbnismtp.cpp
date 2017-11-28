@@ -52,6 +52,10 @@ PBXEXPORT LPCTSTR PBXCALL PBX_GetDescription()
 		_T ( "subroutine SetAttachment ( string pbattachment, string pbcontentid, string pbcontenttype )\n")
 		_T ( "subroutine SetAttachmentBase64 ( string pbattachment, string pbfilename, string pbcontentid, string pbcontenttype )\n")
 		_T ( "subroutine SetMailerName ( string pbname )\n")
+		_T ( "subroutine SetPriorityNone ( )\n")
+		_T ( "subroutine SetPriorityLow ( )\n")
+		_T ( "subroutine SetPriorityNormal ( )\n")
+		_T ( "subroutine SetPriorityHigh ( )\n")
 		_T ( "end class\n" )
 	};
 	return (LPCTSTR)desc ;
@@ -106,6 +110,10 @@ enum MethodIDs
 	SETATTACHEMENTEXTRA = 23,
 	SETATTACHMENTBASE64 = 24,
 	SETMAILERNAME = 25,
+	SETPRIORITYNONE = 26,
+	SETPRIORITYLOW = 27,
+	SETPRIORITYNORMAL = 28,
+	SETPRIORITYHIGH = 29,
 	ENTRY_COUNT
 };
 
@@ -635,6 +643,30 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 			return PBX_OK;
 
 		}
+	case SETPRIORITYNONE:
+		{
+			PRIORITY = 0;
+
+			return PBX_OK;
+		}
+	case SETPRIORITYLOW:
+	{
+		PRIORITY = 1;
+
+		return PBX_OK;
+	}
+	case SETPRIORITYNORMAL:
+	{
+		PRIORITY = 2;
+
+		return PBX_OK;
+	}
+	case SETPRIORITYHIGH:
+	{
+		PRIORITY = 3;
+
+		return PBX_OK;
+	}
 	case SETREADRECEIPTREQUEST:
 		{
 			IPB_Value * ReadReceiptArg = session->AcquireValue(ci->pArgs->GetAt(0));
