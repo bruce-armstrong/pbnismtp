@@ -357,7 +357,7 @@ CPJNSMTPMessage* CPJNSMTPAppDlg::CreateMessage()
 
   //Add the attachment(s) if necessary
   if (!m_sFile.IsEmpty()) 
-    pMessage->AddMultipleAttachments(m_sFile);		
+    pMessage->AddMultipleAttachments(m_sFile);
 
   //Setup the from address
   if (m_sName.IsEmpty()) 
@@ -459,7 +459,7 @@ void CPJNSMTPAppDlg::OnSend()
             {
               CString sMsg;
             #ifdef CPJNSMTP_MFC_EXTENSIONS
-              sMsg.Format(_T("Unable to determine the domain for the email address \"%s\""), sAddress.operator LPCTSTR());
+              sMsg.Format(_T("Unable to determine the domain for the email address \"%s\""), sAddress.GetString());
             #else
               sMsg.Format(_T("Unable to determine the domain for the email address \"%s\""), sAddress.c_str());
             #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -485,7 +485,7 @@ void CPJNSMTPAppDlg::OnSend()
               {
                 CString sMsg;
               #ifdef CPJNSMTP_MFC_EXTENSIONS
-                sMsg.Format(_T("Unable to perform a DNS MX lookup for the domain \"%s\", Error Code:%u"), sDomain.operator LPCTSTR(), GetLastError());
+                sMsg.Format(_T("Unable to perform a DNS MX lookup for the domain \"%s\", Error Code:%u"), sDomain.GetString(), GetLastError());
               #else
                 sMsg.Format(_T("Unable to perform a DNS MX lookup for the domain \"%s\", Error Code:%u"), sDomain.c_str(), GetLastError());
               #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -534,7 +534,7 @@ void CPJNSMTPAppDlg::OnSend()
       {
         //Display the error
         CString sMsg;
-        sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), pEx->m_hr, pEx->GetErrorMessage().operator LPCTSTR(), pEx->m_sLastResponse.operator LPCTSTR());
+        sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), pEx->m_hr, pEx->GetErrorMessage().GetString(), pEx->m_sLastResponse.GetString());
         AfxMessageBox(sMsg, MB_ICONSTOP);
         pEx->Delete();
         bCloseGracefully = FALSE;
@@ -754,7 +754,7 @@ void CPJNSMTPAppDlg::SendFromDisk(BOOL bUI)
             if (!tsd.m_bSentOK)
             {
               CString sMsg;
-              sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), tsd.m_ExceptionHr, tsd.m_sExceptionMessage.operator LPCTSTR(), tsd.m_sLastResponse.operator LPCTSTR());
+              sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), tsd.m_ExceptionHr, tsd.m_sExceptionMessage.GetString(), tsd.m_sLastResponse.GetString());
               AfxMessageBox(sMsg, MB_ICONSTOP);
             }
           }
@@ -764,7 +764,7 @@ void CPJNSMTPAppDlg::SendFromDisk(BOOL bUI)
         {
           //Display the error
           CString sMsg;
-          sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), pEx->m_hr, pEx->GetErrorMessage().operator LPCTSTR(), pEx->m_sLastResponse.operator LPCTSTR());
+          sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), pEx->m_hr, pEx->GetErrorMessage().GetString(), pEx->m_sLastResponse.GetString());
           AfxMessageBox(sMsg, MB_ICONSTOP);
   
           pEx->Delete();
@@ -808,7 +808,7 @@ void CPJNSMTPAppDlg::OnSaveToDisk()
       catch(CPJNSMTPException* pEx)
       {
         CString sMsg;
-        sMsg.Format(_T("Failed to save message to disk, Error:%08X, %s"), pEx->m_hr, pEx->GetErrorMessage().operator LPCTSTR());
+        sMsg.Format(_T("Failed to save message to disk, Error:%08X, %s"), pEx->m_hr, pEx->GetErrorMessage().GetString());
         AfxMessageBox(sMsg, MB_ICONSTOP);
 
         pEx->Delete();
@@ -909,7 +909,7 @@ void CPJNSMTPAppDlg::SendFromMemory(BOOL bUI)
         if (FAILED(hr))
         {
           CString sMsg;
-          sMsg.Format(_T("Failed to open the file:\'%s\', Error:%08X"), sFile.operator LPCTSTR(), hr);
+          sMsg.Format(_T("Failed to open the file:\'%s\', Error:%08X"), sFile.GetString(), hr);
           AfxMessageBox(sMsg);
           return;
         }
@@ -920,21 +920,21 @@ void CPJNSMTPAppDlg::SendFromMemory(BOOL bUI)
         if (FAILED(hr))
         {
           CString sMsg;
-          sMsg.Format(_T("Failed to obtain the file length for the file:\'%s\', Error:%08X"), sFile.operator LPCTSTR(), hr);
+          sMsg.Format(_T("Failed to obtain the file length for the file:\'%s\', Error:%08X"), sFile.GetString(), hr);
           AfxMessageBox(sMsg);
           return;
         }
         if (nFileSize >= ULONG_MAX)
         {
           CString sMsg;
-          sMsg.Format(_T("The file \'%s\' is too large to send"), sFile.operator LPCTSTR());
+          sMsg.Format(_T("The file \'%s\' is too large to send"), sFile.GetString());
           AfxMessageBox(sMsg);
           return;
         }
         if (nFileSize == 0)
         {
           CString sMsg;
-          sMsg.Format(_T("The file \'%s\' does not contain any data to send"), sFile.operator LPCTSTR());
+          sMsg.Format(_T("The file \'%s\' does not contain any data to send"), sFile.GetString());
           AfxMessageBox(sMsg);
           return;
         }
@@ -952,7 +952,7 @@ void CPJNSMTPAppDlg::SendFromMemory(BOOL bUI)
         if (FAILED(hr))
         {
           CString sMsg;
-          sMsg.Format(_T("Failed to read from the file:%s, Error:%08X"), sFile.operator LPCTSTR(), hr);
+          sMsg.Format(_T("Failed to read from the file:%s, Error:%08X"), sFile.GetString(), hr);
           AfxMessageBox(sMsg);
           return;
         }
@@ -1016,7 +1016,7 @@ void CPJNSMTPAppDlg::SendFromMemory(BOOL bUI)
             if (!tsd.m_bSentOK)
             {
               CString sMsg;
-              sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), tsd.m_ExceptionHr, tsd.m_sExceptionMessage.operator LPCTSTR(), tsd.m_sLastResponse.operator LPCTSTR());
+              sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), tsd.m_ExceptionHr, tsd.m_sExceptionMessage.GetString(), tsd.m_sLastResponse.GetString());
               AfxMessageBox(sMsg, MB_ICONSTOP);
             }
           }
@@ -1026,7 +1026,7 @@ void CPJNSMTPAppDlg::SendFromMemory(BOOL bUI)
         {
           //Display the error
           CString sMsg;
-          sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), pEx->m_hr, pEx->GetErrorMessage().operator LPCTSTR(), pEx->m_sLastResponse.operator LPCTSTR());
+          sMsg.Format(_T("An error occurred sending the message, Error:%08X, %s, Last Response:%s"), pEx->m_hr, pEx->GetErrorMessage().GetString(), pEx->m_sLastResponse.GetString());
           AfxMessageBox(sMsg, MB_ICONSTOP);
 
           pEx->Delete();

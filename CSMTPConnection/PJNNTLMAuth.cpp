@@ -1,5 +1,5 @@
 /*
-Module : PJNNTLMAuth.CPP
+Module : PJNNTLMAuth.cpp
 Purpose: Implementation for a simple wrapper class for client NTLM authentication via SSPI
 Created: PJN / 06-04-2005
 History: PJN / 05-09-2005 1. Function pointer to CompleteAuthToken is now constructed at runtime. This means
@@ -40,8 +40,11 @@ History: PJN / 05-09-2005 1. Function pointer to CompleteAuthToken is now constr
                           MFC behaviour.
          PJN / 14-11-2016 1. Updated the non MFC code path in CNTLMClientAuth::NTLMAuthenticate to handle a NULL pszUsername
                           parameter being passed. Thanks to Christopher Craft for reporting this issue.
+         PJN / 28-04-2017 1. Updated the code to compile cleanly using /permissive-.
+         PJN / 02-05-2017 1. Fixed a bug in the CNTLMClientAuth::NTLMAuthenticate method when CNTLMCLIENTAUTH_MFC_EXTENSIONS
+                          is defined. Thanks to Darron Redman for reporting this issue.
 
-Copyright (c) 2005 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 2005 - 2017 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 
@@ -120,9 +123,9 @@ SECURITY_STATUS CNTLMClientAuth::NTLMAuthenticate(_In_opt_z_ LPCTSTR pszUsername
   if (nSlashSeparatorOffset != -1)
   {
     sDomain = sUsername.Left(nSlashSeparatorOffset);
-    pszDomain = sDomain.operator LPCTSTR();
+    pszDomain = sDomain.GetString();
     sUsernameWithoutDomain = sUsername.Mid(nSlashSeparatorOffset + 1);
-    pszUsername = sUsernameWithoutDomain.operator LPCTSTR();
+    pszUsername = sUsernameWithoutDomain.GetString();
   }
 #else
 #ifdef _UNICODE
@@ -153,9 +156,9 @@ SECURITY_STATUS CNTLMClientAuth::NTLMAuthenticate(_In_opt_z_ LPCTSTR pszUsername
   //Get the buffer size to use for the NTLM SSPI  
   PSecPkgInfo pSecInfo = NULL;
 #ifdef _UNICODE
-  SECURITY_STATUS ss = QuerySecurityPackageInfo(NTLMSP_NAME, &pSecInfo);
+  SECURITY_STATUS ss = QuerySecurityPackageInfo(const_cast<LPTSTR>(NTLMSP_NAME), &pSecInfo);
 #else
-  SECURITY_STATUS ss = QuerySecurityPackageInfo(NTLMSP_NAME_A, &pSecInfo);
+  SECURITY_STATUS ss = QuerySecurityPackageInfo(const_cast<LPTSTR>(NTLMSP_NAME_A), &pSecInfo);
 #endif //#ifdef _UNICODE
   if (ss != SEC_E_OK)
     return ss;
@@ -256,7 +259,7 @@ SECURITY_STATUS CNTLMClientAuth::GenClientContext(_In_reads_bytes_opt_(cbIn) BYT
     }
 
     TimeStamp Lifetime;
-    ss = AcquireCredentialsHandle(NULL, _T("NTLM"), SECPKG_CRED_OUTBOUND, NULL, pvLogonID, NULL, NULL, &m_hCred, &Lifetime);
+    ss = AcquireCredentialsHandle(NULL, const_cast<LPTSTR>(_T("NTLM")), SECPKG_CRED_OUTBOUND, NULL, pvLogonID, NULL, NULL, &m_hCred, &Lifetime);
     if (ss != SEC_E_OK)
       return ss;
   }

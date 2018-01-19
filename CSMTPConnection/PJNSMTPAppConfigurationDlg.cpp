@@ -9,8 +9,8 @@
 
 struct _MC_charset
 {
-  TCHAR* pszFriendlyName;
-  TCHAR* pszCharset;
+  const TCHAR* pszFriendlyName;
+  const TCHAR* pszCharset;
 };
 
 _MC_charset g_charset[] =

@@ -3,7 +3,7 @@ Module : PJNSmtp.h
 Purpose: Defines the interface for a MFC class encapsulation of the SMTP protocol
 Created: PJN / 22-05-1998
 
-Copyright (c) 1998 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 1998 - 2017 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 
@@ -402,6 +402,7 @@ public:
   virtual CPJNSMTPString      GetTextBody();
   virtual void                AddHTMLBody(_In_z_ LPCTSTR pszBody, _In_z_ LPCTSTR pszRootMIMEType = _T("multipart/mixed"));
   virtual CPJNSMTPString      GetHTMLBody();
+
   virtual void                SetCharset(_In_z_ LPCTSTR pszCharset);
   virtual CPJNSMTPString      GetCharset() const;
   virtual void                SetMime(BOOL bMime);
