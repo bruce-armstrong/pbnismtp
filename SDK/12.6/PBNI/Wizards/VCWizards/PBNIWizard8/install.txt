@@ -1,0 +1,59 @@
+*************************************************************************
+Installation Notes for PBNI Wizard for Visual C++ .NET 2005
+Updated 05/10/2006
+*************************************************************************
+
+This file contains important installation information for the PBNI
+Wizard for VisualC++.NET 2005. 
+
+Section I:  Before you install
+            Supported operating systems
+            Required software
+              
+Section II: Running the install.wsf script file
+
+=============================
+Section I: Before you install
+=============================
+Before you run the deploy.bat batch file to install this release of
+the PBNI Wizard for Visual C++ .NET 2005, read this section carefully to 
+make sure that you have installed any required software.
+
+Supported operating systems
+---------------------------
+This release has been tested on Windows XP and Windows 2000 (with service 
+pack 2).  
+
+Required software
+-----------------
+If you want to use the PBNI Wizard for Visual C++ .NET 2005, you must 
+have the following programs installed on the development computer before 
+you run the deploy.bat batch file:
+
+* Microsoft VisualStudio.NET version 2005 (8.0)
+* Microsoft .NET Framework version 2.0.50727 or later
+* Internet Explorer 5.5 or later
+
+===============================================
+Section II: Running the install.wsf script file
+===============================================
+Important Note
+--------------
+the WSF (Windows Script File) format is executable. Some virus protection 
+and/or firewall software may disable the execution of this file format. 
+Should this be the case for the machine you are trying to install to, you 
+may use the deploy.bat file as an alternative. You should open the 
+deploy.bat file in a text editor prior to running it to verify that the 
+target folders used by it are correct (the WSF script queries the 
+registry for the correct location).
+
+Installation
+------------
+1. Shut down VisualStudio.NET if it is running.
+ 
+2. Run the install.wsf (or deploy.bat) script file.
+  
+3. When the script completes successfully, you may delete all files from
+   the temporary install directory
+
+*************************************************************************

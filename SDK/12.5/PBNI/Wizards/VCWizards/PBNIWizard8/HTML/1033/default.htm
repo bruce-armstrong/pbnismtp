@@ -1,0 +1,293 @@
+<html dir="ltr">
+   <head>
+      <title>'PBNIWizard'</title>
+      <meta name="vs_targetSchema" CONTENT="http://schemas.microsoft.com/intellisense/ie5" />
+      <style type="text/css">@import url();
+      </style>
+      <script>
+      <!--
+         var strURL = window.external.FindSymbol("PRODUCT_INSTALLATION_DIR");
+         strURL += "VCWizards/";
+         strURL += window.external.GetHostLocale();
+         strURL += "/NewStyles.css";
+         document.styleSheets(0).imports(0).href = strURL;
+      //-->
+      </script>
+      <!--  -->
+      <!-- The SYMBOL tag is used to set the default values for the user-defined symbols.-->
+      <!--  -->
+      <symbol name="WIZARD_DIALOG_TITLE" type="text" value="PBNI Application Wizard" />
+      <symbol name="SOURCE_FILTER" type="text" value="cpp" />
+      <symbol name="HEADER_FILTER" type="text" value="h" />
+      <symbol name="PBNI_CLASS_NAME" type="input" value="" />
+      <symbol name="VISUAL_FLAG" type="radio" value="false" />
+      <symbol name="NON_VISUAL_FLAG" type="radio" value="true" />
+      <symbol name="APP_TYPE_SUMMARY" type="text" value="A PBNI (PowerBuilder Native Interface) Extension DLL" />
+      <symbol name="GEN_INTERFACE" type="checkbox" value="false" />
+      <symbol name="GLOBAL" type="checkbox" value="false" />
+   </head>
+   <body BGCOLOR="buttonface" TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" ONLOAD="InitDocument(document);" ONKEYDOWN="OnKey();" ONKEYPRESS="OnPress();">
+      <table class="ONE" height="100%" width="100%" border="0" cellpadding="0" cellspacing="0">
+         <col width="178"><col>
+         <!--OPEN OF INTRODUCTORY INFORMATION TABLE//-->
+         <tr valign="top">
+            <td height="79" width="100%" colspan="2">
+               <table class="TWO" border="0" cellpadding="0" cellspacing="0">
+                  <col width="12"><col><col width="12">
+                  <tr>
+                     <td valign="top" height="12" width="12">&nbsp;</td>
+                     <td valign="top" height="12">&nbsp;</td>
+                     <td valign="top" height="12" width="12">&nbsp;</td>
+                     <td class="IMAGE" valign="middle" width="110" rowspan="2"><div class="SMALLA" id="Layer0"><img class="SMALLEST" src="../../Images/PBNIWizard.gif" width="63" height="63" alt="" border="0" /></div></td>
+                     <td valign="top" height="12" width="6" rowspan="2">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td valign="top" height="65" width="12">&nbsp;</td>
+                     <td valign="top" height="65">
+                        <h4 class="HEAD" id="HEAD">Welcome to the PBNI Application Wizard</h4>
+                        <p class="SUBHEAD" id="SUBHEAD">This wizard will create a startup project for a PBNI Extension DLL.</p>
+                     </td>
+                     <td valign="top" height="65" width="12">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td valign="top" class="RulE" colspan="5" height="2">
+                        <table border="0" width="100%" height="1" cellpadding="0" cellspacing="0">
+                           <tr valign="top">
+                              <td height="1" width="100%" BGCOLOR="buttonshadow"><img src="../../Images/spacer.gif" height="1" width="1" alt="" /></td>
+                              <td height="1" width="1" BGCOLOR="window"><img src="../../Images/spacer.gif" height="1" width="1" alt="" /></td>
+                           </tr>
+                        </table>
+                     </td>
+                  </tr>
+                  </col></col></col>
+               </table>
+            </td>
+         </tr>
+         <!--CLOSE OF INTRODUCTORY INFORMATION TABLE//-->
+         <!--OPEN OF NAVIGATION, CONTENT, AND button TABLES//-->
+         <tr valign="top">
+            <td class="THREE" valign="top" height="100%" width="178" STYLE="BACKGROUND-IMAGE: url(../../Images/PBNIWizard_Background.gif)">
+               <!--OPEN OF NAVIGATION TABLE//-->
+               <table class="THREE" border="0" cellpadding="0" cellspacing="0">
+                  <col width="12"><col width="166"><col width="1">
+                  <tr><td valign="top" colspan="3" height="12">&nbsp;</td></tr>
+                  <tr>
+                     <td valign="top" height="100%" width="12">&nbsp;</td>
+                     <td valign="top" height="100%" width="165">
+                        <!--OPEN OF NAVIGATIONAL liNKS//-->
+                        <div class="liNKSELECTED">
+                           <span class="VERTliNE1"><img src="../../Images/spacer.gif" width="1" height="1" alt="" border="0" /></span>
+                           <span class="HORIliNE1">
+                              <table width="167" height="100%" border="0" cellpadding="0" cellspacing="0">
+                                 <tr valign="top">
+<!--                                    <td class="DOTTEDLINE" height="1">
+                                    </td>-->
+                                 </tr>
+                                 <tr valign="top">
+                                    <td height="100%"><img src="../../Images/spacer.gif" width="1" height="28" alt="" border="0" /></td>
+                                 </tr>
+                                 <tr valign="top">
+<!--                                    <td class="DOTTEDLINE" height="1">
+                                    </td>-->
+                                 </tr>
+                              </table>
+                           </span>
+                           <table width="160" height="28" border="0" cellpadding="0" cellspacing="0" class="liNKTEXTSELECTED">
+                              <tr valign="center">
+                                 <td width="156">
+                                    <span id="Default" TITLE="" onClick="Next(document, 'default.htm');" tabindex="1">Overview</span>
+                                 </td>
+                                 <td width="4"><img src="../../Images/spacer.gif" height="1" width="4" /></td>
+                              </tr>
+                           </table>
+                        </div>
+                        <div class="link">
+                           <table width="166" height="28" border="0" cellpadding="0" cellspacing="0" class="LINKTEXT">
+                              <tr valign="center">
+                                 <td width="162"><span class="ACTIVElink" id="Page_2" TITLE="" onClick="Next(document, 'Page_2.htm');" tabindex="1">Application Settings</span></td>
+                                 <td width="4"><img src="../../Images/spacer.gif" height="1" width="4" /></td>
+                              </tr>
+                           </table>
+                        </div>
+                        <!--CLOSE OF NAVIGATIONAL liNKS//-->
+                     </td>
+                     <td width="1">
+                        <div class="VERTliNE">
+                           <img src="../../Images/spacer.gif" width="1" height="1" alt="" border="0" />
+                        </div>
+                     </td>
+                  </tr></col></col></col>
+               </table>
+               <!--CLOSE OF NAVIGATION TABLE//-->
+            </td>
+            <td valign="top" height="100%">
+               <!--OPEN OF CONTENT AND button TABLE//-->
+               <table class="ONE" border="0" cellpadding="0" cellspacing="0">
+                  <col width="100%">
+                  <tr valign="top">
+                     <td height="100%">
+                        <!--OPEN OF CONTENT//-->
+                        <table class="CONTENT" border="0" cellpadding="0" cellspacing="0">
+                           <col width="12"><col width="185"><col width="12"><col width="185"><col width="12"><col width="185"><col width="12">
+                           <tr><td valign="top" height="12" colspan="5">&nbsp;</td></tr>
+                           <tr valign="top"><td valign="top" width="12">&nbsp;</td>
+                              <td valign="top" colspan="3">
+                                 <span class="itemText">
+                                    <span class="ItemTextTop" id="PROJECT_SETTINGS_span">These are the current project settings:</span>
+                                    <ul>
+                                       <li class="list"><span class="SideBtnHidden" id="CLASSNAME" title=""></span></li>
+                                       <li class="list" style="DISPLAY: none">
+                                          <span class="SideBtnHidden" id="GENINTERFACE" title=""></span>
+                                       </li>
+                                       <li class="list" style="DISPLAY: none">
+                                          <span class="SideBtnHidden" id="GLOBAL_" title=""></span>
+                                       </li>
+                                    </ul>
+                                    <span class="ItemText" id="FinishText">Click <B>Finish</B> from any window to accept the current settings.</span>
+                                    <p class="ElementSpacer2">&nbsp;</p>
+                                    <span class="ItemText" id="README_REMINDER" title="">After you create the project, see the project's readme.txt file for information about the project features and files that are generated.</span>
+                                 </span>
+                              </td>
+                              <td valign="top" width="12">&nbsp;</td>
+                           </tr>
+                           <tr><td valign="top" height="100%" colspan="7">&nbsp;</td></tr>
+                           </col></col></col></col></col></col></col>
+                        </table>
+                        <!--CLOSE OF CONTENT//-->
+                     </td>
+                  </tr>
+                  <tr valign="bottom">
+                     <td height="48">
+                        <!--OPEN OF button HTML//-->
+                        <table height="48" border="0" cellpadding="0" cellspacing="0">
+                           <col width="12"><col><col width="75"><col width="4"><col width="75"><col width="4"><col width="75"><col width="12">
+                           <tr>
+                              <td valign="top" class="RulE" colspan="8" height="2">
+                                 <table border="0" width="100%" height="1" cellpadding="0" cellspacing="0">
+                                    <tr valign="top">
+                                       <td height="1" width="100%" BGCOLOR="buttonshadow"><img src="../../Images/spacer.gif" height="1" width="1" alt="" /></td>
+                                       <td height="1" width="1" BGCOLOR="window"><img src="../../Images/spacer.gif" height="1" width="1" alt="" /></td>
+                                    </tr>
+                                 </table>
+                              </td>
+                           </tr>
+                           <tr><td valign="top" height="11" colspan="8">&nbsp;</td></tr>
+                           <tr>
+                              <td valign="center" height="23" width="12">&nbsp;</td>
+                              <td valign="top" height="23">&nbsp;</td>
+                              <td valign="center" height="23" width="75">
+                                 <button class="buttonS" id="FinishBtn" ACCESSKEY="F" onClick="OnFinish(document);" type="button"><U>F</U>inish</button>
+                              </td>
+                              <td valign="center" height="23" width="4">&nbsp;</td>
+                              <td valign="center" height="23" width="75">
+                                 <button class="buttonS" id="CancelBtn" ACCESSKEY="C" onClick="window.external.Finish(document, 'cancel');" type="button"><U>C</U>ancel</button>
+                              </td>
+                              <td valign="center" height="23" width="4">&nbsp;</td>
+                              <td valign="center" height="23" width="75">
+                                 <button class="buttonS" id="HelpBtn" ACCESSKEY="H" onClick="window.external.OnHelp('vc.appwiz.custom.overview');" type="button"><U>H</U>elp</button>
+                              </td>
+                              <td valign="center" height="23" width="12">&nbsp;</td>
+                           </tr>
+                           <tr><td valign="top" height="12" colspan="8">&nbsp;</td></tr>
+                           </col></col></col></col></col></col></col></col>
+                        </table>
+                        <!--CLOSE OF button HTML//-->
+                     </td>
+                  </tr>
+                  </col>
+               </table>
+               <!--CLOSE OF NAVIGATION, CONTENT, AND button TABLES//-->
+            </td>
+         </tr>
+         </col></col>
+      </table>
+   </body>
+</html>
+<script language="JSCRIPT">
+<!--
+   var tab_array = new Array();
+   tab_array[0] = Default;
+   tab_array[1] = Page_2;
+
+   // This is an example of a function which initializes the page
+   //
+   function InitDocument(document)
+   {
+      setDirection();
+
+      if (window.external.FindSymbol('DOCUMENT_FIRST_LOAD'))
+      {
+         // This function sets the default symbols based
+         // on the values specified in the SYMBOL tags above
+         //
+         window.external.SetDefaults(document);
+      }
+
+      // Load the document and initialize the controls
+      // with the appropriate symbol values
+      //
+      window.external.Load(document);
+      InitControls();
+   }
+
+   // update the values of the class name based on user input
+   //
+   function InitControls()
+   {
+	   var L_CLASSNAME_TEXT = 'C' + window.external.FindSymbol("PROJECT_NAME");
+	   var L_GENINTERFACE_TEXT = "Generate Interface Header File";
+	   var L_GLOBAL_TEXT = "Include Support for Global Functions";
+	   var L_CLASSNAME = window.external.FindSymbol("PBNI_CLASS_NAME");
+
+	   if ( L_CLASSNAME == "" )
+	      CLASSNAME.innerText = "Default PBNI class name is " + L_CLASSNAME_TEXT;
+	   else
+	      CLASSNAME.innerText = "PBNI Class name is " + L_CLASSNAME;
+	   
+	   if (window.external.FindSymbol("GEN_INTERFACE"))
+	   {
+		   GENINTERFACE.innerText = L_GENINTERFACE_TEXT;
+		   GENINTERFACE.parentNode.style.display = 'block';
+	   }
+	   if (window.external.FindSymbol("GLOBAL"))
+	   {
+		   GLOBAL_.innerText = L_GLOBAL_TEXT;
+		   GLOBAL_.parentNode.style.display = 'block';
+	   }
+   }
+
+   // If the wizard has more than 1 page, this
+   // function will browse to the page specified
+   //
+   function Next(document, linkto)
+   {
+      window.external.Next(document, linkto);
+   }
+
+   // This is an example of a function which
+   // gets called when the user clicks on 'Finish'
+   //
+   function OnFinish(document)
+   {
+      OnWizFinish(document);
+   }
+//-->
+</script>
+<script id="INCLUDE_SCRIPT" language="JSCRIPT"></script>
+<script id="INCLUDE_COMMON" language="JSCRIPT"></script>
+<!--
+   Common.js is a script file which contains the helper functions
+   used by the wizards.  Include this line if you want to
+   call these functions from your html scripts.
+//-->
+<script>
+<!--
+	var strPath = window.external.FindSymbol("PRODUCT_INSTALLATION_DIR");
+	strPath += "VCWizards/";
+	strPath += window.external.GetHostLocale();
+	var strScriptPath = strPath + "/Script.js";
+	var strCommonPath = strPath + "/Common.js";
+	document.scripts("INCLUDE_SCRIPT").src = strScriptPath;
+	document.scripts("INCLUDE_COMMON").src = strCommonPath;
+//-->
+</script>
