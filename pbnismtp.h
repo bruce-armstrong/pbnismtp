@@ -34,7 +34,8 @@ protected:
 
 	void CleanUp();
 
-	LPCTSTR Message; 
+	LPCTSTR Message;
+	LPCTSTR HTMLMessage;
 	LPCTSTR SenderEmail;
 	LPCTSTR RecipientEmail;
 	LPCTSTR CCRecipientEmail;
@@ -59,18 +60,48 @@ protected:
 	IPB_Value* CharSetArg ;
 	IPB_Value* UsernameArg ;
 	IPB_Value* PasswordArg ;
+	IPB_Value* PriorityArg;
+	IPB_Value* ReadReceiptArg;
+	IPB_Value* DeliverReportArg;
+	IPB_Value* MailerNameArg;
 
 	IPB_Session*	Session ;
 
 	CString LastErrorMsg;
 
+	CString MailerName;
+
+	int PRIORITY;
+	bool DELIVERYREPORT;
+	bool READRECEIPT;
+
 	int ErrorMessageBoxesOn ;
 
 	bool HTMLBody ;
+	bool PLAINHTMLBody ;
 
 	int Port;
 	int AuthMethod;
 	int ConnectType;
+
+	class AttachmentBase64
+	{
+	public:
+		LPCSTR Base64;
+		LPTSTR FileName;
+		LPTSTR ContentID;
+		LPTSTR ContentType;
+	};
+
+	class AttachmentFile {
+	public:
+		LPTSTR Filename;
+		LPTSTR ContentID;
+		LPTSTR ContentType;
+	 };
+
+	std::vector<AttachmentFile> m_AttachmentFile;
+	std::vector<AttachmentBase64> m_AttachmentBase64;
 
 private:
 

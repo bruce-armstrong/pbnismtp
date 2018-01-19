@@ -45,6 +45,17 @@ PBXEXPORT LPCTSTR PBXCALL PBX_GetDescription()
 		_T ( "subroutine SetAuthMethod ( integer authmethod )\n" )
 		_T ( "subroutine SetConnectionType ( integer connecttype )\n" )
 		_T ( "function string GetLastErrorMessage ( )\n")
+		_T ( "subroutine SetPriority ( integer pbpriority )\n" )
+		_T ( "subroutine SetReadReceiptRequested ( boolean pbboolean )\n" )
+		_T ( "subroutine SetOriginatorDeliveryReportRequested ( boolean pbboolean )\n" )
+		_T ( "subroutine SetMessage ( string pbplainmessage, string pbhtmlmessage )\n")
+		_T ( "subroutine SetAttachment ( string pbattachment, string pbcontentid, string pbcontenttype )\n")
+		_T ( "subroutine SetAttachmentBase64 ( string pbattachment, string pbfilename, string pbcontentid, string pbcontenttype )\n")
+		_T ( "subroutine SetMailerName ( string pbname )\n")
+		_T ( "subroutine SetPriorityNone ( )\n")
+		_T ( "subroutine SetPriorityLow ( )\n")
+		_T ( "subroutine SetPriorityNormal ( )\n")
+		_T ( "subroutine SetPriorityHigh ( )\n")
 		_T ( "end class\n" )
 	};
 	return (LPCTSTR)desc ;
@@ -92,6 +103,17 @@ enum MethodIDs
 	SETAUTHMETHOD = 16,
 	SETCONNECTIONTYPE = 17,
 	GETLASTERRORMESSAGE = 18,
+	SETPRIORITY = 19,
+	SETREADRECEIPTREQUEST = 20,
+	SETORIGINATORDELIVERYREPORTREQUESTED = 21,
+	SETMESSAGEPLAINHTML = 22,
+	SETATTACHEMENTEXTRA = 23,
+	SETATTACHMENTBASE64 = 24,
+	SETMAILERNAME = 25,
+	SETPRIORITYNONE = 26,
+	SETPRIORITYLOW = 27,
+	SETPRIORITYNORMAL = 28,
+	SETPRIORITYHIGH = 29,
 	ENTRY_COUNT
 };
 
@@ -118,8 +140,12 @@ CSMTP::CSMTP()
 	CharSetArg = NULL ;
 	UsernameArg = NULL ;
 	PasswordArg = NULL ;
+	PriorityArg = NULL ;
+	ReadReceiptArg = NULL ;
+	DeliverReportArg = NULL ;	 
 
-	Message = NULL;  
+	Message = NULL;
+	HTMLMessage = NULL;
 	SenderEmail = NULL;
 	RecipientEmail = NULL;
 	CCRecipientEmail = NULL;
@@ -135,10 +161,13 @@ CSMTP::CSMTP()
 	ErrorMessageBoxesOn = FALSE;    /* initialize to off  */	
 
 	HTMLBody = FALSE ;
+	PLAINHTMLBody = FALSE;
 
 	Port = 25 ;
 	AuthMethod = 5 ; /* Default to Auto Detect */
 	ConnectType = 0 ; /* Default to Plain Text */
+
+	MailerName = _T("PBNISMTP 3.2");
 
 }
 
@@ -221,14 +250,90 @@ int CSMTP::Send()
 
 		// Set the subject and message
 		msg.m_sSubject = (CString)Subject ; 
-		msg.m_sXMailer = _T ( "PBNISMTP 3.2" ) ;
-		if ( HTMLBody )
+		msg.m_sXMailer = MailerName;
+
+		// Set Read Receipt header
+		if ( READRECEIPT == TRUE )
 		{
+			#ifdef _DEBUG
+						MessageBox(NULL, _T("Set Disposition-Notification-To Header"), title, MB_ICONEXCLAMATION | MB_OK);
+			#endif
+			CString dString;
+			dString.Format(_T("Disposition-Notification-To: %s"), SenderEmail);
+			msg.m_CustomHeaders.push_back((CPJNSMTPString)dString);
+
+		}
+
+		// Set Delivery report header
+		if ( DELIVERYREPORT == TRUE )
+		{
+			#ifdef _DEBUG
+						MessageBox(NULL, _T("Set Delivery Report Header"), title, MB_ICONEXCLAMATION | MB_OK);
+			#endif
+			// set develivery report header
+			msg.m_dwDSN = msg.DSN_SUCCESS;
+		}
+
+		// Set Priority Header
+		if (PRIORITY != NULL)
+		{
+			#ifdef _DEBUG
+						MessageBox(NULL, _T("Set Priority Header"), title, MB_ICONEXCLAMATION | MB_OK);
+			#endif
+			
+			msg.m_Priority = msg.NoPriority;
+
+			if (PRIORITY == 3)
+			{
+				msg.m_Priority = msg.HighPriority;
+			}
+			else if (PRIORITY == 2)
+			{
+				msg.m_Priority = msg.NormalPriority;
+			}
+			else if (PRIORITY == 1)
+			{
+				msg.m_Priority = msg.LowPriority;
+			}
+		}
+
+		if ( HTMLBody == TRUE )
+		{
+			// Only HTML Message
 			msg.SetMime(TRUE) ;
 			msg.AddHTMLBody(Message);
 		}
+		else if (PLAINHTMLBody == TRUE)
+		{
+			// multipart plain/html message
+			CPJNSMTPBodyPart RootPart;
+			CPJNSMTPBodyPart MessagePart;
+			CPJNSMTPBodyPart TextPart;
+			CPJNSMTPBodyPart HTMLPart;
+
+			RootPart = msg.m_RootPart;
+
+			msg.SetMime(TRUE);
+
+			MessagePart.SetCharset(RootPart.GetCharset().c_str());
+			MessagePart.SetText(_T(""));
+			MessagePart.SetContentType(_T("multipart/alternative"));
+
+			TextPart.SetCharset(RootPart.GetCharset().c_str());
+			TextPart.SetText(Message);
+			TextPart.SetContentType(_T("text/plain"));
+			MessagePart.AddChildBodyPart(TextPart);
+
+			HTMLPart.SetCharset(RootPart.GetCharset().c_str());
+			HTMLPart.SetText(HTMLMessage);
+			HTMLPart.SetContentType(_T("text/html"));
+			MessagePart.AddChildBodyPart(HTMLPart);
+
+			msg.AddBodyPart(MessagePart);
+		}
 		else
 		{
+			// Only PlainText Message
 			msg.AddTextBody (Message) ;
 		}
 
@@ -236,6 +341,28 @@ int CSMTP::Send()
 		if ( Attachment != NULL )
 		{
 			msg.AddMultipleAttachments(Attachment);
+		}
+
+		// Set any attachement in array
+		for (std::vector<AttachmentFile*>::size_type i = 0; i < m_AttachmentFile.size(); i++)
+		{
+			CPJNSMTPBodyPart	BodyPart;
+			BodyPart.SetFilename(m_AttachmentFile[i].Filename);
+			BodyPart.SetContentID(m_AttachmentFile[i].ContentID);
+			BodyPart.SetContentType(m_AttachmentFile[i].ContentType);
+			msg.AddBodyPart(BodyPart);
+		}
+
+		// Set Embedded Attachements
+		for (std::vector<AttachmentBase64*>::size_type i = 0; i < m_AttachmentBase64.size(); i++)
+		{
+			CPJNSMTPBodyPart	imageBodyPart;
+			imageBodyPart.SetRawBody(m_AttachmentBase64[i].Base64);
+			imageBodyPart.SetAttachment(TRUE);
+			imageBodyPart.SetContentID(m_AttachmentBase64[i].ContentID);
+			imageBodyPart.SetContentType(m_AttachmentBase64[i].ContentType);
+			imageBodyPart.SetTitle(m_AttachmentBase64[i].FileName);
+			msg.AddBodyPart(imageBodyPart);
 		}
 
 		// Set the Return Code if Exception is raised for the following calls
@@ -508,7 +635,139 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		ci->returnValue->SetString(LastErrorMsg);
 		return PBX_OK;
 		}
-	return PBX_E_INVOKE_METHOD_AMBIGUOUS;
+	case SETPRIORITY:
+		{
+			IPB_Value * PriorityArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			PRIORITY = (int)PriorityArg->GetInt();
+
+			return PBX_OK;
+
+		}
+	case SETPRIORITYNONE:
+		{
+			PRIORITY = 0;
+
+			return PBX_OK;
+		}
+	case SETPRIORITYLOW:
+	{
+		PRIORITY = 1;
+
+		return PBX_OK;
+	}
+	case SETPRIORITYNORMAL:
+	{
+		PRIORITY = 2;
+
+		return PBX_OK;
+	}
+	case SETPRIORITYHIGH:
+	{
+		PRIORITY = 3;
+
+		return PBX_OK;
+	}
+	case SETREADRECEIPTREQUEST:
+		{
+			IPB_Value * ReadReceiptArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			READRECEIPT = (bool)ReadReceiptArg->GetBool();
+			if (ReadReceiptArg)
+			{
+				Session->ReleaseValue(ReadReceiptArg);
+			}
+			return PBX_OK;
+		}
+	case SETORIGINATORDELIVERYREPORTREQUESTED:
+		{
+			IPB_Value * DeliverReportArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			DELIVERYREPORT = (bool)DeliverReportArg->GetBool();
+			if (DeliverReportArg)
+			{
+				Session->ReleaseValue(DeliverReportArg);
+			}
+			return PBX_OK;
+		}
+	case SETMESSAGEPLAINHTML:
+		{
+			// Plaintext message
+			MessageArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			pbstring pbMessage = MessageArg->GetString();
+			Message = session->GetString(pbMessage);
+
+			// HTML Mesage
+			MessageArg = session->AcquireValue(ci->pArgs->GetAt(1));
+			pbstring pbHTMLMessage = MessageArg->GetString();
+			HTMLMessage = session->GetString(pbHTMLMessage);
+
+			PLAINHTMLBody = TRUE;
+
+			#ifdef _DEBUG
+					MessageBox(NULL, Message, _T("Message"), MB_ICONEXCLAMATION | MB_OK);
+					MessageBox(NULL, HTMLMessage, _T("HTMLMessage"), MB_ICONEXCLAMATION | MB_OK);
+			#endif
+			return PBX_OK;
+		}
+	case SETATTACHEMENTEXTRA:
+		{
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			pbstring pbFileName = AttachmentArg->GetString();
+			LPTSTR FileName = (LPTSTR)session->GetString(pbFileName);
+
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(1));
+			pbstring pbContentID = AttachmentArg->GetString();
+			LPTSTR ContentID = (LPTSTR)session->GetString(pbContentID);
+
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(2));
+			pbstring pbContentType = AttachmentArg->GetString();
+			LPTSTR ContentType = (LPTSTR)session->GetString(pbContentType);
+
+			AttachmentFile	aFile;
+			aFile.Filename = FileName;
+			aFile.ContentID = ContentID;
+			aFile.ContentType = ContentType;
+			m_AttachmentFile.push_back(aFile);
+
+			return PBX_OK;
+		}
+	case SETATTACHMENTBASE64:
+		{
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			pbstring pbBase64 = AttachmentArg->GetString();
+			LPCSTR Base64 = (LPCSTR)session->GetString(pbBase64);
+
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(1));
+			pbstring pbFileName = AttachmentArg->GetString();
+			LPTSTR FileName = (LPTSTR)session->GetString(pbFileName);
+
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(2));
+			pbstring pbContentID = AttachmentArg->GetString();
+			LPTSTR ContentID = (LPTSTR)session->GetString(pbContentID);
+
+			AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(3));
+			pbstring pbContentType = AttachmentArg->GetString();
+			LPTSTR ContentType = (LPTSTR)session->GetString(pbContentType);
+
+			AttachmentBase64	aBase64;
+			aBase64.Base64 = Base64;
+			aBase64.FileName = FileName;
+			aBase64.ContentID = ContentID;
+			aBase64.ContentType = ContentType;
+			m_AttachmentBase64.push_back(aBase64);
+
+			return PBX_OK;
+		}
+	case SETMAILERNAME:
+		{
+			MailerNameArg = session->AcquireValue(ci->pArgs->GetAt(0));
+			pbstring pbMailerName = MailerNameArg->GetString();
+			MailerName = session->GetString(pbMailerName);
+			#ifdef _DEBUG
+					MessageBox(NULL, MailerName, _T("MailerName"), MB_ICONEXCLAMATION | MB_OK);
+			#endif
+			return PBX_OK;
+		}
+
+		return PBX_E_INVOKE_METHOD_AMBIGUOUS;
 	}
 }
 
@@ -563,6 +822,18 @@ void CSMTP::CleanUp()
 	if (PasswordArg)
 	{
 		Session->ReleaseValue( PasswordArg );
+	}
+	if (ReadReceiptArg)
+	{
+		Session->ReleaseValue( ReadReceiptArg );
+	}
+	if (DeliverReportArg)
+	{
+		Session->ReleaseValue( DeliverReportArg );
+	}
+	if (PriorityArg)
+	{
+		Session->ReleaseValue( PriorityArg );
 	}
 }
 
