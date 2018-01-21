@@ -1,0 +1,125 @@
+<job id="main">
+   <script language="VBScript">
+      '-- setup variables
+      Set sho = CreateObject( "WScript.Shell" )
+      Set fso = CreateObject( "Scripting.FileSystemObject" )
+      HKLM = "HKEY_LOCAL_MACHINE\" 
+      vcInstallDir = sho.RegRead( HKLM & "SOFTWARE\Microsoft\VisualStudio\8.0\Setup\VC\ProductDir" )
+      statusMsg = ""
+      
+      '-- resource ID (default is 100/US-English)
+      resCode = "1033"
+      
+      '-- create target directories
+      targetDir = vcInstallDir & "VCWizards\PBNIWizard"
+      If Not fso.FolderExists( targetDir ) Then
+         statusMsg = "Creating " & targetDir & "..."
+         Set rootDir = fso.CreateFolder( targetDir )
+         statusMsg = statusMsg & " done (" & rootDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & " already exists" & vbCrLf
+      End If
+      
+      If Not fso.FolderExists( targetDir & "\" & resCode ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\" & resCode & "..."
+         Set resDir = fso.CreateFolder( targetDir & "\" & resCode )
+         statusMsg = statusMsg & " done (" & resDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\" & resCode & " already exists" & vbCrLf
+      End If
+      
+      If Not fso.FolderExists( targetDir & "\HTML" ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\HTML"
+         Set htmlDir = fso.CreateFolder( targetDir & "\HTML" )
+         statusMsg = statusMsg & " done (" & htmlDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\HTML" & " already exists" & vbCrLf
+      End If
+      
+      If Not fso.FolderExists( targetDir & "\HTML\" & resCode ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\HTML\" & resCode
+         Set htmlDir = fso.CreateFolder( targetDir & "\HTML\" & resCode )
+         statusMsg = statusMsg & " done (" & htmlDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\HTML\" & resCode & " already exists" & vbCrLf
+      End If
+      
+      If Not fso.FolderExists( targetDir & "\Images" ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\Images"
+         Set imageDir = fso.CreateFolder( targetDir & "\Images" )
+         statusMsg = statusMsg & " done (" & imageDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\Images" & " already exists" & vbCrLf
+      End If
+
+      If Not fso.FolderExists( targetDir & "\Scripts" ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\Scripts"
+         Set scriptDir = fso.CreateFolder( targetDir & "\Scripts" )
+         statusMsg = statusMsg & " done (" & scriptDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\Scripts" & " already exists" & vbCrLf
+      End If
+      
+      If Not fso.FolderExists( targetDir & "\Scripts\" & resCode ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\Scripts\" & resCode
+         Set scriptDir = fso.CreateFolder( targetDir & "\Scripts\" & resCode )
+         statusMsg = statusMsg & " done (" & scriptDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\Scripts\" & resCode & " already exists" & vbCrLf
+      End If
+
+      If Not fso.FolderExists( targetDir & "\Templates" ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\Templates" 
+         Set templateDir = fso.CreateFolder( targetDir & "\Templates" )
+         statusMsg = statusMsg & " done (" & templateDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\Templates" & " already exists" & vbCrLf
+      End If
+      
+      If Not fso.FolderExists( targetDir & "\Templates\" & resCode ) Then
+         statusMsg = statusMsg & "Creating " & targetDir & "\Templates\" & resCode 
+         Set templateDir = fso.CreateFolder( targetDir & "\Templates\" & resCode )
+         statusMsg = statusMsg & " done (" & templateDir.Name & ")" & vbCrLf
+      Else
+         statusMsg = statusMsg & targetDir & "\Templates\" & resCode & " already exists" & vbCrLf
+      End If
+         
+      '-- copy wizard files
+      statusMsg = statusMsg & "Copying files..."
+      If fso.FolderExists( resDir ) Then
+         fso.CopyFile ".\VCWizards\PBNIWizard8\" & resCode & "\*.*", resDir, true
+      End IF
+      If fso.FolderExists( htmlDir ) Then
+         fso.CopyFile ".\VCWizards\PBNIWizard8\HTML\" & resCode & "\*.*", htmlDir, true
+      End IF
+      If fso.FolderExists( imageDir ) Then
+         fso.CopyFile ".\VCWizards\PBNIWizard8\Images\*.*", imageDir, true
+      End IF
+      If fso.FolderExists( scriptDir ) Then
+         fso.CopyFile ".\VCWizards\PBNIWizard8\Scripts\" & resCode & "\*.*", scriptDir, true
+      End IF
+      If fso.FolderExists( templateDir ) Then
+         fso.CopyFile ".\VCWizards\PBNIWizard8\Templates\" & resCode & "\*.*", templateDir, true
+      End IF
+      statusMsg = statusMsg & " done" & vbCrLf
+      
+      '-- register the new wizard
+      statusMsg = statusMsg & "Registering wizard..."
+      wizardDir = vcInstallDir & "vcprojects"
+      WScript.Echo wizardDir
+      If fso.FolderExists( wizardDir ) Then
+         fso.CopyFile ".\VCProjects 8.0\PBNIWizard.vsdir", wizardDir & "\PBNIWizard.vsdir", true
+         fso.CopyFile ".\VCProjects 8.0\PBNIWizard.vsz", wizardDir & "\PBNIWizard.vsz", true
+         fso.CopyFile ".\VCProjects 8.0\PBNIWizard.ico", wizardDir & "\PBNIWizard.ico", true
+      End If
+      statusMsg = statusMsg & " done" & vbCrLf
+      
+      '-- cleanup
+      Set sho = Nothing
+      Set fso = Nothing
+      
+      '-- done
+      statusMsg = statusMsg & "Installation complete!"
+      WScript.Echo statusMsg
+   </script>
+</job>
