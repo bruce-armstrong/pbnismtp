@@ -421,6 +421,15 @@ int CSMTP::Send()
 				e.GetErrorMessage(szError, _countof(szError));
 				LastErrorMsg = (CString) szError;
 			}
+
+			// when SMTP server doesn't support DSN you will get an empty error, give enduser a beter error message.
+			if (e.m_hr == 0x80040227 && DELIVERYREPORT == TRUE)
+			{
+				CString sMsg;
+				sMsg.Format(_T("SMTP Server doesn't support Delivery Status Notification (DSN)"));
+				LastErrorMsg = sMsg;
+			}
+
 			if (ErrorMessageBoxesOn == TRUE)
 			{
 				//Display the error
