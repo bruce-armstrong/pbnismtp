@@ -1,5 +1,5 @@
 /*
-Module : PJNMD5.H
+Module : PJNMD5.h
 Purpose: Defines the interface for some MFC class which encapsulate calculating MD5 hashes and HMACS using the MS CryptoAPI
 Created: PJN / 23-04-2005
 History: PJN / 18-05-2005 1. Fixed a compiler warning when compiled using Visual Studio .NET 2003. Thanks to Alexey Kuznetsov
@@ -13,7 +13,7 @@ History: PJN / 18-05-2005 1. Fixed a compiler warning when compiled using Visual
                           classes and idioms but if you define CPJNMD5_MFC_EXTENSIONS the classes will revert back to the 
                           MFC behaviour.
 
-Copyright (c) 2005 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 2005 - 2017 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 

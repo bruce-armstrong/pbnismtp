@@ -675,8 +675,13 @@ History: PJN / 15-06-1998 1. Fixed the case where a single dot occurs on its own
                           5. Reworked the non MFC code path of the SMTP code to now be based on a new CPJNSMTP_MFC_EXTENSIONS preprocessor values instead of the 
                           existing CWSOCKET_MFC_EXTENSIONS preprocessor value which not only applies to the socket class
                           6. Optimized the usage of ATL::CT2A & ATL::CA2T throughout the code
+         PJN / 14-04-2017 1. Updated copyright details.
+                          2. Updated code to compile cleanly on VC 2017
+         PJN / 28-04-2017 1. Updated the code to compile cleanly using /permissive-.
+         PJN / 09-09-2017 1. Replaced CString::operator LPC*STR() calls throughout the codebase with CString::GetString calls
+         PJN / 18-12-2017 1. Updated the code to compile cleanly when _ATL_NO_AUTOMATIC_NAMESPACE is defined.
 
-Copyright (c) 1998 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 1998 - 2017 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 
@@ -875,7 +880,7 @@ BOOL CPJNSMTPException::GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszErr
   #ifdef CPJNSMTP_MFC_EXTENSIONS
     bSuccess = sError.LoadString(HRESULT_CODE(m_hr));
     if (bSuccess)
-      Checked::tcsncpy_s(lpszError, nMaxError, sError, _TRUNCATE);
+      ATL::Checked::tcsncpy_s(lpszError, nMaxError, sError, _TRUNCATE);
   #else
     TCHAR szResource[4096];
     szResource[0] = _T('\0');
@@ -883,7 +888,7 @@ BOOL CPJNSMTPException::GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszErr
     if (bSuccess)
     {
       sError = szResource;
-      Checked::tcsncpy_s(lpszError, nMaxError, sError.c_str(), _TRUNCATE);
+      ATL::Checked::tcsncpy_s(lpszError, nMaxError, sError.c_str(), _TRUNCATE);
     }
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
   }
@@ -898,7 +903,7 @@ BOOL CPJNSMTPException::GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszErr
     else
     {
       bSuccess = TRUE;
-      Checked::tcsncpy_s(lpszError, nMaxError, lpBuffer, _TRUNCATE);
+      ATL::Checked::tcsncpy_s(lpszError, nMaxError, lpBuffer, _TRUNCATE);
       LocalFree(lpBuffer);
     }
   }
@@ -1051,10 +1056,10 @@ CPJNSMTPAsciiString CPJNSMTPAddress::GetRegularFormat(_In_ BOOL bEncode, _In_ co
     if (bEncode)
     {
       CPJNSMTPAsciiString sAsciiEncodedFriendly(CPJNSMTPBodyPart::HeaderEncode(m_sFriendlyName, sCharset));
-      sAddress.Format("\"%s\" <%s>", sAsciiEncodedFriendly.operator LPCSTR(), sAsciiEmailAddress.operator LPCSTR());
+      sAddress.Format("\"%s\" <%s>", sAsciiEncodedFriendly.GetString(), sAsciiEmailAddress.GetString());
     }
     else
-      sAddress.Format("\"%s\" <%s>", CPJNSMTPAsciiString(m_sFriendlyName).operator LPCSTR(), sAsciiEmailAddress.operator LPCSTR());
+      sAddress.Format("\"%s\" <%s>", CPJNSMTPAsciiString(m_sFriendlyName).GetString(), sAsciiEmailAddress.GetString());
   }
 
   return sAddress;
@@ -1427,7 +1432,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n\r\n--%s\r\nContent-Type: %s; name=\"%s\"; Boundary=\"%s\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"%s\"\r\n"), 
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), sTitle.operator LPCTSTR(), m_sBoundary.operator LPCTSTR(), sTitle.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), sTitle.GetString(), m_sBoundary.GetString(), sTitle.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1443,7 +1448,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n\r\n--%s\r\nContent-Type: %s; name=\"%s\"; Boundary=\"%s\"\r\nContent-Transfer-Encoding: quoted-printable\r\nContent-Disposition: attachment; filename=\"%s\"\r\n"), 
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), sTitle.operator LPCTSTR(), m_sBoundary.operator LPCTSTR(), sTitle.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), sTitle.GetString(), m_sBoundary.GetString(), sTitle.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1459,7 +1464,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n\r\n--%s\r\nContent-Type: %s; name=\"%s\"; Boundary=\"%s\"\r\nContent-Disposition: attachment; filename=\"%s\"\r\n"), 
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), sTitle.operator LPCTSTR(), m_sBoundary.operator LPCTSTR(), sTitle.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), sTitle.GetString(), m_sBoundary.GetString(), sTitle.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1481,7 +1486,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n\r\n--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"%s\"\r\n"), 
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), sTitle.operator LPCTSTR(), sTitle.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), sTitle.GetString(), sTitle.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1497,7 +1502,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n\r\n--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: quoted-printable\r\nContent-Disposition: attachment; filename=\"%s\"\r\n"), 
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), sTitle.operator LPCTSTR(), sTitle.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), sTitle.GetString(), sTitle.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1513,7 +1518,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n\r\n--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Disposition: attachment; filename=\"%s\"\r\n"), 
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), sTitle.operator LPCTSTR(), sTitle.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), sTitle.GetString(), sTitle.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1541,7 +1546,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n--%s\r\nContent-Type: %s; charset=%s; Boundary=\"%s\"\r\nContent-Transfer-Encoding: base64\r\n"),
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), m_sCharset.operator LPCTSTR(), m_sBoundary.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), m_sCharset.GetString(), m_sBoundary.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1557,7 +1562,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n--%s\r\nContent-Type: %s; charset=%s; Boundary=\"%s\"\r\nContent-Transfer-Encoding: quoted-printable\r\n"),
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), m_sCharset.operator LPCTSTR(), m_sBoundary.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), m_sCharset.GetString(), m_sBoundary.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1573,7 +1578,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {  
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n--%s\r\nContent-Type: %s; charset=%s; Boundary=\"%s\"\r\n"),
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), m_sCharset.operator LPCTSTR(), m_sBoundary.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), m_sCharset.GetString(), m_sBoundary.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1595,7 +1600,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n--%s\r\nContent-Type: %s; charset=%s\r\nContent-Transfer-Encoding: base64\r\n"),
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), m_sCharset.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), m_sCharset.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1611,7 +1616,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n--%s\r\nContent-Type: %s; charset=%s\r\nContent-Transfer-Encoding: quoted-printable\r\n"),
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), m_sCharset.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), m_sCharset.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1627,7 +1632,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetHeader(_In_ const CPJNSMTPString& sRoot
         {
         #ifdef CPJNSMTP_MFC_EXTENSIONS
           sHeaderT.Format(_T("\r\n--%s\r\nContent-Type: %s; charset=%s\r\n"),
-                          m_pParentBodyPart->m_sBoundary.operator LPCTSTR(), m_sContentType.operator LPCTSTR(), m_sCharset.operator LPCTSTR());
+                          m_pParentBodyPart->m_sBoundary.GetString(), m_sContentType.GetString(), m_sCharset.GetString());
         #else
         #ifdef _UNICODE
           std::wostringstream ss;
@@ -1869,7 +1874,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::GetFooter()
   //Form the MIME footer
   CPJNSMTPAsciiString sFooter;
 #ifdef CPJNSMTP_MFC_EXTENSIONS
-  sFooter.Format("\r\n--%s--", CPJNSMTPAsciiString(m_sBoundary).operator LPCSTR());
+  sFooter.Format("\r\n--%s--", CPJNSMTPAsciiString(m_sBoundary).GetString());
 #else
   std::ostringstream ss;
 #ifdef _UNICODE
@@ -2074,7 +2079,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::FoldSubjectHeader(_In_ const CPJNSMTPStrin
 
   //Fold the input string to a maximum of 78 characters per line
 #ifdef CPJNSMTP_MFC_EXTENSIONS
-  LPCSTR pszLine = sLocalSubject.operator LPCSTR();
+  LPCSTR pszLine = sLocalSubject.GetString();
   int nHeaderLeftLength = sLocalSubject.GetLength();
 #else
   LPCSTR pszLine = sLocalSubject.c_str();
@@ -2139,7 +2144,7 @@ CPJNSMTPAsciiString CPJNSMTPBodyPart::FoldSubjectHeader(_In_ const CPJNSMTPStrin
 }
 
 
-CPJNSMTPMessage::CPJNSMTPMessage() : m_sXMailer(_T("CPJNSMTPConnection v3.23")), 
+CPJNSMTPMessage::CPJNSMTPMessage() : m_sXMailer(_T("CPJNSMTPConnection v3.28")), 
                                      m_bMime(FALSE), 
                                      m_Priority(NoPriority),
                                      m_DSNReturnType(HeadersOnly),
@@ -2403,7 +2408,7 @@ CPJNSMTPAsciiString CPJNSMTPMessage::GetHeader()
     {
       CPJNSMTPAsciiString sPartHeader;
     #ifdef CPJNSMTP_MFC_EXTENSIONS
-      sPartHeader.Format("MIME-Version: 1.0\r\nContent-Type: %s; boundary=\"%s\"\r\n", CPJNSMTPAsciiString(m_RootPart.GetContentType()).operator LPCSTR(), CPJNSMTPAsciiString(m_RootPart.GetBoundary()).operator LPCSTR());
+      sPartHeader.Format("MIME-Version: 1.0\r\nContent-Type: %s; boundary=\"%s\"\r\n", CPJNSMTPAsciiString(m_RootPart.GetContentType()).GetString(), CPJNSMTPAsciiString(m_RootPart.GetBoundary()).GetString());
     #else
       std::ostringstream ss;
     #ifdef _UNICODE
@@ -2419,7 +2424,7 @@ CPJNSMTPAsciiString CPJNSMTPMessage::GetHeader()
     {
       CPJNSMTPAsciiString sPartHeader;
     #ifdef CPJNSMTP_MFC_EXTENSIONS
-      sPartHeader.Format("MIME-Version: 1.0\r\nContent-Type: %s\r\n", CPJNSMTPAsciiString(m_RootPart.GetContentType()).operator LPCSTR());
+      sPartHeader.Format("MIME-Version: 1.0\r\nContent-Type: %s\r\n", CPJNSMTPAsciiString(m_RootPart.GetContentType()).GetString());
     #else
       std::ostringstream ss;
     #ifdef _UNICODE
@@ -2436,7 +2441,7 @@ CPJNSMTPAsciiString CPJNSMTPMessage::GetHeader()
   {
     CPJNSMTPAsciiString sPartHeader;
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    sPartHeader.Format("Content-Type: %s;\r\n\tcharset=%s\r\n", CPJNSMTPAsciiString(m_RootPart.GetContentType()).operator LPCSTR(), CPJNSMTPAsciiString(m_RootPart.GetCharset()).operator LPCSTR());
+    sPartHeader.Format("Content-Type: %s;\r\n\tcharset=%s\r\n", CPJNSMTPAsciiString(m_RootPart.GetContentType()).GetString(), CPJNSMTPAsciiString(m_RootPart.GetCharset()).GetString());
   #else
     std::ostringstream ss;
   #ifdef _UNICODE
@@ -2826,7 +2831,7 @@ void CPJNSMTPMessage::SaveToDisk(_In_z_ LPCTSTR pszFilename)
   //Write out the Message Header
   CPJNSMTPAsciiString sHeader(GetHeader());
 #ifdef CPJNSMTP_MFC_EXTENSIONS
-  hr = file.Write(sHeader.operator LPCSTR(), sHeader.GetLength());
+  hr = file.Write(sHeader.GetString(), sHeader.GetLength());
 #else
   hr = file.Write(sHeader.c_str(), static_cast<DWORD>(sHeader.length()));
 #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -2849,7 +2854,7 @@ void CPJNSMTPMessage::SaveToDisk(_In_z_ LPCTSTR pszFilename)
     //Send the body
   #ifdef CPJNSMTP_MFC_EXTENSIONS
     CPJNSMTPAsciiString sBody(m_RootPart.GetText());
-    hr = file.Write(sBody.operator LPCSTR(), sBody.GetLength());
+    hr = file.Write(sBody.GetString(), sBody.GetLength());
   #else
 
   #ifdef _UNICODE
@@ -2874,7 +2879,7 @@ void CPJNSMTPMessage::WriteToDisk(ATL::CAtlFile& file, CPJNSMTPBodyPart* pBodyPa
     //First send this body parts header
     CPJNSMTPAsciiString sHeader(pBodyPart->GetHeader(sRootCharset));
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    HRESULT hr = file.Write(sHeader.operator LPCSTR(), sHeader.GetLength());
+    HRESULT hr = file.Write(sHeader.GetString(), sHeader.GetLength());
   #else
     HRESULT hr = file.Write(sHeader.c_str(), static_cast<DWORD>(sHeader.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -2885,7 +2890,7 @@ void CPJNSMTPMessage::WriteToDisk(ATL::CAtlFile& file, CPJNSMTPBodyPart* pBodyPa
   //Then the body parts body
   CPJNSMTPAsciiString sBody(pBodyPart->GetBody(FALSE));
 #ifdef CPJNSMTP_MFC_EXTENSIONS
-  HRESULT hr = file.Write(sBody.operator LPCSTR(), sBody.GetLength());
+  HRESULT hr = file.Write(sBody.GetString(), sBody.GetLength());
 #else
   HRESULT hr = file.Write(sBody.c_str(), static_cast<DWORD>(sBody.length()));
 #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -2906,7 +2911,7 @@ void CPJNSMTPMessage::WriteToDisk(ATL::CAtlFile& file, CPJNSMTPBodyPart* pBodyPa
   {
     CPJNSMTPAsciiString sFooter(pBodyPart->GetFooter());
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    hr = file.Write(sFooter.operator LPCSTR(), sFooter.GetLength());
+    hr = file.Write(sFooter.GetString(), sFooter.GetLength());
   #else
     hr = file.Write(sFooter.c_str(), static_cast<DWORD>(sFooter.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -3213,8 +3218,8 @@ void CPJNSMTPConnection::Connect(_In_z_ LPCTSTR pszHostName, _In_ Authentication
     //Negotiate Extended SMTP connection if required
     if (DoEHLO(am, connectionType, dwDSN))
     {
-      //ATLASSUME(pszUsername != NULL);
-      //ATLASSUME(pszPassword != NULL);
+      ATLASSUME(pszUsername != NULL);
+      ATLASSUME(pszPassword != NULL);
 
     #ifdef CPJNSMTP_MFC_EXTENSIONS
       ConnectESMTP(m_sHeloHostname, pszUsername, pszPassword, am);
@@ -3341,10 +3346,10 @@ void CPJNSMTPConnection::SendEHLO(_In_z_ LPCTSTR pszLocalName, _Inout_ CPJNSMTPS
   //Send the EHLO command
 #ifdef CPJNSMTP_MFC_EXTENSIONS
   CPJNSMTPAsciiString sBuf;
-  sBuf.Format("EHLO %s\r\n", CPJNSMTPAsciiString(pszLocalName).operator LPCSTR());
+  sBuf.Format("EHLO %s\r\n", CPJNSMTPAsciiString(pszLocalName).GetString());
   try
   {
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
   }
 #else
   CPJNSMTPAsciiString sBuf;
@@ -3407,7 +3412,7 @@ void CPJNSMTPConnection::ConnectESMTP(_In_z_ LPCTSTR pszLocalName,
   m_bCanDoDSN = (sUpperCaseResponse.Find(_T("250-DSN\r\n")) >= 0) || (sUpperCaseResponse.Find(_T("250 DSN\r\n")) >= 0);
   m_bCanDoSTARTTLS = (sUpperCaseResponse.Find(_T("250-STARTTLS\r\n")) >= 0) || (sUpperCaseResponse.Find(_T("250 STARTTLS\r\n")) >= 0);
 #else
-  std::transform(sUpperCaseResponse.begin(), sUpperCaseResponse.end(), sUpperCaseResponse.begin(), _totupper);
+  std::transform(sUpperCaseResponse.begin(), sUpperCaseResponse.end(), sUpperCaseResponse.begin(), [](TCHAR c) -> TCHAR { return static_cast<TCHAR>(_totupper(c)); });
 
   //Check the server capabilities
   m_bCanDoDSN = (sUpperCaseResponse.find(_T("250-DSN\r\n")) != CPJNSMTPString::npos) || (sUpperCaseResponse.find(_T("250 DSN\r\n")) != CPJNSMTPString::npos);
@@ -3448,7 +3453,7 @@ void CPJNSMTPConnection::ConnectESMTP(_In_z_ LPCTSTR pszLocalName,
   #ifdef CPJNSMTP_MFC_EXTENSIONS
     sUpperCaseResponse.MakeUpper();
   #else
-    std::transform(sUpperCaseResponse.begin(), sUpperCaseResponse.end(), sUpperCaseResponse.begin(), _totupper);
+    std::transform(sUpperCaseResponse.begin(), sUpperCaseResponse.end(), sUpperCaseResponse.begin(), [](TCHAR c) -> TCHAR { return static_cast<TCHAR>(_totupper(c)); });
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
   }
 #endif //#ifdef CPJNSMTP_NOSSL
@@ -3567,10 +3572,10 @@ void CPJNSMTPConnection::ConnectSMTP(_In_z_ LPCTSTR pszLocalName)
 
   CPJNSMTPAsciiString sBuf;
 #ifdef CPJNSMTP_MFC_EXTENSIONS
-  sBuf.Format("HELO %s\r\n", CPJNSMTPAsciiString(pszLocalName).operator LPCSTR());
+  sBuf.Format("HELO %s\r\n", CPJNSMTPAsciiString(pszLocalName).GetString());
   try
   {
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
 #else
   std::ostringstream ss;
 #ifdef _UNICODE
@@ -3612,7 +3617,7 @@ void CPJNSMTPConnection::Disconnect(_In_ BOOL bGracefully)
   {
     if (bGracefully)
     {
-      static char* sBuf = "QUIT\r\n";
+      static const char* sBuf = "QUIT\r\n";
       try
       {
         _Send(sBuf, static_cast<int>(strlen(sBuf)));
@@ -3693,7 +3698,7 @@ void CPJNSMTPConnection::SendBodyPart(_In_ CPJNSMTPBodyPart* pBodyPart, _In_ BOO
     #ifdef CPJNSMTP_MFC_EXTENSIONS
       int nHeaderLength = sHeader.GetLength();
       if (nHeaderLength)
-        _Send(sHeader.operator LPCSTR(), nHeaderLength);
+        _Send(sHeader.GetString(), nHeaderLength);
     #else
       CPJNSMTPAsciiString::size_type nHeaderLength = sHeader.length();
       if (nHeaderLength)
@@ -3722,7 +3727,7 @@ void CPJNSMTPConnection::SendBodyPart(_In_ CPJNSMTPBodyPart* pBodyPart, _In_ BOO
   #ifdef CPJNSMTP_MFC_EXTENSIONS
     int nBodyLength = sBody.GetLength();
     if (nBodyLength)
-      _Send(sBody.operator LPCSTR(), nBodyLength);
+      _Send(sBody.GetString(), nBodyLength);
   #else
     CPJNSMTPAsciiString::size_type nBodyLength = sBody.length();
     if (nBodyLength)
@@ -3761,7 +3766,7 @@ void CPJNSMTPConnection::SendBodyPart(_In_ CPJNSMTPBodyPart* pBodyPart, _In_ BOO
   #ifdef CPJNSMTP_MFC_EXTENSIONS
       int nFooterLength = sFooter.GetLength();
       if (nFooterLength)
-        _Send(sFooter.operator LPCSTR(), nFooterLength);
+        _Send(sFooter.GetString(), nFooterLength);
   #else
       CPJNSMTPAsciiString::size_type nFooterLength = sFooter.length();
       if (nFooterLength)
@@ -3796,7 +3801,7 @@ CPJNSMTPAsciiString CPJNSMTPConnection::FormMailFromCommand(_In_z_ LPCTSTR pszEm
   if (dwDSN == CPJNSMTPMessage::DSN_NOT_SPECIFIED)
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS 
-    sBuf.Format("MAIL FROM:<%s>\r\n", CPJNSMTPAsciiString(pszEmailAddress).operator LPCSTR());
+    sBuf.Format("MAIL FROM:<%s>\r\n", CPJNSMTPAsciiString(pszEmailAddress).GetString());
   #else
     std::ostringstream ss;
   #ifdef _UNICODE
@@ -3819,9 +3824,9 @@ CPJNSMTPAsciiString CPJNSMTPConnection::FormMailFromCommand(_In_z_ LPCTSTR pszEm
       sENVID = CreateNEWENVID();
   
     if (DSNReturnType == CPJNSMTPMessage::HeadersOnly)
-      sBuf.Format("MAIL FROM:<%s> RET=HDRS ENVID=%s\r\n", CPJNSMTPAsciiString(pszEmailAddress).operator LPCSTR(), sENVID.operator LPCSTR());
+      sBuf.Format("MAIL FROM:<%s> RET=HDRS ENVID=%s\r\n", CPJNSMTPAsciiString(pszEmailAddress).GetString(), sENVID.GetString());
     else
-      sBuf.Format("MAIL FROM:<%s> RET=FULL ENVID=%s\r\n", CPJNSMTPAsciiString(pszEmailAddress).operator LPCSTR(), sENVID.operator LPCSTR());
+      sBuf.Format("MAIL FROM:<%s> RET=FULL ENVID=%s\r\n", CPJNSMTPAsciiString(pszEmailAddress).GetString(), sENVID.GetString());
   #else
     if (sENVID.length() == 0)
       sENVID = CreateNEWENVID();
@@ -3865,7 +3870,7 @@ void CPJNSMTPConnection::SendMessage(_Inout_ CPJNSMTPMessage& message)
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
   #else
     _Send(sBuf.c_str(), static_cast<int>(sBuf.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -3931,7 +3936,7 @@ void CPJNSMTPConnection::SendMessage(_Inout_ CPJNSMTPMessage& message)
   }
 
   //Send the DATA command
-  static char* szDataCommand = "DATA\r\n";
+  static const char* szDataCommand = "DATA\r\n";
   try
   {
     _Send(szDataCommand, static_cast<int>(strlen(szDataCommand)));
@@ -3959,7 +3964,7 @@ void CPJNSMTPConnection::SendMessage(_Inout_ CPJNSMTPMessage& message)
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sHeader.operator LPCSTR(), sHeader.GetLength());
+    _Send(sHeader.GetString(), sHeader.GetLength());
   #else
     _Send(sHeader.c_str(), static_cast<int>(sHeader.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -3979,7 +3984,7 @@ void CPJNSMTPConnection::SendMessage(_Inout_ CPJNSMTPMessage& message)
 #endif //#ifdef CWSOCKET_MFC_EXTENSIONS
 
   //Send the Header / body Separator
-  static char* szBodyHeader = "\r\n";
+  static const char* szBodyHeader = "\r\n";
   try
   {
     _Send(szBodyHeader, static_cast<int>(strlen(szBodyHeader)));
@@ -4036,7 +4041,7 @@ void CPJNSMTPConnection::SendMessage(_Inout_ CPJNSMTPMessage& message)
     try
     {
     #ifdef CPJNSMTP_MFC_EXTENSIONS
-      _Send(sBody.operator LPCSTR(), sBody.GetLength());
+      _Send(sBody.GetString(), sBody.GetLength());
     #else
       _Send(sBody.c_str(), static_cast<int>(sBody.length()));
     #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -4057,7 +4062,7 @@ void CPJNSMTPConnection::SendMessage(_Inout_ CPJNSMTPMessage& message)
   }
 
   //Send the end of message indicator
-  static char* szEOM = "\r\n.\r\n";
+  static const char* szEOM = "\r\n.\r\n";
   try
   {
     _Send(szEOM, static_cast<int>(strlen(szEOM)));
@@ -4097,7 +4102,7 @@ void CPJNSMTPConnection::SendMessage(_In_reads_bytes_opt_(dwMessageSize) const B
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
     CPJNSMTPAsciiString sBuf(FormMailFromCommand(From.m_sEmailAddress, DSN, DSNReturnType, sENVID));
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
   #else
     CPJNSMTPAsciiString sBuf(FormMailFromCommand(From.m_sEmailAddress.c_str(), DSN, DSNReturnType, sENVID));
     _Send(sBuf.c_str(), static_cast<int>(sBuf.length()));
@@ -4137,7 +4142,7 @@ void CPJNSMTPConnection::SendMessage(_In_reads_bytes_opt_(dwMessageSize) const B
   }
 
   //Send the DATA command
-  static char* szDataCommand = "DATA\r\n";
+  static const char* szDataCommand = "DATA\r\n";
   try
   {
     _Send(szDataCommand, static_cast<int>(strlen(szDataCommand)));
@@ -4203,7 +4208,7 @@ void CPJNSMTPConnection::SendMessage(_In_reads_bytes_opt_(dwMessageSize) const B
   while (bMore);
 
   //Send the end of message indicator
-  static char* szEOM = "\r\n.\r\n";
+  static const char* szEOM = "\r\n.\r\n";
   try
   {
     _Send(szEOM, static_cast<int>(strlen(szEOM)));
@@ -4254,7 +4259,7 @@ void CPJNSMTPConnection::SendMessage(_In_z_ LPCTSTR pszMessageOnFile, _Inout_ CP
   CPJNSMTPAsciiString sBuf(FormMailFromCommand(From.m_sEmailAddress, DSN, DSNReturnType, sENVID));
   try
   {
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
 #else
   ATLASSERT(From.m_sEmailAddress.length());
   CPJNSMTPAsciiString sBuf(FormMailFromCommand(From.m_sEmailAddress.c_str(), DSN, DSNReturnType, sENVID));
@@ -4297,7 +4302,7 @@ void CPJNSMTPConnection::SendMessage(_In_z_ LPCTSTR pszMessageOnFile, _Inout_ CP
   }
 
   //Send the DATA command
-  static char* szDataCommand = "DATA\r\n";
+  static const char* szDataCommand = "DATA\r\n";
   try
   {
     _Send(szDataCommand, static_cast<int>(strlen(szDataCommand)));
@@ -4373,7 +4378,7 @@ void CPJNSMTPConnection::SendMessage(_In_z_ LPCTSTR pszMessageOnFile, _Inout_ CP
   while (bMore);
 
   //Send the end of message indicator
-  static char* szEOM = "\r\n.\r\n";
+  static const char* szEOM = "\r\n.\r\n";
   try
   {
     _Send(szEOM, static_cast<int>(strlen(szEOM)));
@@ -4411,7 +4416,7 @@ void CPJNSMTPConnection::SendRCPTForRecipient(_In_ DWORD dwDSN, _Inout_ CPJNSMTP
   if (dwDSN == CPJNSMTPMessage::DSN_NOT_SPECIFIED)
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    sBuf.Format("RCPT TO:<%s>\r\n", CPJNSMTPAsciiString(recipient.m_sEmailAddress).operator LPCSTR());
+    sBuf.Format("RCPT TO:<%s>\r\n", CPJNSMTPAsciiString(recipient.m_sEmailAddress).GetString());
   #else
     std::ostringstream ss;
   #ifdef _UNICODE
@@ -4455,7 +4460,7 @@ void CPJNSMTPConnection::SendRCPTForRecipient(_In_ DWORD dwDSN, _Inout_ CPJNSMTP
       sNotificationTypes += "NEVER";
     
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    sBuf.Format("RCPT TO:<%s> NOTIFY=%s\r\n", CPJNSMTPAsciiString(recipient.m_sEmailAddress).operator LPCSTR(), sNotificationTypes.operator LPCSTR());
+    sBuf.Format("RCPT TO:<%s> NOTIFY=%s\r\n", CPJNSMTPAsciiString(recipient.m_sEmailAddress).GetString(), sNotificationTypes.GetString());
   #else
     std::ostringstream ss;
   #ifdef _UNICODE
@@ -4471,7 +4476,7 @@ void CPJNSMTPConnection::SendRCPTForRecipient(_In_ DWORD dwDSN, _Inout_ CPJNSMTP
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
   #else
     _Send(sBuf.c_str(), static_cast<int>(sBuf.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -4803,7 +4808,7 @@ void CPJNSMTPConnection::AuthLogin(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR ps
   //Send the AUTH LOGIN command if required
   if (!m_bDoInitialClientResponse)
   {
-    static char* szAuth = "AUTH LOGIN\r\n";
+    static const char* szAuth = "AUTH LOGIN\r\n";
     try
     {
       _Send(szAuth, static_cast<int>(strlen(szAuth)));
@@ -4865,7 +4870,7 @@ void CPJNSMTPConnection::AuthLogin(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR ps
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sUser.operator LPCSTR(), sUser.GetLength());
+    _Send(sUser.GetString(), sUser.GetLength());
   #else
     _Send(sUser.c_str(), static_cast<int>(sUser.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -4920,7 +4925,7 @@ void CPJNSMTPConnection::AuthLogin(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR ps
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sPwd.operator LPCSTR(), sPwd.GetLength());
+    _Send(sPwd.GetString(), sPwd.GetLength());
   #else
     _Send(sPwd.c_str(), static_cast<int>(sPwd.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -4953,7 +4958,7 @@ void CPJNSMTPConnection::AuthPlain(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR ps
   //Send the AUTH PLAIN command if required
   if (!m_bDoInitialClientResponse)
   {
-    static char* szAuth = "AUTH PLAIN\r\n";
+    static const char* szAuth = "AUTH PLAIN\r\n";
     try
     {
       _Send(szAuth, static_cast<int>(strlen(szAuth)));
@@ -5023,7 +5028,7 @@ void CPJNSMTPConnection::AuthPlain(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR ps
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sAuth.operator LPCSTR(), sAuth.GetLength());
+    _Send(sAuth.GetString(), sAuth.GetLength());
   #else
     _Send(sAuth.c_str(), static_cast<int>(sAuth.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -5054,7 +5059,7 @@ void CPJNSMTPConnection::AuthCramMD5(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR 
   ATLASSERT(pszPassword != NULL);
 
   //Send the AUTH CRAM-MD5 command
-  static char* szAuth = "AUTH CRAM-MD5\r\n";
+  static const char* szAuth = "AUTH CRAM-MD5\r\n";
   try
   {
     _Send(szAuth, static_cast<int>(strlen(szAuth)));
@@ -5100,7 +5105,7 @@ void CPJNSMTPConnection::AuthCramMD5(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR 
   CPJNMD5Hash hash;
 #ifdef CPJNSMTP_MFC_EXTENSIONS
   CPJNSMTPAsciiString sAsciiPassword(pszPassword);
-  if (!hmac.HMAC(reinterpret_cast<const BYTE*>(pszChallenge), static_cast<DWORD>(strlen(pszChallenge)), reinterpret_cast<const BYTE*>(sAsciiPassword.operator LPCSTR()), sAsciiPassword.GetLength(), hash))
+  if (!hmac.HMAC(reinterpret_cast<const BYTE*>(pszChallenge), static_cast<DWORD>(strlen(pszChallenge)), reinterpret_cast<const BYTE*>(sAsciiPassword.GetString()), sAsciiPassword.GetLength(), hash))
 #else
 #ifdef _UNICODE
   CPJNSMTPAsciiString sAsciiPassword(ATL::CT2A(pszPassword).operator LPSTR());
@@ -5137,7 +5142,7 @@ void CPJNSMTPConnection::AuthCramMD5(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR 
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sEncodedDigest.operator LPCSTR(), sEncodedDigest.GetLength());
+    _Send(sEncodedDigest.GetString(), sEncodedDigest.GetLength());
   #else
     _Send(sEncodedDigest.c_str(), static_cast<int>(sEncodedDigest.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -5170,7 +5175,7 @@ void CPJNSMTPConnection::AuthXOAUTH2(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR 
   //Send the AUTH XOAUTH2 command if required
   if (!m_bDoInitialClientResponse)
   {
-    static char* szAuth = "AUTH XOAUTH2\r\n";
+    static const char* szAuth = "AUTH XOAUTH2\r\n";
     try
     {
       _Send(szAuth, static_cast<int>(strlen(szAuth)));
@@ -5247,7 +5252,7 @@ void CPJNSMTPConnection::AuthXOAUTH2(_In_z_ LPCTSTR pszUsername, _In_z_ LPCTSTR 
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sAuth.operator LPCSTR(), sAuth.GetLength());
+    _Send(sAuth.GetString(), sAuth.GetLength());
   #else
     _Send(sAuth.c_str(), static_cast<int>(sAuth.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -5335,7 +5340,7 @@ SECURITY_STATUS CPJNSMTPConnection::NTLMAuthPhase1(_In_reads_bytes_(cbBuf) PBYTE
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
   #else
     _Send(sBuf.c_str(), static_cast<int>(sBuf.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -5400,7 +5405,7 @@ SECURITY_STATUS CPJNSMTPConnection::NTLMAuthPhase3(_In_reads_bytes_(cbBuf) PBYTE
   try
   {
   #ifdef CPJNSMTP_MFC_EXTENSIONS
-    _Send(sBuf.operator LPCSTR(), sBuf.GetLength());
+    _Send(sBuf.GetString(), sBuf.GetLength());
   #else
     _Send(sBuf.c_str(), static_cast<int>(sBuf.length()));
   #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
@@ -5491,7 +5496,7 @@ CPJNSMTPAsciiString CPJNSMTPConnection::CreateNEWENVID()
   sEnvID.erase(std::remove(sEnvID.begin(), sEnvID.end(), '{'), sEnvID.end());
   sEnvID.erase(std::remove(sEnvID.begin(), sEnvID.end(), '}'), sEnvID.end());
   sEnvID.erase(std::remove(sEnvID.begin(), sEnvID.end(), '-'), sEnvID.end());
-  std::transform(sEnvID.begin(), sEnvID.end(), sEnvID.begin(), _totupper);
+  std::transform(sEnvID.begin(), sEnvID.end(), sEnvID.begin(), [](char c) -> char { return static_cast<char>(toupper(c)); });
 #endif //#ifdef CPJNSMTP_MFC_EXTENSIONS
 
   return sEnvID;

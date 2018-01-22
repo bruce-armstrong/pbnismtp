@@ -223,8 +223,7 @@ int CSMTP::Send()
 		msg.SetCharset ( CharSet ) ;
 
 		// Set the Sender
-		CPJNSMTPAddress address ( SenderEmail ) ;
-		msg.m_From = address ;
+		msg.m_From = CPJNSMTPAddress(SenderEmail);
 		
 		// Set the Recipient
 		msg.ParseMultipleRecipients ( RecipientEmail, msg.m_To ) ;
@@ -270,8 +269,14 @@ int CSMTP::Send()
 			#ifdef _DEBUG
 						MessageBox(NULL, _T("Set Delivery Report Header"), title, MB_ICONEXCLAMATION | MB_OK);
 			#endif
-			// set develivery report header
-			msg.m_dwDSN = msg.DSN_SUCCESS;
+			msg.m_DSNReturnType = CPJNSMTPMessage::FullEmail;
+			msg.m_dwDSN = CPJNSMTPMessage::DSN_NOT_SPECIFIED;
+			msg.m_dwDSN |= CPJNSMTPMessage::DSN_SUCCESS;
+			#ifdef CPJNSMTP_MFC_EXTENSIONS
+				msg.m_MessageDispositionEmailAddresses.Add(SenderEmail);
+			#else
+				msg.m_MessageDispositionEmailAddresses.push_back(CPJNSMTPString(SenderEmail));
+			#endif
 		}
 
 		// Set Priority Header
@@ -416,6 +421,15 @@ int CSMTP::Send()
 				e.GetErrorMessage(szError, _countof(szError));
 				LastErrorMsg = (CString) szError;
 			}
+
+			// when SMTP server doesn't support DSN you will get an empty error, give enduser a beter error message.
+			if (e.m_hr == 0x80040227 && DELIVERYREPORT == TRUE)
+			{
+				CString sMsg;
+				sMsg.Format(_T("SMTP Server doesn't support Delivery Status Notification (DSN)"));
+				LastErrorMsg = sMsg;
+			}
+
 			if (ErrorMessageBoxesOn == TRUE)
 			{
 				//Display the error

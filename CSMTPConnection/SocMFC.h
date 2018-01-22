@@ -3,7 +3,7 @@ Module : SocMFC.h
 Purpose: Interface for a C++ wrapper class for sockets
 Created: PJN / 05-08-1998
 
-Copyright (c) 2002 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 2002 - 2017 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 
@@ -135,9 +135,9 @@ public:
 #endif //#ifdef CWSOCKET_MFC_EXTENSIONS
 
 #if _MSC_VER >= 1700
-  virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,	_Out_opt_ PUINT pnHelpContext = NULL);
+  virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError, _Out_opt_ PUINT pnHelpContext = nullptr);
 #else	
-  virtual BOOL GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszError, __in UINT nMaxError, __out_opt PUINT pnHelpContext = NULL);
+  virtual BOOL GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszError, __in UINT nMaxError, __out_opt PUINT pnHelpContext = nullptr);
 #endif //#if _MSC_VER >= 1700
   
 #ifdef CWSOCKET_MFC_EXTENSIONS
@@ -184,7 +184,7 @@ public:
 //Methods
   void    Create(_In_ BOOL bUDP = FALSE, _In_ BOOL bIPv6 = FALSE);
   void    Create(_In_ int nSocketType, _In_ int nProtocolType, _In_ int nAddressFormat);
-  void    Accept(_Inout_ CWSocket& connectedSocket, _Out_writes_bytes_opt_(*pSockAddrLen) SOCKADDR* pSockAddr = NULL, _Inout_opt_ int* pSockAddrLen = NULL);
+  void    Accept(_Inout_ CWSocket& connectedSocket, _Out_writes_bytes_opt_(*pSockAddrLen) SOCKADDR* pSockAddr = nullptr, _Inout_opt_ int* pSockAddrLen = nullptr);
   void    CreateAndBind(_In_ UINT nSocketPort, _In_ int nSocketType = SOCK_STREAM, _In_ int nDefaultAddressFormat = AF_INET);
   void    Bind(_In_reads_bytes_(nSockAddrLen) const SOCKADDR* pSockAddr, _In_ int nSockAddrLen);
   void    Close();
@@ -201,7 +201,7 @@ public:
   int     ReceiveFrom(_Out_writes_bytes_to_(nBufLen, return) __out_data_source(NETWORK) void* pBuf, _In_ int nBufLen, _Inout_ String& sSocketAddress, _Out_ UINT& nSocketPort, _In_ int nReceiveFromFlags = 0, _In_ int nAddressToStringFlags = 0);
   int     Send(_In_reads_bytes_(nBufLen) const void* pBuffer, _In_ int nBufLen, _In_ int nFlags = 0);
   int     SendTo(_In_reads_bytes_(nBufLen) const void* pBuf, _In_ int nBufLen, _In_reads_bytes_(nSockAddrLen) const SOCKADDR* pSockAddr, _In_ int nSockAddrLen, _In_ int nFlags = 0);
-  int     SendTo(_In_reads_bytes_(nBufLen) const void* pBuf, _In_ int nBufLen, _In_ UINT nHostPort, _In_z_ LPCTSTR pszHostAddress = NULL, _In_ int nFlags = 0);
+  int     SendTo(_In_reads_bytes_(nBufLen) const void* pBuf, _In_ int nBufLen, _In_ UINT nHostPort, _In_z_ LPCTSTR pszHostAddress = nullptr, _In_ int nFlags = 0);
   void    ShutDown(_In_ int nHow = SD_SEND);
 
 //Operators
@@ -209,8 +209,8 @@ public:
 
 //Static methods
   static void ThrowWSocketException(_In_ int nError = 0);
-  static String AddressToString(_In_reads_bytes_(nSockAddrLen) const SOCKADDR* pSockAddr, _In_ int nSockAddrLen, _In_ int nFlags = 0, _Inout_opt_ UINT* pnSocketPort = NULL);
-  static String AddressToString(_In_ const SOCKADDR_INET& sockAddr, _In_ int nFlags = 0, _Inout_opt_ UINT* pnSocketPort = NULL);
+  static String AddressToString(_In_reads_bytes_(nSockAddrLen) const SOCKADDR* pSockAddr, _In_ int nSockAddrLen, _In_ int nFlags = 0, _Inout_opt_ UINT* pnSocketPort = nullptr);
+  static String AddressToString(_In_ const SOCKADDR_INET& sockAddr, _In_ int nFlags = 0, _Inout_opt_ UINT* pnSocketPort = nullptr);
 
 protected:
 //Methods

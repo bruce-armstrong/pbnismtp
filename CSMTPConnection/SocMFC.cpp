@@ -33,7 +33,7 @@ History: PJN / 03-03-2003 1. Addition of a number of preprocessor defines, namel
                           14. Optimized code in CWSocket destructor
                           15. Addition of an overloaded Create method which allows all of the socket
                           parameters to be set
-                          16. Use of _tcslen has been minimized when NULL string parameters can be passed
+                          16. Use of _tcslen has been minimized when null string parameters can be passed
                           to various CWSocket methods.
                           17. Change of various parameter names to be consistent with names as used in
                           CAsyncSocket.
@@ -125,8 +125,9 @@ History: PJN / 03-03-2003 1. Addition of a number of preprocessor defines, namel
          PJN / 17-07-2016 1. Fixed a typo in the definition of the preprocessor value which decides on MFC integration in the socket class. The 
                           preprocessor value has been changed from CWSOCKET_MFC_EXTENSTIONS to CWSOCKET_MFC_EXTENSIONS
                           2. Added SAL annotations to the CWSocketException and CWSocket classes.
+         PJN / 10-12-2017 1. Updated the code to compile cleanly when _ATL_NO_AUTOMATIC_NAMESPACE is defined.
 
-Copyright (c) 2002 - 2016 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
+Copyright (c) 2002 - 2017 by PJ Naughter (Web: www.naughter.com, Email: pjna@naughter.com)
 
 All rights reserved.
 
@@ -181,11 +182,11 @@ public:
   GETNAMEINFOW* m_pfnGetNameInfoW;
 };
 
-_SOCMFC_DATA::_SOCMFC_DATA() : m_pfnGetNameInfoW(NULL)
+_SOCMFC_DATA::_SOCMFC_DATA() : m_pfnGetNameInfoW(nullptr)
 {
   //Get the function pointer
   HMODULE hWs32DLL = GetModuleHandle(_T("Ws2_32.dll"));
-  if (hWs32DLL != NULL)
+  if (hWs32DLL != nullptr)
     m_pfnGetNameInfoW = reinterpret_cast<GETNAMEINFOW*>(GetProcAddress(hWs32DLL, "GetNameInfoW"));
 }
 
@@ -193,30 +194,30 @@ _SOCMFC_DATA::_SOCMFC_DATA() : m_pfnGetNameInfoW(NULL)
 _SOCMFC_DATA _SocMFCData;
 
 #if _MSC_VER >= 1700
-BOOL CWSocketException::GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,	_Out_opt_ PUINT pnHelpContext)
+BOOL CWSocketException::GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError, _Out_opt_ PUINT pnHelpContext)
 #else	
 BOOL CWSocketException::GetErrorMessage(__out_ecount_z(nMaxError) LPTSTR lpszError, __in UINT nMaxError, __out_opt PUINT pnHelpContext)
 #endif //#if _MSC_VER >= 1700
 {
   //Validate our parameters
-  ATLASSERT(lpszError != NULL);
+  ATLASSERT(lpszError != nullptr);
 
-  if (pnHelpContext != NULL)
+  if (pnHelpContext != nullptr)
     *pnHelpContext = 0;
 
   //What will be the return value from this function (assume the worst)
   BOOL bSuccess = FALSE;
 
-  LPTSTR lpBuffer;
+  LPTSTR lpBuffer = nullptr;
   DWORD dwReturn = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                 NULL,  m_nError, MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT),
-                                 reinterpret_cast<LPTSTR>(&lpBuffer), 0, NULL);
+                                 nullptr,  m_nError, MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT),
+                                 reinterpret_cast<LPTSTR>(&lpBuffer), 0, nullptr);
   if (dwReturn == 0)
     *lpszError = _T('\0');
   else
   {
     bSuccess = TRUE;
-    Checked::tcsncpy_s(lpszError, nMaxError, lpBuffer, _TRUNCATE);
+    ATL::Checked::tcsncpy_s(lpszError, nMaxError, lpBuffer, _TRUNCATE);
     LocalFree(lpBuffer);
   }
 
@@ -228,7 +229,7 @@ CString CWSocketException::GetErrorMessage()
 {
   CString rVal;
   LPTSTR pstrError = rVal.GetBuffer(4096);
-  GetErrorMessage(pstrError, 4096, NULL);
+  GetErrorMessage(pstrError, 4096, nullptr);
   rVal.ReleaseBuffer();
   return rVal;
 }
@@ -406,7 +407,7 @@ void CWSocket::CreateAndBind(_In_ UINT nSocketPort, _In_ int nSocketType, _In_ i
       ThrowWSocketException(nError);
 
     ADDRINFOT* const pAddress = lookup.GetAddrInfoList();
-    ATLASSUME(pAddress != NULL);
+    ATLASSUME(pAddress != nullptr);
 
     //Create the socket
     Create(nSocketType, 0, pAddress->ai_family);
@@ -482,7 +483,7 @@ void CWSocket::_Connect(_In_z_ LPCTSTR pszHostAddress, _In_z_ LPCTSTR pszPortOrS
 {
   //Validate our parameters
   ATLASSERT(IsCreated()); //must have been created first
-  ATLASSUME(pszHostAddress != NULL); //must have a valid host
+  ATLASSUME(pszHostAddress != nullptr); //must have a valid host
 
   //Do the address lookup
   ATL::CSocketAddr lookup;
@@ -495,7 +496,7 @@ void CWSocket::_Connect(_In_z_ LPCTSTR pszHostAddress, _In_z_ LPCTSTR pszPortOrS
   int nLastError = 0;
   ADDRINFOT* const pAddress = lookup.GetAddrInfoList();
   ADDRINFOT* pCurrentAddress = pAddress;
-  while ((pCurrentAddress != NULL) && !bSuccess) 
+  while ((pCurrentAddress != nullptr) && !bSuccess)
   {
     try
     {
@@ -552,7 +553,7 @@ void CWSocket::_Bind(_In_z_ LPCTSTR pszPortOrServiceName)
       ThrowWSocketException(nError);
 
     ADDRINFOT* const pBindAddress = lookup.GetAddrInfoList();
-    ATLASSUME(pBindAddress != NULL);
+    ATLASSUME(pBindAddress != nullptr);
 
     //Finally bind the socket
     Bind(pBindAddress->ai_addr, static_cast<int>(pBindAddress->ai_addrlen));
@@ -563,7 +564,7 @@ void CWSocket::CreateAndConnect(_In_z_ LPCTSTR pszHostAddress, _In_z_ LPCTSTR ps
 {
   //Validate our parameters
   ATLASSERT(!IsCreated()); //must not be created for a v6 style connect
-  ATLASSUME(pszHostAddress != NULL); //must have a valid host
+  ATLASSUME(pszHostAddress != nullptr); //must have a valid host
 
   //Do the address lookup
   ATL::CSocketAddr lookup;
@@ -576,7 +577,7 @@ void CWSocket::CreateAndConnect(_In_z_ LPCTSTR pszHostAddress, _In_z_ LPCTSTR ps
   int nLastError = 0;
   ADDRINFOT* const pAddress = lookup.GetAddrInfoList();
   ADDRINFOT* pCurrentAddress = pAddress;
-  while ((pCurrentAddress != NULL) && !bSuccess) 
+  while ((pCurrentAddress != nullptr) && !bSuccess)
   {
     try
     {
@@ -616,7 +617,7 @@ void CWSocket::Connect(_In_reads_bytes_(nSockAddrLen) const SOCKADDR* pSockAddr,
   WSAEVENT hConnectedEvent = WSACreateEvent();
   if (hConnectedEvent == WSA_INVALID_EVENT)
     ThrowWSocketException();
-  ATLASSUME(hConnectedEvent != NULL);
+  ATLASSUME(hConnectedEvent != nullptr);
 
   //Setup event selection on the socket
   if (WSAEventSelect(m_hSocket, hConnectedEvent, FD_CONNECT) == SOCKET_ERROR)
@@ -712,7 +713,7 @@ void CWSocket::CreateAndConnect(_In_z_ LPCTSTR pszHostAddress, _In_z_ LPCTSTR ps
 {
   //Validate our parameters
   ATLASSERT(!IsCreated()); //must not be created for a v6 style connect
-  ATLASSUME(pszHostAddress != NULL); //must have a valid host
+  ATLASSUME(pszHostAddress != nullptr); //must have a valid host
 
   //Do the address lookup
   ATL::CSocketAddr lookup;
@@ -724,7 +725,7 @@ void CWSocket::CreateAndConnect(_In_z_ LPCTSTR pszHostAddress, _In_z_ LPCTSTR ps
   int nLastError = 0;
   ADDRINFOT* const pAddress = lookup.GetAddrInfoList();
   ADDRINFOT* pCurrentAddress = pAddress;
-  while ((pCurrentAddress != NULL) && !bSuccess) 
+  while ((pCurrentAddress != nullptr) && !bSuccess)
   {
     try
     {
@@ -796,21 +797,21 @@ CWSocket::String CWSocket::AddressToString(_In_reads_bytes_(nSockAddrLen) const 
   String sSocketAddress;
 
 #ifdef _UNICODE
-  if (_SocMFCData.m_pfnGetNameInfoW == NULL)
+  if (_SocMFCData.m_pfnGetNameInfoW == nullptr)
     ThrowWSocketException(ERROR_CALL_NOT_IMPLEMENTED);
-  ATLASSUME(_SocMFCData.m_pfnGetNameInfoW != NULL);
+  ATLASSUME(_SocMFCData.m_pfnGetNameInfoW != nullptr);
   wchar_t szName[NI_MAXHOST];
   szName[0] = L'\0';
-  int nResult = _SocMFCData.m_pfnGetNameInfoW(pSockAddr, nSockAddrLen, szName, NI_MAXHOST, NULL, 0, nFlags);
+  int nResult = _SocMFCData.m_pfnGetNameInfoW(pSockAddr, nSockAddrLen, szName, NI_MAXHOST, nullptr, 0, nFlags);
 #else
   char szName[NI_MAXHOST];
   szName[0] = '\0';
-  int nResult = getnameinfo(pSockAddr, nSockAddrLen, szName, NI_MAXHOST, NULL, 0, nFlags);
+  int nResult = getnameinfo(pSockAddr, nSockAddrLen, szName, NI_MAXHOST, nullptr, 0, nFlags);
 #endif //#ifdef _UNICODE
   if (nResult == 0)
   {
     sSocketAddress = szName;
-    if (pnSocketPort != NULL)
+    if (pnSocketPort != nullptr)
       *pnSocketPort = ntohs(SS_PORT(&pSockAddr));
   }
   else
@@ -894,7 +895,7 @@ int CWSocket::SendTo(_In_reads_bytes_(nBufLen) const void* pBuf, _In_ int nBufLe
   ADDRINFOT* const pAddress = lookup.GetAddrInfoList();
   ADDRINFOT* pCurrentAddress = pAddress;
   int nSent = 0;
-  while ((pCurrentAddress != NULL) && !bSuccess) 
+  while ((pCurrentAddress != nullptr) && !bSuccess) 
   {
     try
     {
@@ -981,7 +982,7 @@ BOOL CWSocket::IsReadible(_In_ DWORD dwTimeout)
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(m_hSocket, &fds);
-  int nStatus = select(0, &fds, NULL, NULL, &timeout);
+  int nStatus = select(0, &fds, nullptr, nullptr, &timeout);
   if (nStatus == SOCKET_ERROR)
     ThrowWSocketException();
 
@@ -999,7 +1000,7 @@ BOOL CWSocket::IsWritable(_In_ DWORD dwTimeout)
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(m_hSocket, &fds);
-  int nStatus = select(0, NULL, &fds, NULL, &timeout);
+  int nStatus = select(0, nullptr, &fds, nullptr, &timeout);
   if (nStatus == SOCKET_ERROR)
     ThrowWSocketException();
 

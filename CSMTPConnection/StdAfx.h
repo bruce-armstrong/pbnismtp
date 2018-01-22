@@ -21,36 +21,20 @@
 #endif
 
 #define VC_EXTRALEAN //Exclude rarely-used stuff from Windows headers
-
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS //some CString constructors will be explicit
-
-#define _AFX_ALL_WARNINGS // turns off MFC's hiding of some common and often safely ignored warning messages
+#define _AFX_ALL_WARNINGS //turns off MFC's hiding of some common and often safely ignored warning messages
+#define _ATL_NO_AUTOMATIC_NAMESPACE
 
 #ifndef _SECURE_ATL
 #define _SECURE_ATL 1 //Use the Secure C Runtime in ATL
 #endif
 
-//#define CPJNSMTP_NOSSL //Uncomment this line to try out the SMTP classes without SSL support
-//#define CPJNSMTP_NONTLM //Uncomment this line to try out the SMTP classes without NTLM support
-
-//#define CPJNSMTP_MFC_EXTENSIONS //Uncomment this line if you want to use MFC
-
-#ifndef CPJNSMTP_MFC_EXTENSIONS
-  #include <atlbase.h>
-  #include <atlstr.h>
-  #include <atlsocket.h>
-#else
-  #define CWSOCKET_MFC_EXTENSIONS
-  #define CPJNMD5_MFC_EXTENSIONS
-  #define CNTLMCLIENTAUTH_MFC_EXTENSIONS
-  #include <afxwin.h>
-  #include <afxtempl.h>
-  #include <afxsock.h>
-  #include <afxmt.h>
-  #include <afxcmn.h>
-  #include <afxdlgs.h>
-#endif //#ifndef CPJNSMTP_MFC_EXTENSIONS
-
+#include <afxwin.h>
+#include <afxtempl.h>
+#include <afxsock.h>
+#include <afxmt.h>
+#include <afxcmn.h>
+#include <afxdlgs.h>
 #include <locale.h>
 #include <wincrypt.h>
 #include <atlenc.h>
@@ -58,6 +42,13 @@
 #include <wininet.h>
 #include <WinDNS.h>
 #include <WS2tcpip.h>
+
+//#define CPJNSMTP_NOSSL //Uncomment this line to try out the SMTP classes without SSL support
+//#define CPJNSMTP_NONTLM //Uncomment this line to try out the SMTP classes without NTLM support
+//#define CWSOCKET_MFC_EXTENSIONS //Uncomment this line if you want to test the MFC support in the socket classes
+//#define CPJNSMTP_MFC_EXTENSIONS //Uncomment this line if you want to test the MFC support in the SMTP classes
+//#define CPJNMD5_MFC_EXTENSIONS  //Uncomment this line if you want to test the MFC support in the MD5 class
+//#define CNTLMCLIENTAUTH_MFC_EXTENSIONS  //Uncomment this line if you want to test the MFC support in the NTLM client auth class
 
 #ifndef CPJNSMTP_NOSSL
   #include <schannel.h>
@@ -76,13 +67,22 @@
 //We need Crypt32 for DPAPI support in the sample app
 #pragma comment(lib, "crypt32.lib")
 
+#ifndef CWSOCKET_MFC_EXTENSIONS
+#include <exception>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#endif //#ifndef CWSOCKET_MFC_EXTENSIONS
+
 #ifndef CPJNSMTP_MFC_EXTENSIONS
-  #include <exception>
-  #include <string>
-  #include <vector>
-  #include <sstream>
-  #include <algorithm>
+#include <exception>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
 #endif //#ifndef CPJNSMTP_MFC_EXTENSIONS
+
 
 //Pull in support for Commctrl v6
 #ifdef _UNICODE
