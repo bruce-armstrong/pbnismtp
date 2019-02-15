@@ -47,6 +47,8 @@ protected:
 	LPCTSTR CharSet ;
 	LPCTSTR Username ;
 	LPCTSTR Password ;
+	LPCTSTR HeaderName;
+	LPCTSTR HeaderValue;
 
 	IPB_Value* MessageArg ;
 	IPB_Value* SenderEmailArg ;
@@ -64,6 +66,7 @@ protected:
 	IPB_Value* ReadReceiptArg;
 	IPB_Value* DeliverReportArg;
 	IPB_Value* MailerNameArg;
+	IPB_Value* HeaderArg;
 
 	IPB_Session*	Session ;
 
@@ -100,8 +103,15 @@ protected:
 		LPTSTR ContentType;
 	 };
 
+	class CustomHeader {
+	public:
+		LPTSTR Name;
+		LPTSTR Value;
+	};
+
 	std::vector<AttachmentFile> m_AttachmentFile;
 	std::vector<AttachmentBase64> m_AttachmentBase64;
+	std::vector<CustomHeader> m_CustomHeaders;
 
 private:
 
