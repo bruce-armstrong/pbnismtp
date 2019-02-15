@@ -56,6 +56,7 @@ PBXEXPORT LPCTSTR PBXCALL PBX_GetDescription()
 		_T ( "subroutine SetPriorityLow ( )\n")
 		_T ( "subroutine SetPriorityNormal ( )\n")
 		_T ( "subroutine SetPriorityHigh ( )\n")
+		_T ( "subroutine SetHeader ( string pbheadername, string pbheadervalue )\n")
 		_T ( "end class\n" )
 	};
 	return (LPCTSTR)desc ;
@@ -114,6 +115,7 @@ enum MethodIDs
 	SETPRIORITYLOW = 27,
 	SETPRIORITYNORMAL = 28,
 	SETPRIORITYHIGH = 29,
+	SETHEADER = 30,
 	ENTRY_COUNT
 };
 
@@ -142,7 +144,8 @@ CSMTP::CSMTP()
 	PasswordArg = NULL ;
 	PriorityArg = NULL ;
 	ReadReceiptArg = NULL ;
-	DeliverReportArg = NULL ;	 
+	DeliverReportArg = NULL ;
+	HeaderArg = NULL ;
 
 	Message = NULL;
 	HTMLMessage = NULL;
@@ -156,6 +159,8 @@ CSMTP::CSMTP()
 	Attachment = NULL;
 	Username = NULL ;
 	Password = NULL ;
+	HeaderName = NULL;
+	HeaderValue = NULL;
 	CharSet = _T("iso-8859-1");
 
 	ErrorMessageBoxesOn = FALSE;    /* initialize to off  */	
@@ -368,6 +373,14 @@ int CSMTP::Send()
 			imageBodyPart.SetContentType(m_AttachmentBase64[i].ContentType);
 			imageBodyPart.SetTitle(m_AttachmentBase64[i].FileName);
 			msg.AddBodyPart(imageBodyPart);
+		}
+
+		// Set Headers
+		for (std::vector<CustomHeader*>::size_type i = 0; i < m_CustomHeaders.size(); i++)
+		{
+			CString dString;
+			dString.Format(_T("%s: %s"), m_CustomHeaders[i].Name, m_CustomHeaders[i].Value);
+			msg.m_CustomHeaders.push_back((CPJNSMTPString)dString);
 		}
 
 		// Set the Return Code if Exception is raised for the following calls
@@ -780,6 +793,30 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 			#endif
 			return PBX_OK;
 		}
+	case SETHEADER:
+	{
+		HeaderArg = session->AcquireValue(ci->pArgs->GetAt(0));
+		pbstring pbHeaderName = HeaderArg->GetString();
+		LPTSTR HeaderName = (LPTSTR)session->GetString(pbHeaderName);
+
+		HeaderArg = session->AcquireValue(ci->pArgs->GetAt(1));
+		pbstring pbHeaderValue = HeaderArg->GetString();
+		LPTSTR HeaderValue = (LPTSTR)session->GetString(pbHeaderValue);
+
+		CustomHeader	customHeader;
+		customHeader.Name = HeaderName;
+		customHeader.Value = HeaderValue;
+		m_CustomHeaders.push_back(customHeader);
+		#ifdef _DEBUG
+				CString dString;
+				dString.Format(_T("%s: %s"), HeaderName, HeaderValue);
+				MessageBox(NULL, dString, _T("SetHeader"), MB_ICONEXCLAMATION | MB_OK);
+				delete dString;
+		#endif
+		return PBX_OK;
+	}
+
+
 
 		return PBX_E_INVOKE_METHOD_AMBIGUOUS;
 	}
@@ -848,6 +885,10 @@ void CSMTP::CleanUp()
 	if (PriorityArg)
 	{
 		Session->ReleaseValue( PriorityArg );
+	}
+	if (HeaderArg)
+	{
+		Session->ReleaseValue(HeaderArg);
 	}
 }
 
