@@ -381,7 +381,6 @@ int CSMTP::Send()
 			CString dString;
 			dString.Format(_T("%s: %s"), m_CustomHeaders[i].Name, m_CustomHeaders[i].Value);
 			msg.m_CustomHeaders.push_back((CPJNSMTPString)dString);
-			delete dString;
 		}
 
 		// Set the Return Code if Exception is raised for the following calls
@@ -796,11 +795,11 @@ PBXRESULT CSMTP::Invoke(IPB_Session * session, pbobject obj, pbmethodID mid, PBC
 		}
 	case SETHEADER:
 	{
-		AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(0));
+		HeaderArg = session->AcquireValue(ci->pArgs->GetAt(0));
 		pbstring pbHeaderName = HeaderArg->GetString();
 		LPTSTR HeaderName = (LPTSTR)session->GetString(pbHeaderName);
 
-		AttachmentArg = session->AcquireValue(ci->pArgs->GetAt(1));
+		HeaderArg = session->AcquireValue(ci->pArgs->GetAt(1));
 		pbstring pbHeaderValue = HeaderArg->GetString();
 		LPTSTR HeaderValue = (LPTSTR)session->GetString(pbHeaderValue);
 
