@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PBNIWizard", "PBNIWizard.vcproj", "{CE17ED22-C5B8-4F27-9F4D-E1B0791F8B15}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{CE17ED22-C5B8-4F27-9F4D-E1B0791F8B15}.Debug.ActiveCfg = Debug|Win32
+		{CE17ED22-C5B8-4F27-9F4D-E1B0791F8B15}.Debug.Build.0 = Debug|Win32
+		{CE17ED22-C5B8-4F27-9F4D-E1B0791F8B15}.Release.ActiveCfg = Release|Win32
+		{CE17ED22-C5B8-4F27-9F4D-E1B0791F8B15}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
